@@ -9,21 +9,28 @@ const hydrophoneIcon = new Icon({
   iconSize: [35,35]
 })
 
-export default function Map() {
+export default function Map({ onToggleSidebar, hydrophoneMetadata }) {
   const position = [49.2608724, -123.113952]; // Initial map position
 
+  const handleAnalyticsButtonClick = (hydrophoneName) => {
+    onToggleSidebar(hydrophoneName);
+  };
+
   return (
-    <MapContainer center={position} zoom={7} style={{ flex: 1 }}>
+    <MapContainer center={position} zoom={7} style={{ flex: 1, height: '100vh' }}>
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
-      <Marker position={position} icon={hydrophoneIcon}> 
+      {hydrophoneMetadata.map((hydrophone, index) => (
+      <Marker key={index} position={hydrophone.coordinates} icon={hydrophoneIcon}>
         <Popup>
-          <Typography>Hydrophone</Typography>
-          <Button>View Analytics</Button>
+          <Typography style={{ textAlign: 'center' }}>{hydrophone.name}</Typography>
+          <Typography variant="caption">Last updated: {hydrophone.lastUpdated}</Typography>
+          <Button onClick={() => handleAnalyticsButtonClick(hydrophone.name)} style={{ display: 'block', margin: 'auto' }}>View Analytics</Button>
         </Popup>
       </Marker>
+    ))}
     </MapContainer>
   );
 };
