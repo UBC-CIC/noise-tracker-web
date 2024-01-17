@@ -23,14 +23,16 @@ export default function Map({ onToggleSidebar, hydrophoneData }) {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
       {hydrophoneData.map((hydrophone, index) => (
-      <Marker key={index} position={hydrophone.coordinates} icon={hydrophoneIcon}>
-        <Popup>
-          <Typography style={{ textAlign: 'center' }}>{hydrophone.name}</Typography>
-          <Typography variant="caption">Last updated: {hydrophone.lastUpdated}</Typography>
-          <Button onClick={() => handleAnalyticsButtonClick(hydrophone.name)} style={{ display: 'block', margin: 'auto' }}>View Analytics</Button>
-        </Popup>
-      </Marker>
-    ))}
+        <Marker
+          key={index}
+          position={hydrophone.coordinates}
+          icon={hydrophoneIcon}
+          eventHandlers={{
+            click: () => handleAnalyticsButtonClick(hydrophone.name),
+          }}
+        >
+        </Marker>
+      ))}
     </MapContainer>
   );
 };
