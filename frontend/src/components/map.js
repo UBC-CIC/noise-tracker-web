@@ -12,8 +12,11 @@ const hydrophoneIcon = new Icon({
 export default function Map({ onToggleSidebar, hydrophoneData }) {
   const position = [49.2608724, -123.113952]; // Initial map position
 
-  const handleAnalyticsButtonClick = (hydrophoneName) => {
-    onToggleSidebar(hydrophoneName);
+  const handleIconClick = (hydrophone, map) => {
+    const zoomLevel = 9;
+
+    onToggleSidebar(hydrophone.name);
+    map.flyTo(hydrophone.coordinates, zoomLevel);
   };
 
   return (
@@ -28,7 +31,7 @@ export default function Map({ onToggleSidebar, hydrophoneData }) {
           position={hydrophone.coordinates}
           icon={hydrophoneIcon}
           eventHandlers={{
-            click: () => handleAnalyticsButtonClick(hydrophone.name),
+            click: (e) => handleIconClick(hydrophone, e.target._map),
           }}
         >
         </Marker>
