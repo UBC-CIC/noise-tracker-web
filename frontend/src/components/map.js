@@ -1,5 +1,5 @@
 import React from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, AttributionControl } from 'react-leaflet';
 import { Icon } from 'leaflet';
 import { Button, Typography } from '@mui/material';
 import 'leaflet/dist/leaflet.css';
@@ -20,14 +20,14 @@ export default function Map({ onToggleSidebar, hydrophoneData }) {
   };
 
   return (
-    <MapContainer center={position} zoom={7} style={{ flex: 1, height: '100vh' }}>
+    <MapContainer center={position} zoom={7} style={{ flex: 1, height: '100vh' }} attributionControl={false}>
       <TileLayer
         url="https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}        "
-        attribution='&copy; Esri &mdash; Source: Esri, HERE, Garmin, FAO, NOAA, USGS, EPA'
+        attribution='CHS, Esri, GEBCO, Garmin, NaturalVue | CHS, Esri, GEBCO, Garmin, NGS'
       />
+      <AttributionControl position="bottomright"/>
       <TileLayer
         url="https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Reference/MapServer/tile/{z}/{y}/{x}        "
-        attribution='&copy; Esri &mdash; Source: Esri, HERE, Garmin, FAO, NOAA, USGS, EPA'
       />
       {hydrophoneData.map((hydrophone, index) => (
         <Marker
@@ -43,4 +43,3 @@ export default function Map({ onToggleSidebar, hydrophoneData }) {
     </MapContainer>
   );
 };
-
