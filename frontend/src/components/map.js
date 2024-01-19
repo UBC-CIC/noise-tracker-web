@@ -22,8 +22,12 @@ export default function Map({ onToggleSidebar, hydrophoneData }) {
   return (
     <MapContainer center={position} zoom={7} style={{ flex: 1, height: '100vh' }}>
       <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        url="https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}        "
+        attribution='&copy; Esri &mdash; Source: Esri, HERE, Garmin, FAO, NOAA, USGS, EPA'
+      />
+      <TileLayer
+        url="https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Reference/MapServer/tile/{z}/{y}/{x}        "
+        attribution='&copy; Esri &mdash; Source: Esri, HERE, Garmin, FAO, NOAA, USGS, EPA'
       />
       {hydrophoneData.map((hydrophone, index) => (
         <Marker
