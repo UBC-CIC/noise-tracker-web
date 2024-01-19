@@ -20,7 +20,7 @@ export default function Map({ onToggleSidebar, hydrophoneData }) {
   };
 
   return (
-    <MapContainer center={position} zoom={7} style={{ flex: 1, height: '100vh' }} attributionControl={false}>
+    <MapContainer center={position} zoom={7} style={{ flex: 1, height: '100vh' }} attributionControl={false} maxZoom={13}>
       <TileLayer
         url="https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}        "
         attribution='CHS, Esri, GEBCO, Garmin, NaturalVue | CHS, Esri, GEBCO, Garmin, NGS'
