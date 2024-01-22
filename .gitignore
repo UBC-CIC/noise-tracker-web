@@ -1,7 +1,2 @@
-.idea/
-__pycache__/
-venv/
-test/
-
 .DS_Store
-*.iml
+
