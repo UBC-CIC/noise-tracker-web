@@ -5,6 +5,8 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 
+const pages = ["Map", "About", "Education Hub", "Login"];
+
 const NavBar = () => {
   return (
     <AppBar position="static">
@@ -12,18 +14,16 @@ const NavBar = () => {
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           NoiseTracker
         </Typography>
-        <Button color="inherit" component={Link} to="/home">
-          Home
-        </Button>
-        <Button color="inherit" component={Link} to="/contact">
-          Contact
-        </Button>
-        <Button color="inherit" component={Link} to="/">
-          Map
-        </Button>
-        <Button color="inherit" component={Link} to="/login">
-          Login
-        </Button>
+        {pages.map((tab, index) => (
+          <Button
+            key={index}
+            color="inherit"
+            component={Link}
+            to={`/${tab.toLowerCase()}`}
+          >
+            {tab}
+          </Button>
+        ))}
       </Toolbar>
     </AppBar>
   );

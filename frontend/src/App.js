@@ -11,6 +11,7 @@ function App() {
       <NavBar/>
       <Routes>
         <Route path="/" element={<InteractiveMap/>}/>
+        <Route path="/map" element={<InteractiveMap/>}/>
       </Routes>
     </Router>
   );
