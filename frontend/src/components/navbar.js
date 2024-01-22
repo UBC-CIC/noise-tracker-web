@@ -13,7 +13,7 @@ const NavBar = () => {
           NoiseTracker
         </Typography>
         <Button color="inherit" component={Link} to="/home">
-          Ocean Map
+          Home
         </Button>
         <Button color="inherit" component={Link} to="/contact">
           Contact

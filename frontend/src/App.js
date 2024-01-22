@@ -4,7 +4,6 @@ import './App.css';
 
 import NavBar from './components/navbar';
 import InteractiveMap from './pages/InteractiveMap';
-import OceanMapPage from './pages/OceanMapPage';
 
 function App() {
   return (
@@ -12,7 +11,6 @@ function App() {
       <NavBar/>
       <Routes>
         <Route path="/" element={<InteractiveMap/>}/>
-        <Route path="/home" element={<OceanMapPage/>}/>
       </Routes>
     </Router>
   );
