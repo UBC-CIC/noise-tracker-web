@@ -97,7 +97,7 @@ export default function OceanMap({ onToggleSidebar, hydrophoneData }){
     view.hitTest(event).then((response) => {
       const hoveredGraphics = response.results;
 
-      if (hoveredGraphics.length > 0 && hoveredGraphics[0].graphic === graphic) {
+      if (hoveredGraphics.length > 0) {
         // Set cursor to 'pointer' when hovering over the graphic
         mapRef.current.style.cursor = 'pointer';
       } else {
