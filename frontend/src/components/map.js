@@ -3,6 +3,7 @@ import { MapContainer, TileLayer, Marker, AttributionControl } from 'react-leafl
 import { Icon } from 'leaflet';
 import { Button, Typography } from '@mui/material';
 import 'leaflet/dist/leaflet.css';
+import Popup from './popup';
 
 const hydrophoneIcon = new Icon({
   iconUrl: require("./hydrophoneIcon.png"),
@@ -53,26 +54,29 @@ export default function Map({ onToggleSidebar, hydrophoneData }) {
   };
 
   return (
-    <MapContainer center={initialPosition} zoom={initialZoom} style={{ flex: 1, height: '100vh' }} attributionControl={false} maxZoom={13}>
-      <TileLayer
-        url="https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}        "
-        attribution='CHS, Esri, GEBCO, Garmin, NaturalVue | CHS, Esri, GEBCO, Garmin, NGS'
-      />
-      <AttributionControl position="bottomright"/>
-      <TileLayer
-        url="https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Reference/MapServer/tile/{z}/{y}/{x}        "
-      />
-      {hydrophoneData.map((hydrophone, index) => (
-        <Marker
-          key={index}
-          position={hydrophone.coordinates}
-          icon={hydrophoneIcon}
-          eventHandlers={{
-            click: (e) => handleIconClick(hydrophone, e.target._map),
-          }}
-        >
-        </Marker>
-      ))}
-    </MapContainer>
+    <div>
+      <MapContainer center={initialPosition} zoom={initialZoom} style={{ flex: 1, height: '100vh' }} attributionControl={false} maxZoom={13}>
+        <TileLayer
+          url="https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}        "
+          attribution='CHS, Esri, GEBCO, Garmin, NaturalVue | CHS, Esri, GEBCO, Garmin, NGS'
+        />
+        <AttributionControl position="bottomright"/>
+        <TileLayer
+          url="https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Reference/MapServer/tile/{z}/{y}/{x}        "
+        />
+        {hydrophoneData.map((hydrophone, index) => (
+          <Marker
+            key={index}
+            position={hydrophone.coordinates}
+            icon={hydrophoneIcon}
+            eventHandlers={{
+              click: (e) => handleIconClick(hydrophone, e.target._map),
+            }}
+          >
+          </Marker>
+        ))}
+      </MapContainer>
+      <Popup />
+    </div>
   );
 };
