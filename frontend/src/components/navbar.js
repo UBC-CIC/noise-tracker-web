@@ -6,15 +6,18 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 
 const pages = ["Map", "About", "Education Hub", "Login"];
+const loggedInPages = ["Map", "About", "Education Hub", "Operator Profile", "Signout"]; 
 
-const NavBar = () => {
+const NavBar = ({ loginStatus }) => {
+  const tabs = loginStatus ? loggedInPages : pages;
+
   return (
     <AppBar position="static">
       <Toolbar>
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           NoiseTracker
         </Typography>
-        {pages.map((tab, index) => (
+        {tabs.map((tab, index) => (
           <Button
             key={index}
             color="inherit"
