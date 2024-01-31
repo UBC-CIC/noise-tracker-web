@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { MapContainer, TileLayer, Marker, AttributionControl } from 'react-leaflet';
 import { Icon } from 'leaflet';
 import { Button, Typography } from '@mui/material';
@@ -10,11 +10,21 @@ const hydrophoneIcon = new Icon({
   iconSize: [35,35]
 })
 
+const hydrophoneIconSelected = new Icon({
+  iconUrl: require("./hydrophoneIconSelected.png"),
+  iconSize: [35,35]
+})
+
 export default function Map({ onToggleSidebar, hydrophoneData }) {
+  const [selectedHydrophone, setSelectedHydrophone] = useState(null);
+
   const initialPosition = [49.2608724, -123.113952]; // Initial map position
   const initialZoom = 7;
 
   const handleIconClick = (hydrophone, map) => {
+    // Update the selected hydrophone
+    setSelectedHydrophone(hydrophone.name)
+
     // Icon zoom level
     const zoomLevel = 9;
 
@@ -68,7 +78,7 @@ export default function Map({ onToggleSidebar, hydrophoneData }) {
           <Marker
             key={index}
             position={hydrophone.coordinates}
-            icon={hydrophoneIcon}
+            icon={hydrophone.name === selectedHydrophone ? hydrophoneIconSelected : hydrophoneIcon}
             eventHandlers={{
               click: (e) => handleIconClick(hydrophone, e.target._map),
             }}
