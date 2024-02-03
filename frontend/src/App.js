@@ -5,6 +5,7 @@ import './App.css';
 import NavBar from './components/navbar';
 import InteractiveMap from './pages/InteractiveMap';
 import LoginPage from './pages/LoginPage';
+import OperatorProfile from './pages/OperatorProfile';
 
 function App() {
   const [loginStatus, setLoginStatus] = useState(false);
@@ -13,16 +14,15 @@ function App() {
     <Router>
       <NavBar loginStatus={loginStatus} />
       <Routes>
+        <Route path="/" element={<InteractiveMap />} />
+        <Route path="/map" element={<InteractiveMap />} />
         {loginStatus ? (
           <>
-            <Route path="/" element={<InteractiveMap />} />
-            <Route path="/map" element={<InteractiveMap />} />
             <Route path="/signout" element={<LoginPage loginStatus={false} setLoginStatus={setLoginStatus} />} />
+            <Route path="/operatorprofile" element={<OperatorProfile />} />
           </>
         ) : (
           <>
-            <Route path="/" element={<InteractiveMap />} />
-            <Route path="/map" element={<InteractiveMap />} />
             <Route path="/login"element={<LoginPage loginStatus={loginStatus} setLoginStatus={setLoginStatus} />} />
           </>
         )}

@@ -22,7 +22,7 @@ const NavBar = ({ loginStatus }) => {
             key={index}
             color="inherit"
             component={Link}
-            to={`/${tab.toLowerCase()}`}
+            to={`/${tab.toLowerCase().replace(/\s+/g, '')}`}
           >
             {tab}
           </Button>
