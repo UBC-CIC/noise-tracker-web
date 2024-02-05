@@ -6,12 +6,12 @@ import 'leaflet/dist/leaflet.css';
 import Popup from './popup';
 
 const hydrophoneIcon = new Icon({
-  iconUrl: require("./hydrophoneIcon.png"),
+  iconUrl: require("./images/hydrophoneIcon.png"),
   iconSize: [35,35]
 })
 
 const hydrophoneIconSelected = new Icon({
-  iconUrl: require("./hydrophoneIconSelected.png"),
+  iconUrl: require("./images/hydrophoneIconSelected.png"),
   iconSize: [35,35]
 })
 
