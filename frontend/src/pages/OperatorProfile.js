@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Tabs, Tab } from '@mui/material';
 import OperatorProfileInformation from '../components/operatorProfileInformation'
+import OperatorProfileDownload from '../components/operatorProfileDownload';
 
 export default function OperatorProfile(){
     const tabs = ["Information", "Settings", "Download"];
@@ -18,7 +19,7 @@ export default function OperatorProfile(){
           case 'Settings':
             return;
           case 'Download':
-            return null;
+            return <OperatorProfileDownload />;
           default:
             return null;
         }
