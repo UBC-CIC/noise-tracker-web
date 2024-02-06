@@ -29,7 +29,7 @@ const LineGraph = ({ hydrophoneData }) => {
 
   // Layout configuration for the graph
   const layout = {
-    title: 'Sound Levels',
+    title: 'Sound Pressure Level',
     xaxis: { title: 'Date', tickvals, ticktext},
     yaxis: { title: 'dB'},
     autosize: false,

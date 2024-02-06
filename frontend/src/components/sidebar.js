@@ -4,7 +4,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import LineGraph from './linegraph';
 
 const Sidebar = ({ hydrophoneData, onCloseSidebar, selectedMetric }) => {
-    const [selectedTab, setSelectedTab] = useState("Sound Levels"); // Initialize selectedTab state
+    const [selectedTab, setSelectedTab] = useState("Sound Pressure Level"); // Initialize selectedTab state
 
     const handleTabChange = (event, newValue) => {
       setSelectedTab(newValue);
@@ -29,7 +29,12 @@ const Sidebar = ({ hydrophoneData, onCloseSidebar, selectedMetric }) => {
               <Tab key={index} label={metric} value={metric} />
             ))}
           </Tabs>
-          {selectedTab === "Sound Levels" && <LineGraph hydrophoneData={hydrophoneData} />} 
+          {selectedTab === "Sound Pressure Level" && (
+            <>
+              <Typography style={{ paddingTop: '20px', paddingBottom: '20px' }}>Contextual information about the metric goes here.</Typography>
+              <LineGraph hydrophoneData={hydrophoneData} />
+            </>
+          )} 
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto' }}>
           <Typography>Last Updated: {hydrophoneData.lastUpdated}</Typography>

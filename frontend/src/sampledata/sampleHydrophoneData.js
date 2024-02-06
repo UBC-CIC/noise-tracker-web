@@ -3,7 +3,7 @@ const sampleHydrophoneData = [
       "name": "Hydrophone 1",
       "coordinates": [49.2608724, -123.513952],
       "lastUpdated": "January 10, 2024",
-      "metrics": ["Sound Levels", "Spectral Averages", "Trends", "Station Information"],
+      "metrics": ["Sound Pressure Level", "Spectral Averages", "Trends", "Station Information"],
       "soundLevelsData": {
         "xAxis": [
           "Jan 1, 2024", "Jan 2, 2024", "Jan 3, 2024", "Jan 4, 2024", "Jan 5, 2024",
@@ -19,7 +19,7 @@ const sampleHydrophoneData = [
       "name": "Hydrophone 2",
       "coordinates": [49.693333, -124.810168],
       "lastUpdated": "January 11, 2024",
-      "metrics": ["Sound Levels", "Spectral Averages", "Trends", "Station Information"],
+      "metrics": ["Sound Pressure Level", "Spectral Averages", "Trends", "Station Information"],
       "soundLevelsData": {
         "xAxis": [
           "Jan 1, 2024", "Jan 2, 2024", "Jan 3, 2024", "Jan 4, 2024", "Jan 5, 2024",
@@ -35,7 +35,7 @@ const sampleHydrophoneData = [
       "name": "Hydrophone 3",
       "coordinates": [50.693333, -125.810168],
       "lastUpdated": "January 9, 2024",
-      "metrics": ["Sound Levels", "Spectral Averages", "Trends", "Station Information"],
+      "metrics": ["Sound Pressure Level", "Spectral Averages", "Trends", "Station Information"],
       "soundLevelsData": {
         "xAxis": [
           "Jan 1, 2024", "Jan 2, 2024", "Jan 3, 2024", "Jan 4, 2024", "Jan 5, 2024",
