@@ -1,4 +1,4 @@
-import { IconButton, Typography, Tab, Tabs } from '@mui/material';
+import { IconButton, Typography, Tab, Tabs, tabsClasses } from '@mui/material';
 import React, { useState, useEffect } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
 import LineGraph from './linegraph';
@@ -24,7 +24,22 @@ const Sidebar = ({ hydrophoneData, onCloseSidebar, selectedMetric }) => {
       <div style={{ position: 'relative', width: '35%', backgroundColor: '#f0f0f0', padding: '20px', display: 'flex', flexDirection: 'column' }}>
         <div style={{ marginBottom: 'auto' }}>
           <Typography variant='h4'>{hydrophoneData.name}</Typography>
-          <Tabs value={selectedTab} onChange={handleTabChange} indicatorColor="primary" textColor="primary" style={{ marginTop: '20px' }}>
+          <Tabs 
+            value={selectedTab} 
+            onChange={handleTabChange} 
+            indicatorColor="primary" 
+            textColor="primary" 
+            variant="scrollable"
+            scrollButtons
+            allowScrollButtonsMobile
+            style={{ 
+              marginTop: '20px'
+            }}
+            sx={{
+              [`& .${tabsClasses.scrollButtons}`]: {
+                '&.Mui-disabled': { opacity: 0.3 },
+              },
+            }}>
             {hydrophoneData.metrics.map((metric, index) => (
               <Tab key={index} label={metric} value={metric} />
             ))}
