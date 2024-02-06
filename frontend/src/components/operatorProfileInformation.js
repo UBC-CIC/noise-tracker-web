@@ -51,7 +51,7 @@ export default function OperatorProfileInformation(){
                                             <TableCell>
                                                 {metric}
                                                 <span style={{ float: 'right' }}>
-                                                    <IconButton component={Link} to={`/map`}>
+                                                    <IconButton component={Link} to={`/map/${hydrophone.name}/${metric}`}>
                                                         <ArrowForwardIosIcon />
                                                     </IconButton>
                                                 </span>

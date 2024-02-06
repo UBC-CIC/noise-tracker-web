@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, AttributionControl } from 'react-leaflet';
 import { Icon } from 'leaflet';
-import { Button, Typography } from '@mui/material';
 import 'leaflet/dist/leaflet.css';
 import Popup from './popup';
 
@@ -15,7 +14,7 @@ const hydrophoneIconSelected = new Icon({
   iconSize: [35,35]
 })
 
-export default function Map({ onToggleSidebar, hydrophoneData }) {
+export default function Map({ onToggleSidebar, hydrophoneData, selectedHydrophoneFromProfile }) {
   const [selectedHydrophone, setSelectedHydrophone] = useState(null);
 
   const initialPosition = [49.2608724, -123.113952]; // Initial map position
@@ -62,6 +61,13 @@ export default function Map({ onToggleSidebar, hydrophoneData }) {
     // Open sidebar
     onToggleSidebar(hydrophone.name);
   };
+
+  useEffect(() => {
+    if (selectedHydrophoneFromProfile){
+      setSelectedHydrophone(selectedHydrophoneFromProfile.name);
+    }
+  }, [selectedHydrophoneFromProfile]); 
+
 
   return (
     <div>

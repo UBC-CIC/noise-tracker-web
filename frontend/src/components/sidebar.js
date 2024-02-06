@@ -1,9 +1,9 @@
 import { IconButton, Typography, Tab, Tabs } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
 import LineGraph from './linegraph';
 
-const Sidebar = ({ hydrophoneData, onCloseSidebar }) => {
+const Sidebar = ({ hydrophoneData, onCloseSidebar, selectedMetric }) => {
     const [selectedTab, setSelectedTab] = useState("Sound Levels"); // Initialize selectedTab state
 
     const handleTabChange = (event, newValue) => {
@@ -13,6 +13,12 @@ const Sidebar = ({ hydrophoneData, onCloseSidebar }) => {
     const handleSidebarClose = () =>{
         onCloseSidebar();
     };
+
+    useEffect(() => {
+      if (selectedMetric){
+        setSelectedTab(selectedMetric);
+      }
+    }, [selectedMetric]);
 
     return (
       <div style={{ position: 'relative', width: '35%', backgroundColor: '#f0f0f0', padding: '20px', display: 'flex', flexDirection: 'column' }}>

@@ -15,7 +15,8 @@ function App() {
       <NavBar loginStatus={loginStatus} />
       <Routes>
         <Route path="/" element={<InteractiveMap />} />
-        <Route path="/map" element={<InteractiveMap />} />
+        <Route path="/map/*" element={<InteractiveMap />} />
+        <Route path="/map/:hydrophoneName/:metricName" element={<InteractiveMap />} />
         {loginStatus ? (
           <>
             <Route path="/signout" element={<LoginPage loginStatus={false} setLoginStatus={setLoginStatus} />} />
