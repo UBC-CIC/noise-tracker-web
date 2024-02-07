@@ -41,6 +41,12 @@ export default function OperatorProfileDownload() {
         // Add download logic here
     };
 
+    const dateTimePickerStyling = { 
+        width: '25%',
+        minWidth: '300px',
+        paddingBottom: '20px', 
+    };
+
     return (
         <div style={{ paddingLeft: '20px' }}>
             <Typography style={{ fontSize: '24px', paddingBottom: '20px' }}>
@@ -73,7 +79,7 @@ export default function OperatorProfileDownload() {
                 Select the time period that you would like to download from.
             </Typography>
 
-            <div style={{ paddingBottom: '20px', width: '20%'}}>       
+            <div style={dateTimePickerStyling}>       
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DemoContainer components={['DateTimePicker']}>
                         <DateTimePicker 
@@ -85,7 +91,7 @@ export default function OperatorProfileDownload() {
                 </LocalizationProvider>
             </div>
 
-            <div style={{ paddingBottom: '50px', width: '20%'}}>       
+            <div style={dateTimePickerStyling}>       
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DemoContainer components={['DateTimePicker']}>
                         <DateTimePicker 
@@ -97,7 +103,7 @@ export default function OperatorProfileDownload() {
                 </LocalizationProvider>
             </div>
 
-            <Button variant="contained" onClick={handleDownloadClick}>
+            <Button sx={{mt: 2, mb: 2}} variant="contained" onClick={handleDownloadClick}>
                 Download
             </Button>
         </div>
