@@ -6,6 +6,7 @@ import NavBar from './components/navbar';
 import InteractiveMap from './pages/InteractiveMap';
 import LoginPage from './pages/LoginPage';
 import OperatorProfile from './pages/OperatorProfile';
+import AdminDashboard from './pages/AdminDashboard';
 
 function App() {
   const [loginStatus, setLoginStatus] = useState(false);
@@ -21,6 +22,7 @@ function App() {
           <>
             <Route path="/signout" element={<LoginPage loginStatus={false} setLoginStatus={setLoginStatus} />} />
             <Route path="/operatorprofile" element={<OperatorProfile />} />
+            <Route path="/admin" element={<AdminDashboard />} />
           </>
         ) : (
           <>
