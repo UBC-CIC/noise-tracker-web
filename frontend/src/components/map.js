@@ -1,20 +1,29 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, AttributionControl } from 'react-leaflet';
 import { Icon } from 'leaflet';
-import { Button, Typography } from '@mui/material';
 import 'leaflet/dist/leaflet.css';
 import Popup from './popup';
 
 const hydrophoneIcon = new Icon({
-  iconUrl: require("./hydrophoneIcon.png"),
+  iconUrl: require("./images/hydrophoneIcon.png"),
   iconSize: [35,35]
 })
 
-export default function Map({ onToggleSidebar, hydrophoneData }) {
+const hydrophoneIconSelected = new Icon({
+  iconUrl: require("./images/hydrophoneIconSelected.png"),
+  iconSize: [35,35]
+})
+
+export default function Map({ onToggleSidebar, hydrophoneData, selectedHydrophoneFromProfile }) {
+  const [selectedHydrophone, setSelectedHydrophone] = useState(null);
+
   const initialPosition = [49.2608724, -123.113952]; // Initial map position
   const initialZoom = 7;
 
   const handleIconClick = (hydrophone, map) => {
+    // Update the selected hydrophone
+    setSelectedHydrophone(hydrophone.name)
+
     // Icon zoom level
     const zoomLevel = 9;
 
@@ -53,6 +62,13 @@ export default function Map({ onToggleSidebar, hydrophoneData }) {
     onToggleSidebar(hydrophone.name);
   };
 
+  useEffect(() => {
+    if (selectedHydrophoneFromProfile){
+      setSelectedHydrophone(selectedHydrophoneFromProfile.name);
+    }
+  }, [selectedHydrophoneFromProfile]); 
+
+
   return (
     <div>
       <MapContainer center={initialPosition} zoom={initialZoom} style={{ flex: 1, height: '100vh' }} attributionControl={false} maxZoom={13}>
@@ -68,7 +84,7 @@ export default function Map({ onToggleSidebar, hydrophoneData }) {
           <Marker
             key={index}
             position={hydrophone.coordinates}
-            icon={hydrophoneIcon}
+            icon={hydrophone.name === selectedHydrophone ? hydrophoneIconSelected : hydrophoneIcon}
             eventHandlers={{
               click: (e) => handleIconClick(hydrophone, e.target._map),
             }}
