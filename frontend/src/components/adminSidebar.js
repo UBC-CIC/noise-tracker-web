@@ -1,5 +1,5 @@
 import { IconButton } from "@mui/material"
-import SettingsIcon from '@mui/icons-material/Settings';
+import MicIcon from '@mui/icons-material/Mic';
 import HomeIcon from '@mui/icons-material/Home';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 
@@ -34,11 +34,11 @@ export default function AdminSidebar({ onButtonClick }){
             </IconButton>
 
             <IconButton style={buttonStyle} onClick={() => onButtonClick('hydrophones')}>
-                <PeopleAltIcon /> <span style={{ marginLeft: '10%', fontFamily: 'Arial, sans-serif', fontSize: '16px', fontWeight: 'bold' }}>Hydrophones</span>
+                <MicIcon /> <span style={{ marginLeft: '10%', fontFamily: 'Arial, sans-serif', fontSize: '16px', fontWeight: 'bold' }}>Hydrophones</span>
             </IconButton>
 
-            <IconButton style={buttonStyle} onClick={() => onButtonClick('settings')}>
-                <SettingsIcon /> <span style={{ marginLeft: '10%', fontFamily: 'Arial, sans-serif', fontSize: '16px', fontWeight: 'bold' }}>Settings</span>
+            <IconButton style={buttonStyle} onClick={() => onButtonClick('operators')}>
+                <PeopleAltIcon /> <span style={{ marginLeft: '10%', fontFamily: 'Arial, sans-serif', fontSize: '16px', fontWeight: 'bold' }}>Operators</span>
             </IconButton>
         </div>
     )

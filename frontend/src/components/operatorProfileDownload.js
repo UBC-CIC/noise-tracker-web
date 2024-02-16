@@ -10,6 +10,9 @@ export default function OperatorProfileDownload() {
     // Create a state to store selected metrics for each hydrophone
     const [selectedMetrics, setSelectedMetrics] = useState({});
 
+    // Create a state for "Select All" checkbox
+    const [selectAllChecked, setSelectAllChecked] = useState({});
+
     // Create a state to store start and end date times 
     const [startDateTime, setStartDateTime] = useState(null);
     const [endDateTime, setEndDateTime] = useState(null);
@@ -24,6 +27,26 @@ export default function OperatorProfileDownload() {
                 },
             };
             return hydrophoneSelectedMetrics;
+        });
+    };
+
+    const handleSelectAllChange = (hydrophoneName) => {
+        setSelectAllChecked((prev) => ({
+            ...prev,
+            [hydrophoneName]: !prev[hydrophoneName],
+        }));
+        setSelectedMetrics((prevSelectedMetrics) => {
+            const updatedMetrics = {
+                ...prevSelectedMetrics,
+                [hydrophoneName]: {},
+            };
+            sampleHydrophoneData
+                .find((hydrophone) => hydrophone.name === hydrophoneName)
+                .metrics.forEach((metric) => {
+                    updatedMetrics[hydrophoneName][metric] =
+                        !prevSelectedMetrics[hydrophoneName]?.[metric];
+                });
+            return updatedMetrics;
         });
     };
 
@@ -56,6 +79,20 @@ export default function OperatorProfileDownload() {
             {sampleHydrophoneData.map((hydrophone) => (
                 <div key={hydrophone.name} style={{ paddingBottom: '20px' }}>
                     <Typography variant="h6">{hydrophone.name}</Typography>
+
+                    <div>
+                        {/* "Select All" checkbox for each hydrophone */}
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    checked={selectAllChecked[hydrophone.name] || false}
+                                    onChange={() => handleSelectAllChange(hydrophone.name)}
+                                />
+                            }
+                            label="Select All"
+                        />
+                    </div>
+
                     {hydrophone.metrics && hydrophone.metrics.length > 0 ? (
                         hydrophone.metrics.map((metric) => (
                             <FormControlLabel

@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 
 const pages = ["Map", "About", "Education Hub", "Login"];
-const loggedInPages = ["Map", "About", "Education Hub", "Operator Profile", "Signout"]; 
+const loggedInPages = ["Map", "About", "Education Hub", "Operator Profile", "Admin", "Signout"]; 
 
 const NavBar = ({ loginStatus }) => {
   const tabs = loginStatus ? loggedInPages : pages;
