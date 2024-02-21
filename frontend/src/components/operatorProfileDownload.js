@@ -27,6 +27,26 @@ export default function OperatorProfileDownload() {
         });
     };
 
+    const handleSelectAllChange = (hydrophoneName, checked) => {
+        setSelectedMetrics((prevSelectedMetrics) => {
+            const hydrophoneMetrics = {
+                ...(prevSelectedMetrics[hydrophoneName] || {}),
+            };
+
+            // Initialize all metrics for the hydrophone if not present
+            sampleHydrophoneData
+                .find((hydrophone) => hydrophone.name === hydrophoneName)
+                .metrics.forEach((metric) => {
+                    hydrophoneMetrics[metric] = checked;
+                });
+
+            return {
+                ...prevSelectedMetrics,
+                [hydrophoneName]: hydrophoneMetrics,
+            };
+        });
+    };
+
     const handleStartDateTimeChange = (date) => {
         const formattedDate = date.$d.toISOString();
         setStartDateTime(formattedDate);
@@ -56,6 +76,20 @@ export default function OperatorProfileDownload() {
             {sampleHydrophoneData.map((hydrophone) => (
                 <div key={hydrophone.name} style={{ paddingBottom: '20px' }}>
                     <Typography variant="h6">{hydrophone.name}</Typography>
+
+                <div>
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                checked={Object.keys(selectedMetrics[hydrophone.name] || {}).length >= hydrophone.metrics.length && 
+                                         Object.values(selectedMetrics[hydrophone.name] || {}).every(Boolean)}
+                                onChange={(e) => handleSelectAllChange(hydrophone.name, e.target.checked)}
+                            />
+                        }
+                        label="Select All"
+                    />
+                </div>
+
                     {hydrophone.metrics && hydrophone.metrics.length > 0 ? (
                         hydrophone.metrics.map((metric) => (
                             <FormControlLabel
