@@ -1,6 +1,10 @@
 import { styled } from '@mui/material/styles';
-import { Table, TableBody, TableCell, tableCellClasses, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import { Table, TableBody, TableCell, tableCellClasses, TableContainer, TableHead, TableRow, Paper, IconButton } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
 import sampleHydrophoneData from '../sampledata/sampleHydrophoneData';
+import CreateHydrophone from './adminSettings/createHydrophone';
+import ModifyHydrophone from './adminSettings/modifyHydrophone';
+import HydrophoneForm from './adminSettings/hydrophoneForm';
 
 export default function AdminHydrophones(){
     const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -19,6 +23,7 @@ export default function AdminHydrophones(){
           flex: 1,
           justifyContent: 'center',
         }}>
+          <HydrophoneForm mode="create" />
           <TableContainer component={Paper}>
             <Table>
               <TableHead>
@@ -28,6 +33,7 @@ export default function AdminHydrophones(){
                   <StyledTableCell>Summary</StyledTableCell>
                   <StyledTableCell>Metrics</StyledTableCell>
                   <StyledTableCell>Contact</StyledTableCell>
+                  <StyledTableCell></StyledTableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -53,6 +59,9 @@ export default function AdminHydrophones(){
                       </div>
                     </TableCell>
                     <TableCell>contact@gmail.com</TableCell>
+                    <TableCell>
+                      <HydrophoneForm mode="modify" />
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
