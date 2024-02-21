@@ -18,7 +18,7 @@ export default function AdminDashboard(){
 
             {selectedOption === 'general' && <AdminGeneral />}
             {selectedOption === 'hydrophones' && <AdminHydrophones />}
-            {selectedOption === 'settings' && <AdminSettings />}
+            {selectedOption === 'operators' && <AdminSettings />}
         </div>
     )
 }
