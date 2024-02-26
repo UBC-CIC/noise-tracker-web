@@ -3,9 +3,10 @@ import { Tabs, Tab } from '@mui/material';
 import OperatorProfileInformation from '../components/operatorProfileInformation'
 import OperatorProfileDownload from '../components/operatorProfileDownload';
 import OperatorProfileSettings from '../components/operatorProfileSettings';
+import OperatorProfileDirectory from '../components/operatorProfileDirectory';
 
 export default function OperatorProfile(){
-    const tabs = ["Information", "Settings", "Download"];
+    const tabs = ["Information", "Settings", "Download", "Directory"];
 
     const [selectedTab, setSelectedTab] = useState("Information"); 
 
@@ -21,6 +22,8 @@ export default function OperatorProfile(){
             return <OperatorProfileSettings />;
           case 'Download':
             return <OperatorProfileDownload />;
+          case 'Directory':
+            return <OperatorProfileDirectory />;
           default:
             return null;
         }
