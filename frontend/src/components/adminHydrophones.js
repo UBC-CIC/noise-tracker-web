@@ -1,9 +1,6 @@
 import { styled } from '@mui/material/styles';
 import { Table, TableBody, TableCell, tableCellClasses, TableContainer, TableHead, TableRow, Paper, IconButton } from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
 import sampleHydrophoneData from '../sampledata/sampleHydrophoneData';
-import CreateHydrophone from './adminSettings/createHydrophone';
-import ModifyHydrophone from './adminSettings/modifyHydrophone';
 import HydrophoneForm from './adminSettings/hydrophoneForm';
 
 export default function AdminHydrophones(){
