@@ -50,12 +50,11 @@ def handler(event, context):
             CREATE TABLE IF NOT EXISTS "hydrophone_operators" (
                 "hydrophone_operator_id" uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
                 "hydrophone_operator_name" varchar,
-                "operator_name" varchar,
                 "contact_info" varchar
             );
 
             CREATE TABLE IF NOT EXISTS "hydrophones" (
-                "species_id" uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
+                "hydrophone_id" uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
                 "hydrophone_operator_id" uuid,
                 "hydrophone_name" varchar,
                 "hydrophone_site" varchar,
