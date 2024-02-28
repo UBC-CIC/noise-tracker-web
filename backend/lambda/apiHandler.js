@@ -5,6 +5,7 @@ const AWS = require("aws-sdk");
 const secretsManager = new AWS.SecretsManager();
 
 let { SM_DB_CREDENTIALS } = process.env;
+let dbConnection;  // Global variable to hold the database connection
 
 async function initializeConnection(){
     // Retrieve the secret from AWS Secrets Manager
@@ -23,10 +24,14 @@ async function initializeConnection(){
 		ssl: true,
 	};
 
-    return postgres(connectionConfig);
+    dbConnection = postgres(connectionConfig);
 }
 
 exports.handler = async (event) => {
+	if(!dbConnection){
+		await initializeConnection();
+	}
+	
 	const response = {
 		statusCode: 200,
 		headers: {
@@ -36,8 +41,6 @@ exports.handler = async (event) => {
 		},
 		body: "", 
 	};
-
-    const dbConnection = await initializeConnection();
 
     let data;
     try{
