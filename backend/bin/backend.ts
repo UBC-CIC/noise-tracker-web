@@ -5,6 +5,7 @@ import { FunctionalityStack } from '../lib/functionality-stack';
 import { VpcStack } from '../lib/vpc-stack';
 import { DBStack } from '../lib/database-stack';
 import { DBFlowStack } from '../lib/dbFlow-stack';
+import { APIStack } from '../lib/api-stack';
 
 const app = new cdk.App();
 
@@ -26,3 +27,6 @@ const dbStack = new DBStack(app, 'DBStack', vpcStack, stackDefaultSetup);
 
 // Create instance of a Database Flow stack
 const dbFlowStack = new DBFlowStack(app, 'DBFlowStack', vpcStack, dbStack, stackDefaultSetup);
+
+// Create instance of API stack
+const apiStack = new APIStack(app, 'APIStack', vpcStack, dbStack, stackDefaultSetup);
