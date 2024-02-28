@@ -68,6 +68,35 @@ exports.handler = async (event) => {
             	response.body= JSON.stringify(data);
             	
             	break;
+            	
+            case "POST /operators":
+            	if (event.body != null){
+            		const body = JSON.parse(event.body);
+            		
+            		data = await dbConnection`
+		            	INSERT INTO hydrophone_operators
+			            	(hydrophone_operator_name, contact_info)
+			            VALUES 
+			            	(${body.hydrophone_operator_name}, ${body.contact_info});
+						`;
+            	}
+				
+            	response.body= JSON.stringify(event);
+            	
+            	break;
+            	
+            case "DELETE /operators":
+            	if (event.queryStringParameters['operator_id'] != null){
+            		const operator_id = event.queryStringParameters['operator_id'];
+            		console.log("Delete body: ", operator_id);
+            		
+            		data = await dbConnection`
+		            	DELETE FROM hydrophone_operators WHERE hydrophone_operator_id = ${operator_id};`;
+            	}
+				
+            	response.body= JSON.stringify(event);
+            	
+            	break;
         }
     }
     catch(error){

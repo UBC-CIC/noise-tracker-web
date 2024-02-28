@@ -3,6 +3,7 @@ import { Table, TableBody, TableCell, tableCellClasses, TableContainer, TableHea
 import { styled } from '@mui/material/styles';
 import sampleHOData from "../sampledata/sampleHOData";
 import OperatorForm from "./adminSettings/operatorForm";
+import DeleteForm from './adminSettings/deleteForm';
 import axios from "axios";
 
 export default function AdminSettings() {
@@ -45,7 +46,7 @@ export default function AdminSettings() {
             flex: 1,
             justifyContent: 'center',
           }}>
-            <OperatorForm mode="create" />
+            <OperatorForm mode="create" onUpdate={fetchOperatorData} />
             <TableContainer component={Paper}>
             <Table>
                 <TableHead>
@@ -55,6 +56,7 @@ export default function AdminSettings() {
                     <StyledTableCell>Hydrophones</StyledTableCell>
                     <StyledTableCell>Contact</StyledTableCell>
                     <StyledTableCell>Edit</StyledTableCell>
+                    <StyledTableCell>Delete</StyledTableCell>
                     </TableRow>
                 </TableHead>
                 {operatorData.map((operator, index) => (
@@ -71,6 +73,12 @@ export default function AdminSettings() {
                     <StyledTableCell>{operator.contact_info}</StyledTableCell>
                     <StyledTableCell>
                         <OperatorForm mode="modify" />
+                    </StyledTableCell>
+                    <StyledTableCell>
+                        <DeleteForm 
+                          mode="operator" 
+                          itemId={operator.hydrophone_operator_id} 
+                          onDelete={fetchOperatorData}/>
                     </StyledTableCell>
                     </TableRow>
                 ))}

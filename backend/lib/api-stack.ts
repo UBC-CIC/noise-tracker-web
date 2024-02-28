@@ -117,9 +117,11 @@ export class APIStack extends Stack {
           hydrophonesResource.addMethod('GET', new apigateway.LambdaIntegration(apiHandler, {proxy: true}));
           hydrophonesResource.addMethod('POST', new apigateway.LambdaIntegration(apiHandler, {proxy: true}));
           hydrophonesResource.addMethod('PUT', new apigateway.LambdaIntegration(apiHandler, {proxy: true}));
+          hydrophonesResource.addMethod('DELETE', new apigateway.LambdaIntegration(apiHandler, {proxy: true}));
 
           operatorsResource.addMethod('GET', new apigateway.LambdaIntegration(apiHandler, {proxy: true}));
           operatorsResource.addMethod('POST', new apigateway.LambdaIntegration(apiHandler, {proxy: true}));
           operatorsResource.addMethod('PUT', new apigateway.LambdaIntegration(apiHandler, {proxy: true}));
+          operatorsResource.addMethod('DELETE', new apigateway.LambdaIntegration(apiHandler, {proxy: true}));
     }
 }
