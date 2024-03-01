@@ -72,7 +72,15 @@ export default function AdminSettings() {
                     </StyledTableCell>
                     <StyledTableCell>{operator.contact_info}</StyledTableCell>
                     <StyledTableCell>
-                        <OperatorForm mode="modify" />
+                        <OperatorForm 
+                          mode="modify" 
+                          onUpdate={fetchOperatorData}
+                          operatorData={{
+                            "hydrophone_operator_id": operator.hydrophone_operator_id,
+                            "hydrophone_operator_name": operator.hydrophone_operator_name, 
+                            "contact_info": operator.contact_info
+                          }} 
+                        />
                     </StyledTableCell>
                     <StyledTableCell>
                         <DeleteForm 
