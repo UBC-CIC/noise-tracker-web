@@ -4,19 +4,22 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import sampleHydrophoneData from "../../sampledata/sampleHydrophoneData";
+import axios from "axios";
 import { useState } from "react";
 
-export default function HydrophoneForm({ mode }) {
+export default function HydrophoneForm({ mode, onUpdate, hydrophoneData }) {
+    const API_URL = process.env.REACT_APP_API_URL;
+
     const [open, setOpen] = useState(false);
-    const [organization, setOrganization] = useState('');
+    const [operator, setOperator] = useState('');
     const [site, setSite] = useState('');
     const [location, setLocation] = useState('');
     const [hydrophone, setHydrophone] = useState('');
     const [samplingFrequency, setSamplingFrequency] = useState('');
     const [depth, setDepth] = useState('');
     const [deploymentDate, setDeploymentDate] = useState(null);
-    const [estimatedRange, setEstimatedRange] = useState('');
-    const [estimatedAngleOfView, setEstimatedAngleOfView] = useState('');
+    const [range, setRange] = useState('');
+    const [angleOfView, setAngleOfView] = useState('');
 
     const handleOpen = () => {
         setOpen(true);
@@ -26,13 +29,37 @@ export default function HydrophoneForm({ mode }) {
         setOpen(false);
     };
 
-    const handleSave = () => {
-        console.log("Organization:", organization);
+    const handleSave = async () => {
+        if (mode === 'create'){
+            try{
+                const response = await axios.post(
+                  API_URL + 'hydrophones',
+                  {
+                    "hydrophone_operator_id": operator,
+                    "hydrophone_site": site,
+                    "hydrophone_name": hydrophone,
+                    "hydrophone_coordinates": location,
+                    "deployment_date": deploymentDate,
+                    "angle_of_view": angleOfView,
+                    "depth": depth,
+                    "range": range,
+                    "sampling_frequency": samplingFrequency
+                  }
+                );
+
+                onUpdate();
+              } 
+              
+              catch(error){
+                console.error("Error creating operator: ", error);
+              }
+        }
+
         handleClose(); // Close the dialog after saving
     };
 
-    const handleOrganizationChange = (event) => {
-        setOrganization(event.target.value);
+    const handleOperatorChange = (event) => {
+        setOperator(event.target.value);
     };
 
     const handleSiteChange = (event) => {
@@ -59,12 +86,12 @@ export default function HydrophoneForm({ mode }) {
         setDeploymentDate(date);
     };
 
-    const handleEstimatedRangeChange = (event) => {
-        setEstimatedRange(event.target.value);
+    const handleRangeChange = (event) => {
+        setRange(event.target.value);
     };
 
-    const handleEstimatedAngleOfViewChange = (event) => {
-        setEstimatedAngleOfView(event.target.value);
+    const handleAngleOfViewChange = (event) => {
+        setAngleOfView(event.target.value);
     };
 
     return (
@@ -83,12 +110,12 @@ export default function HydrophoneForm({ mode }) {
                     <DialogContent>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                                 <TextField
-                                    label="Organization"
+                                    label="Organization/Operator"
                                     variant="outlined"
                                     fullWidth
                                     margin="normal"
-                                    value={organization}
-                                    onChange={handleOrganizationChange}
+                                    value={operator}
+                                    onChange={handleOperatorChange}
                                 />
                                 <TextField
                                     label="Site"
@@ -143,16 +170,16 @@ export default function HydrophoneForm({ mode }) {
                                     variant="outlined"
                                     fullWidth
                                     margin="normal"
-                                    value={estimatedRange}
-                                    onChange={handleEstimatedRangeChange}
+                                    value={range}
+                                    onChange={handleRangeChange}
                                 />
                                 <TextField
                                     label="Estimated Angle of View (degs)"
                                     variant="outlined"
                                     fullWidth
                                     margin="normal"
-                                    value={estimatedAngleOfView}
-                                    onChange={handleEstimatedAngleOfViewChange}
+                                    value={angleOfView}
+                                    onChange={handleAngleOfViewChange}
                                 />
                         </LocalizationProvider>
                     </DialogContent>

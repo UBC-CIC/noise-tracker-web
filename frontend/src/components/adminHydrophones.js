@@ -4,6 +4,7 @@ import { styled } from '@mui/material/styles';
 import { Table, TableBody, TableCell, tableCellClasses, TableContainer, TableHead, TableRow, Paper, IconButton } from '@mui/material';
 import sampleHydrophoneData from '../sampledata/sampleHydrophoneData';
 import HydrophoneForm from './adminSettings/hydrophoneForm';
+import DeleteForm from './adminSettings/deleteForm';
 import axios from 'axios';
 
 export default function AdminHydrophones(){
@@ -47,7 +48,7 @@ export default function AdminHydrophones(){
           flex: 1,
           justifyContent: 'center',
         }}>
-          <HydrophoneForm mode="create" />
+          <HydrophoneForm mode="create" onUpdate={fetchHydrophoneData} />
           <TableContainer component={Paper}>
             <Table>
               <TableHead>
@@ -62,23 +63,44 @@ export default function AdminHydrophones(){
                   <StyledTableCell>Range (m)</StyledTableCell>
                   <StyledTableCell>Sampling Frequency</StyledTableCell>
                   <StyledTableCell>Edit</StyledTableCell>
+                  <StyledTableCell>Delete</StyledTableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {hydrophoneData.map((hydrophone, index) => (
                   <TableRow key={hydrophone.hydrophone_name} style={{ background: index % 2 === 0 ? '#f9f9f9' : 'white' }}>
-                    <TableCell>{hydrophone.hydrophone_site}</TableCell>
-                    <TableCell>{hydrophone.hydrophone_id}</TableCell>
-                    <TableCell>{hydrophone.hydrophone_name}</TableCell>
-                    <TableCell>{hydrophone.hydrophone_coordinates}</TableCell>
-                    <TableCell>{hydrophone.deployment_date}</TableCell>
-                    <TableCell>{hydrophone.angle_of_view}</TableCell>
-                    <TableCell>{hydrophone.depth}</TableCell>
-                    <TableCell>{hydrophone.range}</TableCell>
-                    <TableCell>{hydrophone.sampling_frequency}</TableCell>
-                    <TableCell>
-                      <HydrophoneForm mode="modify" />
-                    </TableCell>
+                    <StyledTableCell>{hydrophone.hydrophone_site}</StyledTableCell>
+                    <StyledTableCell>{hydrophone.hydrophone_id}</StyledTableCell>
+                    <StyledTableCell>{hydrophone.hydrophone_name}</StyledTableCell>
+                    <StyledTableCell>{hydrophone.hydrophone_coordinates}</StyledTableCell>
+                    <StyledTableCell>{hydrophone.deployment_date}</StyledTableCell>
+                    <StyledTableCell>{hydrophone.angle_of_view}</StyledTableCell>
+                    <StyledTableCell>{hydrophone.depth}</StyledTableCell>
+                    <StyledTableCell>{hydrophone.range}</StyledTableCell>
+                    <StyledTableCell>{hydrophone.sampling_frequency}</StyledTableCell>
+                    <StyledTableCell>
+                      <HydrophoneForm 
+                        mode="modify" 
+                        onUpdate={fetchHydrophoneData} 
+                        hydrophoneData={{
+                          "hydrophone_site": hydrophone.hydrophone_site,
+                          "hydrophone_id": hydrophone.hydrophone_id,
+                          "hydrophone_name": hydrophone.hydrophone_name,
+                          "hydrophone_coordinates": hydrophone.hydrophone_coordinates,
+                          "deployment_date": hydrophone.deployment_date,
+                          "angle_of_view": hydrophone.angle_of_view,
+                          "depth": hydrophone.depth,
+                          "range": hydrophone.range,
+                          "sampling_frequency": hydrophone.sampling_frequency
+                        }}
+                      />
+                    </StyledTableCell>
+                    <StyledTableCell>
+                        <DeleteForm 
+                          mode="hydrophone" 
+                          itemId={hydrophone.hydrophone_id} 
+                          onDelete={fetchHydrophoneData}/>
+                    </StyledTableCell>
                   </TableRow>
                 ))}
               </TableBody>

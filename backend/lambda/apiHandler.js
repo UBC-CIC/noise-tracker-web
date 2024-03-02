@@ -52,6 +52,36 @@ exports.handler = async (event) => {
                 response.body = JSON.stringify(data);
                 
                 break;
+                
+            case "POST /hydrophones":
+	        	if (event.body != null){
+	        		const body = JSON.parse(event.body);
+	        		
+	        		data = await dbConnection`
+		            	INSERT INTO hydrophones
+			            	(hydrophone_operator_id, 
+			            	 hydrophone_name, 
+			            	 hydrophone_site,
+			            	 hydrophone_coordinates, 
+			            	 sampling_frequency,
+			            	 depth,
+			            	 deployment_date,
+			            	 range,
+			            	 angle_of_view)
+			            VALUES 
+			            	(${body.hydrophone_operator_id}, 
+			            	 ${body.hydrophone_name},
+			            	 ${body. hydrophone_site},
+			            	 ${body.hydrophone_coordinates},
+			            	 ${body.sampling_frequency},
+			            	 ${body.depth},
+			            	 ${body.deployment_date},
+			            	 ${body.range},
+			            	 ${body.angle_of_view});
+						`;
+	        	}
+				
+	        	break;
             
             case "GET /operators":
             	data = await dbConnection`
@@ -81,8 +111,19 @@ exports.handler = async (event) => {
 						`;
             	}
 				
-            	response.body= JSON.stringify(event);
+            	break;
             	
+            case "PUT /operators":
+            	if (event.body != null){
+            		const body = JSON.parse(event.body);
+            		
+            		data = await dbConnection`
+		            	UPDATE hydrophone_operators
+			            SET hydrophone_operator_name = ${body.hydrophone_operator_name}, contact_info = ${body.contact_info}
+			            WHERE hydrophone_operator_id = ${body.hydrophone_operator_id};
+						`;
+            	}
+				
             	break;
             	
             case "DELETE /operators":
@@ -94,8 +135,6 @@ exports.handler = async (event) => {
 		            	DELETE FROM hydrophone_operators WHERE hydrophone_operator_id = ${operator_id};`;
             	}
 				
-            	response.body= JSON.stringify(event);
-            	
             	break;
         }
     }
