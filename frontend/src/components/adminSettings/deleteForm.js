@@ -35,6 +35,21 @@ export default function DeleteForm({ mode, itemId, onDelete }) {
                 console.error("Error deleting operator: ", error);
               }
         }
+
+        else if (mode === 'hydrophone'){
+            try{
+                const deleteOperator = await axios.delete(
+                  API_URL + 'hydrophones?hydrophone_id=' + itemId
+                );
+
+                onDelete();
+              } 
+              
+              catch(error){
+                console.error("Error deleting operator: ", error);
+              }
+        }
+
         handleClose(); // Close the dialog 
     };
 

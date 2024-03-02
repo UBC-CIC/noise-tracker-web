@@ -82,6 +82,16 @@ exports.handler = async (event) => {
 	        	}
 				
 	        	break;
+	        	
+	        case "DELETE /hydrophones":
+            	if (event.queryStringParameters['hydrophone_id'] != null){
+            		const hydrophone_id = event.queryStringParameters['hydrophone_id'];
+
+            		data = await dbConnection`
+		            	DELETE FROM hydrophones WHERE hydrophone_id = ${hydrophone_id};`;
+            	}
+				
+            	break;
             
             case "GET /operators":
             	data = await dbConnection`
@@ -129,8 +139,7 @@ exports.handler = async (event) => {
             case "DELETE /operators":
             	if (event.queryStringParameters['operator_id'] != null){
             		const operator_id = event.queryStringParameters['operator_id'];
-            		console.log("Delete body: ", operator_id);
-            		
+
             		data = await dbConnection`
 		            	DELETE FROM hydrophone_operators WHERE hydrophone_operator_id = ${operator_id};`;
             	}
