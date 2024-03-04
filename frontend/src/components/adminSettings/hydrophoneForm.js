@@ -1,11 +1,11 @@
-import { Typography, TextField, Button, Dialog, DialogTitle, DialogContent, DialogActions, IconButton } from "@mui/material";
+import { Typography, TextField, Button, Dialog, DialogTitle, DialogContent, DialogActions, IconButton, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import sampleHydrophoneData from "../../sampledata/sampleHydrophoneData";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function HydrophoneForm({ mode, onUpdate, hydrophoneData }) {
     const API_URL = process.env.REACT_APP_API_URL;
@@ -20,6 +20,26 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData }) {
     const [deploymentDate, setDeploymentDate] = useState(null);
     const [range, setRange] = useState('');
     const [angleOfView, setAngleOfView] = useState('');
+
+    const [operatorData, setOperatorData] = useState([]);
+
+    useEffect(() => {
+        fetchOperators();
+    }, []);
+
+    const fetchOperators = async () => {
+        try{
+                const response = await axios.get(
+                    API_URL + 'operators?query=getOperatorData'
+                );
+                
+                const data = response.data;
+                setOperatorData(data); 
+        }
+        catch(error){
+            console.log("Error fetching operators: ", error);
+        }
+    };
 
     const handleOpen = () => {
         setOpen(true);
@@ -109,14 +129,22 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData }) {
                     <DialogTitle>{mode === 'create' ? 'Create Hydrophone' : 'Modify Hydrophone'}</DialogTitle>
                     <DialogContent>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <TextField
-                                    label="Organization/Operator"
-                                    variant="outlined"
-                                    fullWidth
-                                    margin="normal"
-                                    value={operator}
-                                    onChange={handleOperatorChange}
-                                />
+                                <FormControl fullWidth margin="normal">
+                                    <InputLabel id="operator-label">Operator</InputLabel>
+                                    <Select
+                                        labelId="operator-label"
+                                        label="Operator"
+                                        value={operator}
+                                        onChange={handleOperatorChange}
+                                        fullWidth
+                                    >
+                                        {operatorData.map((operator, index) => (
+                                            <MenuItem key={index} value={operator.hydrophone_operator_name}>
+                                                {operator.hydrophone_operator_name}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
                                 <TextField
                                     label="Site"
                                     variant="outlined"
@@ -126,7 +154,7 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData }) {
                                     onChange={handleSiteChange}
                                 />
                                 <TextField
-                                    label="Location"
+                                    label="Location (Coordinates)"
                                     variant="outlined"
                                     fullWidth
                                     margin="normal"
@@ -134,7 +162,7 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData }) {
                                     onChange={handleLocationChange}
                                 />
                                 <TextField
-                                    label="Hydrophone Name"
+                                    label="Hydrophone Model"
                                     variant="outlined"
                                     fullWidth
                                     margin="normal"
@@ -142,7 +170,7 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData }) {
                                     onChange={handleHydrophoneChange}
                                 />
                                 <TextField
-                                    label="Sampling Frequency"
+                                    label="Sampling Frequency (kHz)"
                                     variant="outlined"
                                     fullWidth
                                     margin="normal"

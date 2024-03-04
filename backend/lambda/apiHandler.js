@@ -57,6 +57,12 @@ exports.handler = async (event) => {
 	        	if (event.body != null){
 	        		const body = JSON.parse(event.body);
 	        		
+	        		const operator_id = await dbConnection`
+					    SELECT hydrophone_operator_id
+					    FROM hydrophone_operators
+					    WHERE hydrophone_operator_name = ${body.hydrophone_operator_id};
+					`;
+					
 	        		data = await dbConnection`
 		            	INSERT INTO hydrophones
 			            	(hydrophone_operator_id, 
@@ -69,9 +75,9 @@ exports.handler = async (event) => {
 			            	 range,
 			            	 angle_of_view)
 			            VALUES 
-			            	(${body.hydrophone_operator_id}, 
+			            	(${operator_id[0].hydrophone_operator_id}, 
 			            	 ${body.hydrophone_name},
-			            	 ${body. hydrophone_site},
+			            	 ${body.hydrophone_site},
 			            	 ${body.hydrophone_coordinates},
 			            	 ${body.sampling_frequency},
 			            	 ${body.depth},
@@ -94,18 +100,28 @@ exports.handler = async (event) => {
             	break;
             
             case "GET /operators":
-            	data = await dbConnection`
-	            	SELECT
-					    hydrophone_operators.*,
-						ARRAY_AGG(CONCAT(hydrophones.hydrophone_site)) AS hydrophone_info
-					FROM
-					    hydrophone_operators
-					LEFT JOIN
-					    hydrophones ON hydrophone_operators.hydrophone_operator_id = hydrophones.hydrophone_operator_id
-					GROUP BY
-					    hydrophone_operators.hydrophone_operator_id, hydrophone_operators.hydrophone_operator_name, hydrophone_operators.contact_info;
-				`;
-            	response.body= JSON.stringify(data);
+            	if (event.queryStringParameters != null){
+	            	if (event.queryStringParameters['query'] === 'getOperatorData'){
+	            		data = await dbConnection`SELECT hydrophone_operator_name FROM hydrophone_operators`;
+		            		
+		            	response.body= JSON.stringify(data);
+	            	}
+            	}
+            	
+            	else {
+	            	data = await dbConnection`
+		            	SELECT
+						    hydrophone_operators.*,
+							ARRAY_AGG(CONCAT(hydrophones.hydrophone_site)) AS hydrophone_info
+						FROM
+						    hydrophone_operators
+						LEFT JOIN
+						    hydrophones ON hydrophone_operators.hydrophone_operator_id = hydrophones.hydrophone_operator_id
+						GROUP BY
+						    hydrophone_operators.hydrophone_operator_id, hydrophone_operators.hydrophone_operator_name, hydrophone_operators.contact_info;
+					`;
+	            	response.body= JSON.stringify(data);
+            	}
             	
             	break;
             	
