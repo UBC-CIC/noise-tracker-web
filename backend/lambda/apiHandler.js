@@ -48,7 +48,11 @@ exports.handler = async (event) => {
 
         switch(request){
             case "GET /hydrophones":
-                data = await dbConnection`SELECT * FROM hydrophones;`;
+                data = await dbConnection`
+                	SELECT hydrophones.*, hydrophone_operators.hydrophone_operator_name
+					FROM hydrophones
+					JOIN hydrophone_operators ON hydrophones.hydrophone_operator_id = hydrophone_operators.hydrophone_operator_id;
+				`;
                 response.body = JSON.stringify(data);
                 
                 break;
@@ -88,6 +92,34 @@ exports.handler = async (event) => {
 	        	}
 				
 	        	break;
+	        	
+	        case "PUT /hydrophones":
+            	if (event.body != null){
+            		const body = JSON.parse(event.body);
+            		
+            		const operator_id = await dbConnection`
+					    SELECT hydrophone_operator_id
+					    FROM hydrophone_operators
+					    WHERE hydrophone_operator_name = ${body.hydrophone_operator_name};
+					`;
+            		
+            		data = await dbConnection`
+		            	UPDATE hydrophones
+			            SET 
+			            	hydrophone_operator_id = ${operator_id[0].hydrophone_operator_id},
+						    hydrophone_name = ${body.hydrophone_name},
+						    hydrophone_site = ${body.hydrophone_site},
+						    hydrophone_coordinates = ${body.hydrophone_coordinates},
+						    sampling_frequency = ${body.sampling_frequency},
+						    depth = ${body.depth},
+						    deployment_date = ${body.deployment_date},
+						    range = ${body.range},
+						    angle_of_view = ${body.angle_of_view}
+			            WHERE hydrophone_id = ${body.hydrophone_id};
+						`;
+            	}
+				
+            	break;
 	        	
 	        case "DELETE /hydrophones":
             	if (event.queryStringParameters['hydrophone_id'] != null){

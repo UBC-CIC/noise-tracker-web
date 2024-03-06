@@ -55,6 +55,7 @@ export default function AdminHydrophones(){
                 <TableRow style={{ background: '#f2f2f2' }}>
                   <StyledTableCell>Hydrophone</StyledTableCell>
                   <StyledTableCell>Hydrophone ID</StyledTableCell>
+                  <StyledTableCell>Operator</StyledTableCell>
                   <StyledTableCell>Model</StyledTableCell>
                   <StyledTableCell>Coordinates</StyledTableCell>
                   <StyledTableCell>Deployment Date</StyledTableCell>
@@ -68,9 +69,10 @@ export default function AdminHydrophones(){
               </TableHead>
               <TableBody>
                 {hydrophoneData.map((hydrophone, index) => (
-                  <TableRow key={hydrophone.hydrophone_name} style={{ background: index % 2 === 0 ? '#f9f9f9' : 'white' }}>
+                  <TableRow key={hydrophone.hydrophone_id} style={{ background: index % 2 === 0 ? '#f9f9f9' : 'white' }}>
                     <StyledTableCell>{hydrophone.hydrophone_site}</StyledTableCell>
                     <StyledTableCell>{hydrophone.hydrophone_id}</StyledTableCell>
+                    <StyledTableCell>{hydrophone.hydrophone_operator_name}</StyledTableCell>
                     <StyledTableCell>{hydrophone.hydrophone_name}</StyledTableCell>
                     <StyledTableCell>{hydrophone.hydrophone_coordinates}</StyledTableCell>
                     <StyledTableCell>{hydrophone.deployment_date}</StyledTableCell>
@@ -83,15 +85,17 @@ export default function AdminHydrophones(){
                         mode="modify" 
                         onUpdate={fetchHydrophoneData} 
                         hydrophoneData={{
-                          "hydrophone_site": hydrophone.hydrophone_site,
                           "hydrophone_id": hydrophone.hydrophone_id,
+                          "hydrophone_operator_id": hydrophone.hydrophone_operator_id,
+                          "hydrophone_operator_name": hydrophone.hydrophone_operator_name,
                           "hydrophone_name": hydrophone.hydrophone_name,
+                          "hydrophone_site": hydrophone.hydrophone_site,
                           "hydrophone_coordinates": hydrophone.hydrophone_coordinates,
-                          "deployment_date": hydrophone.deployment_date,
-                          "angle_of_view": hydrophone.angle_of_view,
+                          "sampling_frequency": hydrophone.sampling_frequency,
                           "depth": hydrophone.depth,
+                          "deployment_date": hydrophone.deployment_date,
                           "range": hydrophone.range,
-                          "sampling_frequency": hydrophone.sampling_frequency
+                          "angle_of_view": hydrophone.angle_of_view
                         }}
                       />
                     </StyledTableCell>

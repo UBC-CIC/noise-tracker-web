@@ -5,21 +5,22 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import sampleHydrophoneData from "../../sampledata/sampleHydrophoneData";
 import axios from "axios";
+import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 
 export default function HydrophoneForm({ mode, onUpdate, hydrophoneData }) {
     const API_URL = process.env.REACT_APP_API_URL;
 
     const [open, setOpen] = useState(false);
-    const [operator, setOperator] = useState('');
-    const [site, setSite] = useState('');
-    const [location, setLocation] = useState('');
-    const [hydrophone, setHydrophone] = useState('');
-    const [samplingFrequency, setSamplingFrequency] = useState('');
-    const [depth, setDepth] = useState('');
-    const [deploymentDate, setDeploymentDate] = useState(null);
-    const [range, setRange] = useState('');
-    const [angleOfView, setAngleOfView] = useState('');
+    const [operator, setOperator] = useState(hydrophoneData?.hydrophone_operator_name || '');
+    const [site, setSite] = useState(hydrophoneData?.hydrophone_site || '');
+    const [location, setLocation] = useState(hydrophoneData?.hydrophone_coordinates || '');
+    const [hydrophone, setHydrophone] = useState(hydrophoneData?.hydrophone_name || '');
+    const [samplingFrequency, setSamplingFrequency] = useState(hydrophoneData?.sampling_frequency || '');
+    const [depth, setDepth] = useState(hydrophoneData?.depth || '');
+    const [deploymentDate, setDeploymentDate] = useState(dayjs(hydrophoneData?.deployment_date) || null);
+    const [range, setRange] = useState(hydrophoneData?.range || '');
+    const [angleOfView, setAngleOfView] = useState(hydrophoneData?.angle_of_view || '');
 
     const [operatorData, setOperatorData] = useState([]);
 
@@ -56,6 +57,31 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData }) {
                   API_URL + 'hydrophones',
                   {
                     "hydrophone_operator_id": operator,
+                    "hydrophone_site": site,
+                    "hydrophone_name": hydrophone,
+                    "hydrophone_coordinates": location,
+                    "deployment_date": deploymentDate,
+                    "angle_of_view": angleOfView,
+                    "depth": depth,
+                    "range": range,
+                    "sampling_frequency": samplingFrequency
+                  }
+                );
+
+                onUpdate();
+              } 
+              
+              catch(error){
+                console.error("Error creating operator: ", error);
+              }
+        }
+        else if (mode === 'modify'){
+            try{
+                const response = await axios.put(
+                  API_URL + 'hydrophones',
+                  {
+                    "hydrophone_id": hydrophoneData.hydrophone_id,
+                    "hydrophone_operator_name": operator,
                     "hydrophone_site": site,
                     "hydrophone_name": hydrophone,
                     "hydrophone_coordinates": location,
