@@ -30,7 +30,12 @@ export class VpcStack extends Stack {
             name: "isolated-subnet-1",
             subnetType: ec2.SubnetType.PRIVATE_ISOLATED,
         },
-      ]
+      ],
+      gatewayEndpoints: {
+        S3: {
+          service: ec2.GatewayVpcEndpointAwsService.S3,
+        },
+      },
     });
 
     this.vpc.addFlowLog("noiseTracker-vpcFlowLog");

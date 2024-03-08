@@ -13,7 +13,7 @@ import {DBStack} from './database-stack';
 import { FunctionalityStack } from './functionality-stack';
 
 export class APIStack extends Stack {
-    constructor(scope: Construct, id: string, vpcStack: VpcStack, db: DBStack, props?: StackProps){
+    constructor(scope: Construct, id: string, vpcStack: VpcStack, db: DBStack, functionalityStack: FunctionalityStack, props?: StackProps){
         super(scope, id, props);
         /*
          * Create an IAM role for lambda function to get access to database
@@ -67,6 +67,22 @@ export class APIStack extends Stack {
             })
         );
 
+        // Grant access to s3
+        lambdaRole.addToPolicy(
+          new iam.PolicyStatement({
+            effect: iam.Effect.ALLOW,
+            actions: [
+              "s3:PutObject",
+              "s3:DeleteObject",
+              "s3:ListBucket"
+            ],
+            resources: [
+              `arn:aws:s3:::${functionalityStack.bucketName}`,
+              `arn:aws:s3:::${functionalityStack.bucketName}/*`
+            ],
+          })
+      );
+
         /* 
          * Create Integration Lambda layer for PSQL
          */ 
@@ -84,7 +100,8 @@ export class APIStack extends Stack {
             timeout: Duration.seconds(300),
             memorySize: 512,
             environment:{
-                SM_DB_CREDENTIALS: db.secretPathUser.secretName,     
+                SM_DB_CREDENTIALS: db.secretPathUser.secretName,  
+                BUCKET_NAME: functionalityStack.bucketName,   
             },
             vpc: vpcStack.vpc,
             code: lambda.Code.fromAsset("lambda"),

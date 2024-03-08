@@ -1,9 +1,11 @@
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as cognito from 'aws-cdk-lib/aws-cognito';
+import * as s3 from "aws-cdk-lib/aws-s3";
 import * as secretsmanager from 'aws-cdk-lib/aws-secretsmanager';
 
 export class FunctionalityStack extends cdk.Stack {
+  public readonly bucketName: string;
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
@@ -45,5 +47,27 @@ export class FunctionalityStack extends cdk.Stack {
       value: userPool.userPoolId,
       description: 'Cognito user pool ID'
     });
+
+
+    // Create S3 buckets for hydrophone data
+    const s3bucket = new s3.Bucket(this, "noise-tracker-bucket", {
+      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
+      encryption: s3.BucketEncryption.S3_MANAGED,
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      autoDeleteObjects: true,
+      cors: [
+        {
+          allowedHeaders: ["*"],
+          allowedMethods: [
+            s3.HttpMethods.GET,
+            s3.HttpMethods.PUT,
+            s3.HttpMethods.HEAD,
+          ],
+          allowedOrigins: ["*"],
+        },
+      ],
+    });
+
+    this.bucketName = s3bucket.bucketName;
   }
 }

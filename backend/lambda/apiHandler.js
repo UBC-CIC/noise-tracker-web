@@ -3,8 +3,9 @@ const AWS = require("aws-sdk");
 
 // Gather AWS services
 const secretsManager = new AWS.SecretsManager();
+const s3 = new AWS.S3();
 
-let { SM_DB_CREDENTIALS } = process.env;
+let { SM_DB_CREDENTIALS, BUCKET_NAME } = process.env;
 let dbConnection;  // Global variable to hold the database connection
 
 async function initializeConnection(){
@@ -165,8 +166,21 @@ exports.handler = async (event) => {
 		            	INSERT INTO hydrophone_operators
 			            	(hydrophone_operator_name, contact_info)
 			            VALUES 
-			            	(${body.hydrophone_operator_name}, ${body.contact_info});
+			            	(${body.hydrophone_operator_name}, ${body.contact_info})
+			            RETURNING hydrophone_operator_id;
 						`;
+
+			        // The result will be an array, get the first element as the UUID
+			        const hydrophone_operator_id = data[0].hydrophone_operator_id;
+			        
+		            // Create a placeholder object to simulate the folder
+					const params = {
+					  Bucket: BUCKET_NAME,
+					  Key: `${hydrophone_operator_id}/`,
+					};
+					
+					// Upload the placeholder object to simulate the folder creation
+					await s3.putObject(params).promise();;
             	}
 				
             	break;
@@ -188,14 +202,42 @@ exports.handler = async (event) => {
             	if (event.queryStringParameters['operator_id'] != null){
             		const operator_id = event.queryStringParameters['operator_id'];
 
-            		data = await dbConnection`
-		            	DELETE FROM hydrophone_operators WHERE hydrophone_operator_id = ${operator_id};`;
+            		// Delete the hydrophone operator from the database and return the hydrophone_operator_id
+			        data = await dbConnection`
+			            DELETE FROM hydrophone_operators
+			            WHERE hydrophone_operator_id = ${operator_id}
+			            RETURNING hydrophone_operator_id;`;
+			
+			        if (data.length > 0) {
+			            const hydrophone_operator_id = data[0].hydrophone_operator_id;
+			
+			            // List objects with the common prefix
+			            const listParams = {
+			                Bucket: BUCKET_NAME,
+			                Prefix: `${hydrophone_operator_id}/`,
+			            };
+			
+			            const objectsToDelete = await s3.listObjectsV2(listParams).promise();
+			
+			            // Delete the objects in batches (if there are many)
+			            if (objectsToDelete.Contents.length > 0) {
+			                const deleteParams = {
+			                    Bucket: BUCKET_NAME,
+			                    Delete: {
+			                        Objects: objectsToDelete.Contents.map(obj => ({ Key: obj.Key })),
+			                    },
+			                };
+			
+			                await s3.deleteObjects(deleteParams).promise();
+			            }
+			        }
             	}
 				
             	break;
         }
     }
     catch(error){
+    	console.log("Error: ", error.message);
         response.statusCode = 400;
 		response.body = JSON.stringify(error.message);
     }

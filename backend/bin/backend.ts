@@ -29,4 +29,4 @@ const dbStack = new DBStack(app, 'DBStack', vpcStack, stackDefaultSetup);
 const dbFlowStack = new DBFlowStack(app, 'DBFlowStack', vpcStack, dbStack, stackDefaultSetup);
 
 // Create instance of API stack
-const apiStack = new APIStack(app, 'APIStack', vpcStack, dbStack, stackDefaultSetup);
+const apiStack = new APIStack(app, 'APIStack', vpcStack, dbStack, functionalityStack, stackDefaultSetup);
