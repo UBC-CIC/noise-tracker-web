@@ -23,11 +23,15 @@ export class VpcStack extends Stack {
       maxAzs: 2,
       subnetConfiguration: [
         {
-          name: "public-subnet-1",
+          name: "public-subnet",
           subnetType: ec2.SubnetType.PUBLIC,
         },
         {
-            name: "isolated-subnet-1",
+          name: "private-subnet",
+          subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
+        },
+        {
+            name: "isolated-subnet",
             subnetType: ec2.SubnetType.PRIVATE_ISOLATED,
         },
       ],
