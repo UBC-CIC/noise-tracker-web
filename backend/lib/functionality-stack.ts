@@ -5,7 +5,9 @@ import * as s3 from "aws-cdk-lib/aws-s3";
 import * as secretsmanager from 'aws-cdk-lib/aws-secretsmanager';
 
 export class FunctionalityStack extends cdk.Stack {
+  public readonly secret: secretsmanager.ISecret;
   public readonly bucketName: string;
+  public readonly userPoolId: string;
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
@@ -29,6 +31,8 @@ export class FunctionalityStack extends cdk.Stack {
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
 
+    this.userPoolId = userPool.userPoolId;
+
     // Create cognito client
     const userPoolClient = userPool.addClient('userPoolclient', {
       userPoolClientName: userPoolName,
@@ -37,6 +41,29 @@ export class FunctionalityStack extends cdk.Stack {
         userSrp: true,
       }
     });
+
+    /**
+     *
+     * Store secrets to Secret Manager
+     * User pool id, client id, and region the user pool deployed
+     */
+    const secretsName = "Noise_Tracker_Cognito_Secrets"; 
+
+    this.secret = new secretsmanager.Secret(this, secretsName, {
+      secretName: secretsName,
+      description: "Cognito Secrets for authentication",
+      secretObjectValue: {
+        REACT_APP_USERPOOL_ID: cdk.SecretValue.unsafePlainText(
+          userPool.userPoolId
+        ),
+        REACT_APP_USERPOOL_WEB_CLIENT_ID: cdk.SecretValue.unsafePlainText(
+          userPoolClient.userPoolClientId
+        ),
+        REACT_APP_REGION: cdk.SecretValue.unsafePlainText(this.region),
+      },
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+    });
+
 
     new cdk.CfnOutput(this, 'CognitoClientID', {
       value: userPoolClient.userPoolClientId,
