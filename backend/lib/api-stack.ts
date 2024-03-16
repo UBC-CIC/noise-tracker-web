@@ -19,8 +19,8 @@ export class APIStack extends Stack {
          * Create an IAM role for lambda function to get access to database
          */
         //Create a role for lambda to access the postgresql database
-        const lambdaRole = new iam.Role(this, "postgresLambdaRole", {
-            roleName: "postgresLambdaRole",
+        const lambdaRole = new iam.Role(this, "lambdaRole", {
+            roleName: "lambdaRole",
             assumedBy: new iam.ServicePrincipal("lambda.amazonaws.com"),
         });
 
@@ -83,6 +83,20 @@ export class APIStack extends Stack {
           })
       );
 
+      // Grant access to cognito
+      lambdaRole.addToPolicy(
+        new iam.PolicyStatement({
+          effect: iam.Effect.ALLOW,
+          actions: [
+            "cognito-idp:AdminCreateUser",
+            "cognito-idp:AdminDeleteUser"
+          ],
+          resources: [
+            `arn:aws:cognito-idp:${this.region}:${this.account}:userpool/${functionalityStack.userPoolId}`
+          ],
+        })
+    );
+
         /* 
          * Create Integration Lambda layer for PSQL
          */ 
@@ -100,7 +114,8 @@ export class APIStack extends Stack {
             timeout: Duration.seconds(300),
             memorySize: 512,
             environment:{
-                SM_DB_CREDENTIALS: db.secretPathUser.secretName,  
+                SM_DB_CREDENTIALS: db.secretPathUser.secretName, 
+                SM_COGNITO_CREDENTIALS: functionalityStack.secret.secretName, 
                 BUCKET_NAME: functionalityStack.bucketName,   
             },
             vpc: vpcStack.vpc,
