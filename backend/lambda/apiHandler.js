@@ -4,8 +4,9 @@ const AWS = require("aws-sdk");
 // Gather AWS services
 const secretsManager = new AWS.SecretsManager();
 const s3 = new AWS.S3();
+const CognitoIdentityServiceProvider = new AWS.CognitoIdentityServiceProvider();
 
-let { SM_DB_CREDENTIALS, BUCKET_NAME } = process.env;
+let { SM_DB_CREDENTIALS, SM_COGNITO_CREDENTIALS, BUCKET_NAME } = process.env;
 let dbConnection;  // Global variable to hold the database connection
 
 async function initializeConnection(){
@@ -26,6 +27,36 @@ async function initializeConnection(){
 	};
 
     dbConnection = postgres(connectionConfig);
+}
+
+async function retrieveCognitoSecrets() {
+	// Retrieve the secret from AWS Secrets Manager
+	const secret = await secretsManager
+	.getSecretValue({ SecretId: SM_COGNITO_CREDENTIALS })
+	.promise();
+
+	return JSON.parse(secret.SecretString)
+}
+
+async function createCognitoUser(email, userPoolId, userPoolClientId) {
+  const params = {
+    UserPoolId: userPoolId,
+    Username: email,
+    UserAttributes: [
+      {
+        Name: 'email',
+        Value: email,
+      },
+    ],
+  };
+
+  try {
+    const createUserResponse = await CognitoIdentityServiceProvider.adminCreateUser(params).promise();
+    console.log('Cognito user created:', createUserResponse);
+  } catch (error) {
+    console.error('Error creating Cognito user:', error);
+    throw error;
+  }
 }
 
 exports.handler = async (event) => {
@@ -88,8 +119,21 @@ exports.handler = async (event) => {
 			            	 ${body.depth},
 			            	 ${body.deployment_date},
 			            	 ${body.range},
-			            	 ${body.angle_of_view});
+			            	 ${body.angle_of_view})
+			        	RETURNING hydrophone_id;
 						`;
+					
+					// The result will be an array, get the first element as the UUID
+			        const hydrophone_id = data[0].hydrophone_id;
+						
+					// Define an object
+					const params = {
+					  Bucket: BUCKET_NAME,
+					  Key: `${operator_id[0].hydrophone_operator_id}/${hydrophone_id}/`,
+					};
+					
+					// Upload the object
+					await s3.putObject(params).promise();
 	        	}
 				
 	        	break;
@@ -124,10 +168,37 @@ exports.handler = async (event) => {
 	        	
 	        case "DELETE /hydrophones":
             	if (event.queryStringParameters['hydrophone_id'] != null){
-            		const hydrophone_id = event.queryStringParameters['hydrophone_id'];
+            		const hydrophone_id_to_delete = event.queryStringParameters['hydrophone_id'];
 
             		data = await dbConnection`
-		            	DELETE FROM hydrophones WHERE hydrophone_id = ${hydrophone_id};`;
+		            DELETE FROM hydrophones 
+		            WHERE hydrophone_id = ${hydrophone_id_to_delete} 
+		            RETURNING hydrophone_id, hydrophone_operator_id;`;
+		            	
+		        	if (data.length > 0) {
+			            const hydrophone_id = data[0].hydrophone_id;
+			            const hydrophone_operator_id = data[0].hydrophone_operator_id;
+			
+			            // List objects with the common prefix
+			            const listParams = {
+			                Bucket: BUCKET_NAME,
+			                Prefix: `${hydrophone_operator_id}/${hydrophone_id}/`,
+			            };
+			
+			            const objectsToDelete = await s3.listObjectsV2(listParams).promise();
+			
+			            // Delete the objects in batches (if there are many)
+			            if (objectsToDelete.Contents.length > 0) {
+			                const deleteParams = {
+			                    Bucket: BUCKET_NAME,
+			                    Delete: {
+			                        Objects: objectsToDelete.Contents.map(obj => ({ Key: obj.Key })),
+			                    },
+			                };
+			
+			                await s3.deleteObjects(deleteParams).promise();
+			            }
+			        }
             	}
 				
             	break;
@@ -173,14 +244,20 @@ exports.handler = async (event) => {
 			        // The result will be an array, get the first element as the UUID
 			        const hydrophone_operator_id = data[0].hydrophone_operator_id;
 			        
-		            // Create a placeholder object to simulate the folder
+		            // Define an object 
 					const params = {
 					  Bucket: BUCKET_NAME,
 					  Key: `${hydrophone_operator_id}/`,
 					};
 					
-					// Upload the placeholder object to simulate the folder creation
-					await s3.putObject(params).promise();;
+					// Upload the object
+					await s3.putObject(params).promise();
+					
+					// Fetch Cognito credentials
+    				const credentials = await retrieveCognitoSecrets();
+					
+					// Create Cognito user and send invitation
+    				await createCognitoUser(body.contact_info, credentials.REACT_APP_USERPOOL_ID, credentials.REACT_APP_USERPOOL_WEB_CLIENT_ID);
             	}
 				
             	break;
@@ -202,14 +279,30 @@ exports.handler = async (event) => {
             	if (event.queryStringParameters['operator_id'] != null){
             		const operator_id = event.queryStringParameters['operator_id'];
 
-            		// Delete the hydrophone operator from the database and return the hydrophone_operator_id
+            		// Delete the hydrophone operator from the database and return the hydrophone_operator_id and contact_info
 			        data = await dbConnection`
 			            DELETE FROM hydrophone_operators
 			            WHERE hydrophone_operator_id = ${operator_id}
-			            RETURNING hydrophone_operator_id;`;
+			            RETURNING hydrophone_operator_id, contact_info;`;
 			
 			        if (data.length > 0) {
 			            const hydrophone_operator_id = data[0].hydrophone_operator_id;
+			            const username = data[0].contact_info;
+			            
+			            // Fetch Cognito credentials
+    					const credentials = await retrieveCognitoSecrets();
+			            
+			            // Delete the Cognito user
+		                const deleteUserParams = {
+		                    UserPoolId: credentials.REACT_APP_USERPOOL_ID, 
+		                    Username: username,
+		                };
+		
+		                try {
+		                    await CognitoIdentityServiceProvider.adminDeleteUser(deleteUserParams).promise();
+		                } catch (error) {
+		                    console.error('Error deleting Cognito user:', error);
+		                }
 			
 			            // List objects with the common prefix
 			            const listParams = {
