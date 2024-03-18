@@ -79,7 +79,7 @@ exports.handler = async (event) => {
         const request = event.httpMethod + " " + event.resource;
 
         switch(request){
-            case "GET /hydrophones":
+            case "GET /admin/hydrophones":
                 data = await dbConnection`
                 	SELECT hydrophones.*, hydrophone_operators.hydrophone_operator_name
 					FROM hydrophones
@@ -89,7 +89,7 @@ exports.handler = async (event) => {
                 
                 break;
                 
-            case "POST /hydrophones":
+            case "POST /admin/hydrophones":
 	        	if (event.body != null){
 	        		const body = JSON.parse(event.body);
 	        		
@@ -138,7 +138,7 @@ exports.handler = async (event) => {
 				
 	        	break;
 	        	
-	        case "PUT /hydrophones":
+	        case "PUT /admin/hydrophones":
             	if (event.body != null){
             		const body = JSON.parse(event.body);
             		
@@ -166,7 +166,7 @@ exports.handler = async (event) => {
 				
             	break;
 	        	
-	        case "DELETE /hydrophones":
+	        case "DELETE /admin/hydrophones":
             	if (event.queryStringParameters['hydrophone_id'] != null){
             		const hydrophone_id_to_delete = event.queryStringParameters['hydrophone_id'];
 
@@ -203,7 +203,7 @@ exports.handler = async (event) => {
 				
             	break;
             
-            case "GET /operators":
+            case "GET /admin/operators":
             	if (event.queryStringParameters != null){
 	            	if (event.queryStringParameters['query'] === 'getOperatorData'){
 	            		data = await dbConnection`SELECT hydrophone_operator_name FROM hydrophone_operators`;
@@ -229,7 +229,7 @@ exports.handler = async (event) => {
             	
             	break;
             	
-            case "POST /operators":
+            case "POST /admin/operators":
             	if (event.body != null){
             		const body = JSON.parse(event.body);
             		
@@ -262,7 +262,7 @@ exports.handler = async (event) => {
 				
             	break;
             	
-            case "PUT /operators":
+            case "PUT /admin/operators":
             	if (event.body != null){
             		const body = JSON.parse(event.body);
             		
@@ -275,7 +275,7 @@ exports.handler = async (event) => {
 				
             	break;
             	
-            case "DELETE /operators":
+            case "DELETE /admin/operators":
             	if (event.queryStringParameters['operator_id'] != null){
             		const operator_id = event.queryStringParameters['operator_id'];
 

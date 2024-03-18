@@ -18,7 +18,7 @@ export default function AdminSettings() {
   const fetchOperatorData = async () => {
     try{
       const response = await axios.get(
-        API_URL + 'operators'
+        API_URL + 'admin/operators'
       );
 
       const data = response.data;

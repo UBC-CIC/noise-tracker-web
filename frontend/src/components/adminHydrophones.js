@@ -19,7 +19,7 @@ export default function AdminHydrophones(){
     const fetchHydrophoneData = async () => {
       try{
         const response = await axios.get(
-          API_URL + 'hydrophones'
+          API_URL + 'admin/hydrophones'
         );
 
         const data = response.data;
@@ -62,7 +62,7 @@ export default function AdminHydrophones(){
                   <StyledTableCell>Angle of View (°)</StyledTableCell>
                   <StyledTableCell>Depth (m)</StyledTableCell>
                   <StyledTableCell>Range (m)</StyledTableCell>
-                  <StyledTableCell>Sampling Frequency</StyledTableCell>
+                  <StyledTableCell>Sampling Frequency (kHz)</StyledTableCell>
                   <StyledTableCell>Edit</StyledTableCell>
                   <StyledTableCell>Delete</StyledTableCell>
                 </TableRow>

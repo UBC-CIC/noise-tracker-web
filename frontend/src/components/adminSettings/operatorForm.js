@@ -26,7 +26,7 @@ export default function OperatorForm({ mode, onUpdate, operatorData }) {
         if (mode === 'create'){
             try{
                 const response = await axios.post(
-                  API_URL + 'operators',
+                  API_URL + 'admin/operators',
                   {
                     "hydrophone_operator_name": organization,
                     "contact_info": contact,
@@ -43,7 +43,7 @@ export default function OperatorForm({ mode, onUpdate, operatorData }) {
         else if (mode === 'modify'){
             try{
                 const response = await axios.put(
-                  API_URL + 'operators',
+                  API_URL + 'admin/operators',
                   {
                     "hydrophone_operator_id": operatorData.hydrophone_operator_id,
                     "hydrophone_operator_name": organization,

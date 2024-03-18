@@ -31,7 +31,7 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData }) {
     const fetchOperators = async () => {
         try{
                 const response = await axios.get(
-                    API_URL + 'operators?query=getOperatorData'
+                    API_URL + 'admin/operators?query=getOperatorData'
                 );
                 
                 const data = response.data;
@@ -54,7 +54,7 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData }) {
         if (mode === 'create'){
             try{
                 const response = await axios.post(
-                  API_URL + 'hydrophones',
+                  API_URL + 'admin/hydrophones',
                   {
                     "hydrophone_operator_id": operator,
                     "hydrophone_site": site,
@@ -78,7 +78,7 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData }) {
         else if (mode === 'modify'){
             try{
                 const response = await axios.put(
-                  API_URL + 'hydrophones',
+                  API_URL + 'admin/hydrophones',
                   {
                     "hydrophone_id": hydrophoneData.hydrophone_id,
                     "hydrophone_operator_name": operator,

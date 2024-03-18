@@ -25,7 +25,7 @@ export default function DeleteForm({ mode, itemId, onDelete }) {
         if (mode === 'operator'){
             try{
                 const deleteOperator = await axios.delete(
-                  API_URL + 'operators?operator_id=' + itemId
+                  API_URL + 'admin/operators?operator_id=' + itemId
                 );
 
                 onDelete();
@@ -39,7 +39,7 @@ export default function DeleteForm({ mode, itemId, onDelete }) {
         else if (mode === 'hydrophone'){
             try{
                 const deleteOperator = await axios.delete(
-                  API_URL + 'hydrophones?hydrophone_id=' + itemId
+                  API_URL + 'admin/hydrophones?hydrophone_id=' + itemId
                 );
 
                 onDelete();

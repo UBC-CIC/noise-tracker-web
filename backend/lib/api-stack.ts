@@ -141,19 +141,34 @@ export class APIStack extends Stack {
           });
       
           // define api resources
-          const hydrophonesResource = api.root.addResource('hydrophones');
-          const hydrophonesPublicResource = hydrophonesResource.addResource('public');
-          const operatorsResource = api.root.addResource('operators');
-          const metricsResource = api.root.addResource('metrics');
-      
-          hydrophonesResource.addMethod('GET', new apigateway.LambdaIntegration(apiHandler, {proxy: true}));
-          hydrophonesResource.addMethod('POST', new apigateway.LambdaIntegration(apiHandler, {proxy: true}));
-          hydrophonesResource.addMethod('PUT', new apigateway.LambdaIntegration(apiHandler, {proxy: true}));
-          hydrophonesResource.addMethod('DELETE', new apigateway.LambdaIntegration(apiHandler, {proxy: true}));
+          const adminResource = api.root.addResource('admin');
+          const adminHydrophones = adminResource.addResource('hydrophones')
+          const adminOperators = adminResource.addResource('operators')
+          const adminMetrics = adminResource.addResource('metrics')
 
-          operatorsResource.addMethod('GET', new apigateway.LambdaIntegration(apiHandler, {proxy: true}));
-          operatorsResource.addMethod('POST', new apigateway.LambdaIntegration(apiHandler, {proxy: true}));
-          operatorsResource.addMethod('PUT', new apigateway.LambdaIntegration(apiHandler, {proxy: true}));
-          operatorsResource.addMethod('DELETE', new apigateway.LambdaIntegration(apiHandler, {proxy: true}));
+          const operatorResource = api.root.addResource('operator');
+          const operatorHydrophones = operatorResource.addResource('hydrophones')
+          const operatorOperators = operatorResource.addResource('operators')
+          const operatorMetrics = operatorResource.addResource('metrics')
+
+          const publicResource = api.root.addResource('public');
+          const publicHydrophones = publicResource.addResource('hydrophones')
+          const publicOperators = publicResource.addResource('operators')
+          const publicMetrics = publicResource.addResource('metrics')
+
+          adminHydrophones.addMethod('GET', new apigateway.LambdaIntegration(apiHandler, {proxy: true}));
+          adminHydrophones.addMethod('POST', new apigateway.LambdaIntegration(apiHandler, {proxy: true}));
+          adminHydrophones.addMethod('PUT', new apigateway.LambdaIntegration(apiHandler, {proxy: true}));
+          adminHydrophones.addMethod('DELETE', new apigateway.LambdaIntegration(apiHandler, {proxy: true}));
+
+          adminOperators.addMethod('GET', new apigateway.LambdaIntegration(apiHandler, {proxy: true}));
+          adminOperators.addMethod('POST', new apigateway.LambdaIntegration(apiHandler, {proxy: true}));
+          adminOperators.addMethod('PUT', new apigateway.LambdaIntegration(apiHandler, {proxy: true}));
+          adminOperators.addMethod('DELETE', new apigateway.LambdaIntegration(apiHandler, {proxy: true}));
+
+          adminMetrics.addMethod('GET', new apigateway.LambdaIntegration(apiHandler, {proxy: true}));
+          adminMetrics.addMethod('POST', new apigateway.LambdaIntegration(apiHandler, {proxy: true}));
+          adminMetrics.addMethod('PUT', new apigateway.LambdaIntegration(apiHandler, {proxy: true}));
+          adminMetrics.addMethod('DELETE', new apigateway.LambdaIntegration(apiHandler, {proxy: true}));
     }
 }
