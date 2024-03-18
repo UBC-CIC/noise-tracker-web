@@ -44,8 +44,40 @@ export class FunctionalityStack extends cdk.Stack {
 
     /**
      *
-     * Store secrets to Secret Manager
-     * User pool id, client id, and region the user pool deployed
+     * Create user group for admin
+     */
+    const cfnAdminUserPoolGroup = new cognito.CfnUserPoolGroup(
+      this,
+      "cognito-adminUserGroup",
+      {
+        userPoolId: userPool.userPoolId,
+
+        // the properties below are optional
+        description: "Admin usergroup to perform data manipulation",
+        groupName: "ADMIN_USER",
+      }
+    );
+
+    /**
+     *
+     * Create user group for operator
+     */
+    const cfnOperatorUserPoolGroup = new cognito.CfnUserPoolGroup(
+      this,
+      "cognito-operatorUserGroup",
+      {
+        userPoolId: userPool.userPoolId,
+
+        // the properties below are optional
+        description: "Operator usergroup to view operator profile",
+        groupName: "OPERATOR_USER",
+      }
+    );
+
+    /**
+     *
+     // Store secrets to Secret Manager
+     // User pool id, client id, and region the user pool deployed
      */
     const secretsName = "Noise_Tracker_Cognito_Secrets"; 
 
