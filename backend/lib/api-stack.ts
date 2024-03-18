@@ -106,11 +106,11 @@ export class APIStack extends Stack {
             description: 'Contains the postgres library for JS',
         }); 
 
-        // Create a handler for the api
-        const apiHandler = new lambda.Function(this, "apiHandler", {
-            functionName: "apiHandler",
+        // Create an admin handler for the api
+        const apiAdminHandler = new lambda.Function(this, "apiAdminHandler", {
+            functionName: "apiAdminHandler",
             runtime: lambda.Runtime.NODEJS_16_X,
-            handler: "apiHandler.handler",
+            handler: "apiAdminHandler.handler",
             timeout: Duration.seconds(300),
             memorySize: 512,
             environment:{
@@ -123,6 +123,24 @@ export class APIStack extends Stack {
             layers: [postgres],
             role: lambdaRole,
         });
+
+        // Create an operator handler for the api
+        const apiOperatorHandler = new lambda.Function(this, "apiOperatorHandler", {
+          functionName: "apiOperatorHandler",
+          runtime: lambda.Runtime.NODEJS_16_X,
+          handler: "apiOperatorHandler.handler",
+          timeout: Duration.seconds(300),
+          memorySize: 512,
+          environment:{
+              SM_DB_CREDENTIALS: db.secretPathUser.secretName, 
+              SM_COGNITO_CREDENTIALS: functionalityStack.secret.secretName, 
+              BUCKET_NAME: functionalityStack.bucketName,   
+          },
+          vpc: vpcStack.vpc,
+          code: lambda.Code.fromAsset("lambda"),
+          layers: [postgres],
+          role: lambdaRole,
+      });
 
         // Create API Gateway
         const api = new apigateway.RestApi(this, 'api', {
@@ -156,19 +174,34 @@ export class APIStack extends Stack {
           const publicOperators = publicResource.addResource('operators')
           const publicMetrics = publicResource.addResource('metrics')
 
-          adminHydrophones.addMethod('GET', new apigateway.LambdaIntegration(apiHandler, {proxy: true}));
-          adminHydrophones.addMethod('POST', new apigateway.LambdaIntegration(apiHandler, {proxy: true}));
-          adminHydrophones.addMethod('PUT', new apigateway.LambdaIntegration(apiHandler, {proxy: true}));
-          adminHydrophones.addMethod('DELETE', new apigateway.LambdaIntegration(apiHandler, {proxy: true}));
+          adminHydrophones.addMethod('GET', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}));
+          adminHydrophones.addMethod('POST', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}));
+          adminHydrophones.addMethod('PUT', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}));
+          adminHydrophones.addMethod('DELETE', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}));
 
-          adminOperators.addMethod('GET', new apigateway.LambdaIntegration(apiHandler, {proxy: true}));
-          adminOperators.addMethod('POST', new apigateway.LambdaIntegration(apiHandler, {proxy: true}));
-          adminOperators.addMethod('PUT', new apigateway.LambdaIntegration(apiHandler, {proxy: true}));
-          adminOperators.addMethod('DELETE', new apigateway.LambdaIntegration(apiHandler, {proxy: true}));
+          adminOperators.addMethod('GET', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}));
+          adminOperators.addMethod('POST', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}));
+          adminOperators.addMethod('PUT', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}));
+          adminOperators.addMethod('DELETE', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}));
 
-          adminMetrics.addMethod('GET', new apigateway.LambdaIntegration(apiHandler, {proxy: true}));
-          adminMetrics.addMethod('POST', new apigateway.LambdaIntegration(apiHandler, {proxy: true}));
-          adminMetrics.addMethod('PUT', new apigateway.LambdaIntegration(apiHandler, {proxy: true}));
-          adminMetrics.addMethod('DELETE', new apigateway.LambdaIntegration(apiHandler, {proxy: true}));
+          adminMetrics.addMethod('GET', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}));
+          adminMetrics.addMethod('POST', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}));
+          adminMetrics.addMethod('PUT', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}));
+          adminMetrics.addMethod('DELETE', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}));
+
+          operatorHydrophones.addMethod('GET', new apigateway.LambdaIntegration(apiOperatorHandler, {proxy: true}));
+          operatorHydrophones.addMethod('POST', new apigateway.LambdaIntegration(apiOperatorHandler, {proxy: true}));
+          operatorHydrophones.addMethod('PUT', new apigateway.LambdaIntegration(apiOperatorHandler, {proxy: true}));
+          operatorHydrophones.addMethod('DELETE', new apigateway.LambdaIntegration(apiOperatorHandler, {proxy: true}));
+
+          operatorOperators.addMethod('GET', new apigateway.LambdaIntegration(apiOperatorHandler, {proxy: true}));
+          operatorOperators.addMethod('POST', new apigateway.LambdaIntegration(apiOperatorHandler, {proxy: true}));
+          operatorOperators.addMethod('PUT', new apigateway.LambdaIntegration(apiOperatorHandler, {proxy: true}));
+          operatorOperators.addMethod('DELETE', new apigateway.LambdaIntegration(apiOperatorHandler, {proxy: true}));
+
+          operatorMetrics.addMethod('GET', new apigateway.LambdaIntegration(apiOperatorHandler, {proxy: true}));
+          operatorMetrics.addMethod('POST', new apigateway.LambdaIntegration(apiOperatorHandler, {proxy: true}));
+          operatorMetrics.addMethod('PUT', new apigateway.LambdaIntegration(apiOperatorHandler, {proxy: true}));
+          operatorMetrics.addMethod('DELETE', new apigateway.LambdaIntegration(apiOperatorHandler, {proxy: true}));
     }
 }
