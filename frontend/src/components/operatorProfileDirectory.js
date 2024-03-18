@@ -1,9 +1,34 @@
+import { useState, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
 import { Table, TableBody, TableCell, tableCellClasses, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 import sampleHydrophoneData from "../sampledata/sampleHydrophoneData";
 import sampleHOData from '../sampledata/sampleHOData';
+import axios from 'axios';
 
 export default function OperatorProfileDirectory(){
+    const API_URL = process.env.REACT_APP_API_URL;
+
+    const [directoryData, setDirectoryData] = useState([]);
+
+    useEffect(() => {
+      fetchDirectoryData();
+    }, []);
+
+    const fetchDirectoryData = async () => {
+      try{
+        const response = await axios.get(
+          API_URL + 'operator/operators'
+        );
+
+        const data = response.data;
+        setDirectoryData(data);
+      } 
+      
+      catch(error){
+        console.error("Error fetching directory data: ", error);
+      }
+    }
+
     const StyledTableCell = styled(TableCell)(({ theme }) => ({
         [`&.${tableCellClasses.head}`]: {
           backgroundColor: '#024959',
@@ -29,17 +54,17 @@ export default function OperatorProfileDirectory(){
                     <StyledTableCell>Contact</StyledTableCell>
                     </TableRow>
                 </TableHead>
-                {sampleHOData.map((operatorData, index) => (
+                {directoryData.map((operator, index) => (
                     <TableRow key={index} style={{ background: index % 2 === 0 ? '#f9f9f9' : 'white' }}>
-                    <StyledTableCell>{operatorData.operator}</StyledTableCell>
+                    <StyledTableCell>{operator.hydrophone_operator_name}</StyledTableCell>
                     <StyledTableCell>
                         <ul>
-                        {operatorData.hydrophones.map((hydrophone) => (
-                            <li key={hydrophone.name}>{hydrophone.name}</li>
+                        {operator.hydrophone_info.map((hydrophone) => (
+                            <li key={hydrophone}>{hydrophone === '' ? 'N/A' : hydrophone}</li>
                         ))}
                         </ul>
                     </StyledTableCell>
-                    <StyledTableCell>{operatorData.contact}</StyledTableCell>
+                    <StyledTableCell>{operator.contact_info}</StyledTableCell>
                     </TableRow>
                 ))}
             </Table>
