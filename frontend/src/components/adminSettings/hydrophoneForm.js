@@ -8,7 +8,7 @@ import axios from "axios";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 
-export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt }) {
+export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt, operatorData }) {
     const API_URL = process.env.REACT_APP_API_URL;
 
     const [open, setOpen] = useState(false);
@@ -21,31 +21,6 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt }) 
     const [deploymentDate, setDeploymentDate] = useState(dayjs(hydrophoneData?.deployment_date) || null);
     const [range, setRange] = useState(hydrophoneData?.range || '');
     const [angleOfView, setAngleOfView] = useState(hydrophoneData?.angle_of_view || '');
-
-    const [operatorData, setOperatorData] = useState([]);
-
-    useEffect(() => {
-        fetchOperators();
-    }, []);
-
-    const fetchOperators = async () => {
-        try{
-                const response = await axios.get(
-                    API_URL + 'admin/operators?query=getOperatorData',
-                    {
-                      headers: {
-                        'Authorization': jwt
-                      }
-                    }
-                );
-                
-                const data = response.data;
-                setOperatorData(data); 
-        }
-        catch(error){
-            console.log("Error fetching operators: ", error);
-        }
-    };
 
     const handleOpen = () => {
         setOpen(true);
@@ -179,7 +154,7 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt }) 
                                         onChange={handleOperatorChange}
                                         fullWidth
                                     >
-                                        {operatorData.map((operator, index) => (
+                                        {operatorData.length > 0 && operatorData.map((operator, index) => (
                                             <MenuItem key={index} value={operator.hydrophone_operator_name}>
                                                 {operator.hydrophone_operator_name}
                                             </MenuItem>

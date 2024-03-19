@@ -11,9 +11,11 @@ export default function AdminHydrophones({ jwt }){
     const API_URL = process.env.REACT_APP_API_URL;
 
     const [hydrophoneData, setHydrophoneData] = useState([]);
+    const [operatorData, setOperatorData] = useState([]);
 
     useEffect(() => {
       fetchHydrophoneData();
+      fetchOperators();
     }, []);
 
     const fetchHydrophoneData = async () => {
@@ -36,6 +38,25 @@ export default function AdminHydrophones({ jwt }){
       }
     }
 
+    const fetchOperators = async () => {
+      try{
+              const response = await axios.get(
+                  API_URL + 'admin/operators?query=getOperatorData',
+                  {
+                    headers: {
+                      'Authorization': jwt
+                    }
+                  }
+              );
+              
+              const data = response.data;
+              setOperatorData(data); 
+      }
+      catch(error){
+          console.log("Error fetching operators: ", error);
+      }
+  };
+
 
     const StyledTableCell = styled(TableCell)(({ theme }) => ({
         [`&.${tableCellClasses.head}`]: {
@@ -53,7 +74,7 @@ export default function AdminHydrophones({ jwt }){
           flex: 1,
           justifyContent: 'center',
         }}>
-          <HydrophoneForm mode="create" onUpdate={fetchHydrophoneData} jwt={jwt} />
+          <HydrophoneForm mode="create" onUpdate={fetchHydrophoneData} jwt={jwt} operatorData={operatorData} />
           <TableContainer component={Paper}>
             <Table>
               <TableHead>
@@ -103,6 +124,7 @@ export default function AdminHydrophones({ jwt }){
                           "angle_of_view": hydrophone.angle_of_view
                         }}
                         jwt={jwt}
+                        operatorData={operatorData}
                       />
                     </StyledTableCell>
                     <StyledTableCell>
