@@ -29,6 +29,8 @@ const Login = ({ loginStatus, setLoginStatus, jwt, setJwt }) => {
             if (err) {
               setLoginStatus(false);
             } else {
+              const jwtToken = session.getAccessToken().getJwtToken();
+              setJwt(jwtToken);
               setLoginStatus(true);
             }
           });
@@ -63,10 +65,8 @@ const Login = ({ loginStatus, setLoginStatus, jwt, setJwt }) => {
             onSuccess: (session) => {
               setLoginStatus(true);
               navigate("/map");
-
-              // Extract and console log the JWT token
-            const jwtToken = session;
-            console.log("JWT Token:", jwtToken);
+              const jwtToken = session.getAccessToken().getJwtToken();
+              setJwt(jwtToken);
             },
             onFailure: (err) => {
                 if (err.message.includes("newPasswordRequired")) {
