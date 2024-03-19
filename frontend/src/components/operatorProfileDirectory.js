@@ -5,7 +5,8 @@ import sampleHydrophoneData from "../sampledata/sampleHydrophoneData";
 import sampleHOData from '../sampledata/sampleHOData';
 import axios from 'axios';
 
-export default function OperatorProfileDirectory(){
+export default function OperatorProfileDirectory({ jwt }){
+    console.log("JWT: ", jwt);
     const API_URL = process.env.REACT_APP_API_URL;
 
     const [directoryData, setDirectoryData] = useState([]);
@@ -17,7 +18,12 @@ export default function OperatorProfileDirectory(){
     const fetchDirectoryData = async () => {
       try{
         const response = await axios.get(
-          API_URL + 'operator/operators'
+          API_URL + 'operator/operators',
+          {
+            headers: {
+              'Authorization': jwt
+            }
+          }
         );
 
         const data = response.data;

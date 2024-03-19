@@ -8,7 +8,7 @@ import axios from "axios";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 
-export default function HydrophoneForm({ mode, onUpdate, hydrophoneData }) {
+export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt }) {
     const API_URL = process.env.REACT_APP_API_URL;
 
     const [open, setOpen] = useState(false);
@@ -31,7 +31,12 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData }) {
     const fetchOperators = async () => {
         try{
                 const response = await axios.get(
-                    API_URL + 'admin/operators?query=getOperatorData'
+                    API_URL + 'admin/operators?query=getOperatorData',
+                    {
+                      headers: {
+                        'Authorization': jwt
+                      }
+                    }
                 );
                 
                 const data = response.data;
@@ -65,6 +70,11 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData }) {
                     "depth": depth,
                     "range": range,
                     "sampling_frequency": samplingFrequency
+                  },
+                  {
+                    headers: {
+                      'Authorization': jwt
+                    }
                   }
                 );
 
@@ -90,6 +100,11 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData }) {
                     "depth": depth,
                     "range": range,
                     "sampling_frequency": samplingFrequency
+                  },
+                  {
+                    headers: {
+                      'Authorization': jwt
+                    }
                   }
                 );
 

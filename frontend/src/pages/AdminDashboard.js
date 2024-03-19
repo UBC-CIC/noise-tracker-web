@@ -5,7 +5,7 @@ import AdminGeneral from "../components/adminGeneral";
 import AdminHydrophones from "../components/adminHydrophones";
 import AdminSettings from "../components/adminSettings";
 
-export default function AdminDashboard(){
+export default function AdminDashboard({ jwt }){
     const [selectedOption, setSelectedOption] = useState('general');
 
     const handleButtonClick = (option) => {
@@ -17,8 +17,8 @@ export default function AdminDashboard(){
             <AdminSidebar onButtonClick={handleButtonClick}/>
 
             {selectedOption === 'general' && <AdminGeneral />}
-            {selectedOption === 'hydrophones' && <AdminHydrophones />}
-            {selectedOption === 'operators' && <AdminSettings />}
+            {selectedOption === 'hydrophones' && <AdminHydrophones jwt={jwt} />}
+            {selectedOption === 'operators' && <AdminSettings jwt={jwt} />}
         </div>
     )
 }

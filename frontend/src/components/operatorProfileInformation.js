@@ -4,7 +4,7 @@ import { Typography, Table, TableBody, TableCell, TableContainer, TableHead, Tab
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import sampleHydrophoneData from '../sampledata/sampleHydrophoneData';
 
-export default function OperatorProfileInformation(){
+export default function OperatorProfileInformation({ jwt }){
     const [isButtonSelected, setIsButtonSelected] = useState(false);
     const [selectedHydrophones, setSelectedHydrophones] = useState([]);
 

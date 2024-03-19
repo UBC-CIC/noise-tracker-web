@@ -133,14 +133,79 @@ export class APIStack extends Stack {
           memorySize: 512,
           environment:{
               SM_DB_CREDENTIALS: db.secretPathUser.secretName, 
-              SM_COGNITO_CREDENTIALS: functionalityStack.secret.secretName, 
               BUCKET_NAME: functionalityStack.bucketName,   
           },
           vpc: vpcStack.vpc,
           code: lambda.Code.fromAsset("lambda"),
           layers: [postgres],
           role: lambdaRole,
-      });
+        });
+
+          /**
+         *
+         * Create Integration Lambda layer for aws-jwt-verify
+         */
+        const jwt = new lambda.LayerVersion(this, "aws-jwt-verify", {
+          code: lambda.Code.fromAsset("./lambda/layers/aws-jwt-verify.zip"),
+          compatibleRuntimes: [lambda.Runtime.NODEJS_16_X],
+          description: "Contains the aws-jwt-verify library for JS",
+        });
+
+        /**
+         *
+         * Create Lambda for Admin Authorization endpoints
+         */
+        const adminAuthorizerFunction = new lambda.Function(
+          this,
+          "admin-authorization-api-gateway",
+          {
+            runtime: lambda.Runtime.NODEJS_16_X, // Execution environment
+            code: lambda.Code.fromAsset("lambda"), // Code loaded from "lambda" directory
+            handler: "adminAuthorizerFunction.handler", // Code handler
+            timeout: Duration.seconds(300),
+            vpc: vpcStack.vpc,
+            environment: {
+              SM_COGNITO_CREDENTIALS: functionalityStack.secret.secretName,
+            },
+            functionName: "adminLambdaAuthorizer",
+            memorySize: 512,
+            layers: [jwt],
+            role: lambdaRole,
+          }
+        );
+
+        // Add the permission to the Lambda function's policy to allow API Gateway access
+        adminAuthorizerFunction.grantInvoke(
+          new iam.ServicePrincipal("apigateway.amazonaws.com")
+        );
+
+        /**
+         *
+         * Create Lambda for Operator Authorization endpoints
+         */
+        const operatorAuthorizerFunction = new lambda.Function(
+          this,
+          "operator-authorization-api-gateway",
+          {
+            runtime: lambda.Runtime.NODEJS_16_X, // Execution environment
+            code: lambda.Code.fromAsset("lambda"), // Code loaded from "lambda" directory
+            handler: "operatorAuthorizerFunction.handler", // Code handler
+            timeout: Duration.seconds(300),
+            vpc: vpcStack.vpc,
+            environment: {
+              SM_COGNITO_CREDENTIALS: functionalityStack.secret.secretName,
+            },
+            functionName: "operatorLambdaAuthorizer",
+            memorySize: 512,
+            layers: [jwt],
+            role: lambdaRole,
+          }
+        );
+
+        // Add the permission to the Lambda function's policy to allow API Gateway access
+        operatorAuthorizerFunction.grantInvoke(
+          new iam.ServicePrincipal("apigateway.amazonaws.com")
+        );
 
         // Create API Gateway
         const api = new apigateway.RestApi(this, 'api', {
@@ -157,6 +222,9 @@ export class APIStack extends Stack {
               types: [ apigateway.EndpointType.REGIONAL ]
             },
           });
+
+        const adminAuthorizer = new apigateway.TokenAuthorizer(this, 'adminAuthorizer', {handler: adminAuthorizerFunction});
+        const operatorAuthorizer = new apigateway.TokenAuthorizer(this, 'operatorAuthorizer', {handler: operatorAuthorizerFunction});
       
           // define api resources
           const adminResource = api.root.addResource('admin');
@@ -174,34 +242,84 @@ export class APIStack extends Stack {
           const publicOperators = publicResource.addResource('operators')
           const publicMetrics = publicResource.addResource('metrics')
 
-          adminHydrophones.addMethod('GET', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}));
-          adminHydrophones.addMethod('POST', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}));
-          adminHydrophones.addMethod('PUT', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}));
-          adminHydrophones.addMethod('DELETE', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}));
+          adminHydrophones.addMethod('GET', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}), {
+            authorizer: adminAuthorizer,
+            authorizationType: apigateway.AuthorizationType.CUSTOM,
+          });
+          adminHydrophones.addMethod('POST', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}),
+          {
+            authorizer: adminAuthorizer,
+            authorizationType: apigateway.AuthorizationType.CUSTOM,
+          });
+          adminHydrophones.addMethod('PUT', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}),
+          {
+            authorizer: adminAuthorizer,
+            authorizationType: apigateway.AuthorizationType.CUSTOM,
+          });
+          adminHydrophones.addMethod('DELETE', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}),
+          {
+            authorizer: adminAuthorizer,
+            authorizationType: apigateway.AuthorizationType.CUSTOM,
+          });
 
-          adminOperators.addMethod('GET', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}));
-          adminOperators.addMethod('POST', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}));
-          adminOperators.addMethod('PUT', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}));
-          adminOperators.addMethod('DELETE', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}));
+          adminOperators.addMethod('GET', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}),
+          {
+            authorizer: adminAuthorizer,
+            authorizationType: apigateway.AuthorizationType.CUSTOM,
+          });
+          adminOperators.addMethod('POST', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}),
+          {
+            authorizer: adminAuthorizer,
+            authorizationType: apigateway.AuthorizationType.CUSTOM,
+          });
+          adminOperators.addMethod('PUT', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}),
+          {
+            authorizer: adminAuthorizer,
+            authorizationType: apigateway.AuthorizationType.CUSTOM,
+          });
+          adminOperators.addMethod('DELETE', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}),
+          {
+            authorizer: adminAuthorizer,
+            authorizationType: apigateway.AuthorizationType.CUSTOM,
+          });
 
-          adminMetrics.addMethod('GET', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}));
-          adminMetrics.addMethod('POST', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}));
-          adminMetrics.addMethod('PUT', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}));
-          adminMetrics.addMethod('DELETE', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}));
+          adminMetrics.addMethod('GET', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}),
+          {
+            authorizer: adminAuthorizer,
+            authorizationType: apigateway.AuthorizationType.CUSTOM,
+          });
+          adminMetrics.addMethod('POST', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}),
+          {
+            authorizer: adminAuthorizer,
+            authorizationType: apigateway.AuthorizationType.CUSTOM,
+          });
+          adminMetrics.addMethod('PUT', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}),
+          {
+            authorizer: adminAuthorizer,
+            authorizationType: apigateway.AuthorizationType.CUSTOM,
+          });
+          adminMetrics.addMethod('DELETE', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}),
+          {
+            authorizer: adminAuthorizer,
+            authorizationType: apigateway.AuthorizationType.CUSTOM,
+          });
 
-          operatorHydrophones.addMethod('GET', new apigateway.LambdaIntegration(apiOperatorHandler, {proxy: true}));
-          operatorHydrophones.addMethod('POST', new apigateway.LambdaIntegration(apiOperatorHandler, {proxy: true}));
-          operatorHydrophones.addMethod('PUT', new apigateway.LambdaIntegration(apiOperatorHandler, {proxy: true}));
-          operatorHydrophones.addMethod('DELETE', new apigateway.LambdaIntegration(apiOperatorHandler, {proxy: true}));
+          operatorHydrophones.addMethod('GET', new apigateway.LambdaIntegration(apiOperatorHandler, {proxy: true}),
+          {
+            authorizer: operatorAuthorizer,
+            authorizationType: apigateway.AuthorizationType.CUSTOM,
+          });
 
-          operatorOperators.addMethod('GET', new apigateway.LambdaIntegration(apiOperatorHandler, {proxy: true}));
-          operatorOperators.addMethod('POST', new apigateway.LambdaIntegration(apiOperatorHandler, {proxy: true}));
-          operatorOperators.addMethod('PUT', new apigateway.LambdaIntegration(apiOperatorHandler, {proxy: true}));
-          operatorOperators.addMethod('DELETE', new apigateway.LambdaIntegration(apiOperatorHandler, {proxy: true}));
+          operatorOperators.addMethod('GET', new apigateway.LambdaIntegration(apiOperatorHandler, {proxy: true}),
+          {
+            authorizer: operatorAuthorizer,
+            authorizationType: apigateway.AuthorizationType.CUSTOM,
+          });
 
-          operatorMetrics.addMethod('GET', new apigateway.LambdaIntegration(apiOperatorHandler, {proxy: true}));
-          operatorMetrics.addMethod('POST', new apigateway.LambdaIntegration(apiOperatorHandler, {proxy: true}));
-          operatorMetrics.addMethod('PUT', new apigateway.LambdaIntegration(apiOperatorHandler, {proxy: true}));
-          operatorMetrics.addMethod('DELETE', new apigateway.LambdaIntegration(apiOperatorHandler, {proxy: true}));
+          operatorMetrics.addMethod('GET', new apigateway.LambdaIntegration(apiOperatorHandler, {proxy: true}),
+          {
+            authorizer: operatorAuthorizer,
+            authorizationType: apigateway.AuthorizationType.CUSTOM,
+          });
     }
 }

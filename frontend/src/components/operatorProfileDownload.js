@@ -6,7 +6,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import sampleHydrophoneData from '../sampledata/sampleHydrophoneData';
 
-export default function OperatorProfileDownload() {
+export default function OperatorProfileDownload({ jwt }) {
     // Create a state to store selected metrics for each hydrophone
     const [selectedMetrics, setSelectedMetrics] = useState({});
 

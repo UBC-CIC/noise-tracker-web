@@ -5,7 +5,7 @@ import OperatorProfileDownload from '../components/operatorProfileDownload';
 import OperatorProfileSettings from '../components/operatorProfileSettings';
 import OperatorProfileDirectory from '../components/operatorProfileDirectory';
 
-export default function OperatorProfile(){
+export default function OperatorProfile({ jwt }){
     const tabs = ["Information", "Settings", "Download", "Directory"];
 
     const [selectedTab, setSelectedTab] = useState("Information"); 
@@ -17,13 +17,13 @@ export default function OperatorProfile(){
     const renderTabContent = () => {
         switch (selectedTab) {
           case 'Information':
-            return <OperatorProfileInformation />;
+            return <OperatorProfileInformation jwt={jwt} />;
           case 'Settings':
-            return <OperatorProfileSettings />;
+            return <OperatorProfileSettings jwt={jwt} />;
           case 'Download':
-            return <OperatorProfileDownload />;
+            return <OperatorProfileDownload jwt={jwt} />;
           case 'Directory':
-            return <OperatorProfileDirectory />;
+            return <OperatorProfileDirectory jwt={jwt} />;
           default:
             return null;
         }

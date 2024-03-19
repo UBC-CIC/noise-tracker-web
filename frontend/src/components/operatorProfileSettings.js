@@ -1,7 +1,7 @@
 import { Typography } from "@mui/material";
 import sampleHydrophoneData from '../sampledata/sampleHydrophoneData';
 
-export default function OperatorProfileSettings(){
+export default function OperatorProfileSettings({ jwt }){
     return(
         <div style={{ paddingLeft: '20px' }}>
             <Typography style={{ fontSize: '24px', paddingBottom: '20px' }}>

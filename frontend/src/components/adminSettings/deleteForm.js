@@ -6,7 +6,7 @@ import sampleHydrophoneData from "../../sampledata/sampleHydrophoneData";
 import axios from "axios";
 import { useState } from "react";
 
-export default function DeleteForm({ mode, itemId, onDelete }) {
+export default function DeleteForm({ mode, itemId, onDelete, jwt }) {
     const API_URL = process.env.REACT_APP_API_URL;
 
     const [open, setOpen] = useState(false);
@@ -25,7 +25,12 @@ export default function DeleteForm({ mode, itemId, onDelete }) {
         if (mode === 'operator'){
             try{
                 const deleteOperator = await axios.delete(
-                  API_URL + 'admin/operators?operator_id=' + itemId
+                  API_URL + 'admin/operators?operator_id=' + itemId,
+                  {
+                    headers: {
+                      'Authorization': jwt
+                    }
+                  }
                 );
 
                 onDelete();
@@ -39,7 +44,12 @@ export default function DeleteForm({ mode, itemId, onDelete }) {
         else if (mode === 'hydrophone'){
             try{
                 const deleteOperator = await axios.delete(
-                  API_URL + 'admin/hydrophones?hydrophone_id=' + itemId
+                  API_URL + 'admin/hydrophones?hydrophone_id=' + itemId,
+                  {
+                    headers: {
+                      'Authorization': jwt
+                    }
+                  }
                 );
 
                 onDelete();

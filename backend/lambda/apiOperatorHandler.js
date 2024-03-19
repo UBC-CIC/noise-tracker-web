@@ -49,7 +49,16 @@ exports.handler = async (event) => {
         switch(request){
             case "GET /operator/operators":
                 data = await dbConnection`
-                	SELECT * FROM hydrophone_operators;
+	            	SELECT
+					    hydrophone_operators.hydrophone_operator_name,
+					    hydrophone_operators.contact_info,
+					    ARRAY_AGG(CONCAT(hydrophones.hydrophone_site)) AS hydrophone_info
+					FROM
+					    hydrophone_operators
+					LEFT JOIN
+					    hydrophones ON hydrophone_operators.hydrophone_operator_id = hydrophones.hydrophone_operator_id
+					GROUP BY
+					    hydrophone_operators.hydrophone_operator_name, hydrophone_operators.contact_info;
 				`;
                 response.body = JSON.stringify(data);
                 

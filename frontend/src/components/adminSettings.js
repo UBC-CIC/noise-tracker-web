@@ -6,7 +6,7 @@ import OperatorForm from "./adminSettings/operatorForm";
 import DeleteForm from './adminSettings/deleteForm';
 import axios from "axios";
 
-export default function AdminSettings() {
+export default function AdminSettings({ jwt }) {
   const API_URL = process.env.REACT_APP_API_URL;
 
   const [operatorData, setOperatorData] = useState([]);
@@ -18,7 +18,12 @@ export default function AdminSettings() {
   const fetchOperatorData = async () => {
     try{
       const response = await axios.get(
-        API_URL + 'admin/operators'
+        API_URL + 'admin/operators',
+        {
+          headers: {
+            'Authorization': jwt
+          }
+        }
       );
 
       const data = response.data;
@@ -46,7 +51,7 @@ export default function AdminSettings() {
             flex: 1,
             justifyContent: 'center',
           }}>
-            <OperatorForm mode="create" onUpdate={fetchOperatorData} />
+            <OperatorForm mode="create" onUpdate={fetchOperatorData} jwt={jwt} />
             <TableContainer component={Paper}>
             <Table>
                 <TableHead>
@@ -79,14 +84,16 @@ export default function AdminSettings() {
                             "hydrophone_operator_id": operator.hydrophone_operator_id,
                             "hydrophone_operator_name": operator.hydrophone_operator_name, 
                             "contact_info": operator.contact_info
-                          }} 
+                          }}
+                          jwt={jwt}
                         />
                     </StyledTableCell>
                     <StyledTableCell>
                         <DeleteForm 
                           mode="operator" 
                           itemId={operator.hydrophone_operator_id} 
-                          onDelete={fetchOperatorData}/>
+                          onDelete={fetchOperatorData}
+                          jwt={jwt}/>
                     </StyledTableCell>
                     </TableRow>
                 ))}

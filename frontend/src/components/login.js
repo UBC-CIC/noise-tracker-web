@@ -6,7 +6,7 @@ import Button from '@mui/material/Button';
 
 import { AuthenticationDetails, CognitoUser, CognitoUserPool } from 'amazon-cognito-identity-js';
 
-const Login = ({ loginStatus, setLoginStatus  }) => {
+const Login = ({ loginStatus, setLoginStatus, jwt, setJwt }) => {
     const [showError, setShowError] = useState(false);
     const [pageState, setPageState] = useState(0);
     const navigate = useNavigate(); 
@@ -14,8 +14,8 @@ const Login = ({ loginStatus, setLoginStatus  }) => {
     let   password;
 
     const poolData = {
-        UserPoolId: process.env.REACT_APP_USER_POOL_ID,
-        ClientId: process.env.REACT_APP_COGCLIENT,
+        UserPoolId: process.env.REACT_APP_USERPOOL_ID,
+        ClientId: process.env.REACT_APP_USERPOOL_WEB_CLIENT_ID,
     };
 
     const userPool = new CognitoUserPool(poolData);
@@ -63,9 +63,20 @@ const Login = ({ loginStatus, setLoginStatus  }) => {
             onSuccess: (session) => {
               setLoginStatus(true);
               navigate("/map");
+
+              // Extract and console log the JWT token
+            const jwtToken = session;
+            console.log("JWT Token:", jwtToken);
             },
             onFailure: (err) => {
-              setShowError(true);
+                if (err.message.includes("newPasswordRequired")) {
+                    // Handle force change password, navigate to change password page or show a message
+                    console.log("Force change password required. Please change your password.");
+                } else {
+                // Handle other authentication failures
+                console.log("Error: ", err);
+                setShowError(true);
+                }
             },
           });
     }

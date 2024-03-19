@@ -7,7 +7,7 @@ import sampleHydrophoneData from "../../sampledata/sampleHydrophoneData";
 import axios from "axios";
 import { useState } from "react";
 
-export default function OperatorForm({ mode, onUpdate, operatorData }) {
+export default function OperatorForm({ mode, onUpdate, operatorData, jwt }) {
     const API_URL = process.env.REACT_APP_API_URL;
 
     const [open, setOpen] = useState(false);
@@ -30,6 +30,11 @@ export default function OperatorForm({ mode, onUpdate, operatorData }) {
                   {
                     "hydrophone_operator_name": organization,
                     "contact_info": contact,
+                  },
+                  {
+                    headers: {
+                      'Authorization': jwt
+                    }
                   }
                 );
 
@@ -48,6 +53,11 @@ export default function OperatorForm({ mode, onUpdate, operatorData }) {
                     "hydrophone_operator_id": operatorData.hydrophone_operator_id,
                     "hydrophone_operator_name": organization,
                     "contact_info": contact,
+                  },
+                  {
+                    headers: {
+                      'Authorization': jwt
+                    }
                   }
                 );
 

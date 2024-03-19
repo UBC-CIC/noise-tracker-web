@@ -7,7 +7,7 @@ import HydrophoneForm from './adminSettings/hydrophoneForm';
 import DeleteForm from './adminSettings/deleteForm';
 import axios from 'axios';
 
-export default function AdminHydrophones(){
+export default function AdminHydrophones({ jwt }){
     const API_URL = process.env.REACT_APP_API_URL;
 
     const [hydrophoneData, setHydrophoneData] = useState([]);
@@ -19,7 +19,12 @@ export default function AdminHydrophones(){
     const fetchHydrophoneData = async () => {
       try{
         const response = await axios.get(
-          API_URL + 'admin/hydrophones'
+          API_URL + 'admin/hydrophones',
+          {
+            headers: {
+              'Authorization': jwt
+            }
+          }
         );
 
         const data = response.data;
@@ -48,7 +53,7 @@ export default function AdminHydrophones(){
           flex: 1,
           justifyContent: 'center',
         }}>
-          <HydrophoneForm mode="create" onUpdate={fetchHydrophoneData} />
+          <HydrophoneForm mode="create" onUpdate={fetchHydrophoneData} jwt={jwt} />
           <TableContainer component={Paper}>
             <Table>
               <TableHead>
@@ -97,13 +102,15 @@ export default function AdminHydrophones(){
                           "range": hydrophone.range,
                           "angle_of_view": hydrophone.angle_of_view
                         }}
+                        jwt={jwt}
                       />
                     </StyledTableCell>
                     <StyledTableCell>
                         <DeleteForm 
                           mode="hydrophone" 
                           itemId={hydrophone.hydrophone_id} 
-                          onDelete={fetchHydrophoneData}/>
+                          onDelete={fetchHydrophoneData}
+                          jwt={jwt}/>
                     </StyledTableCell>
                   </TableRow>
                 ))}
