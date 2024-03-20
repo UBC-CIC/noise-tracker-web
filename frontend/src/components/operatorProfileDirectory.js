@@ -6,7 +6,6 @@ import sampleHOData from '../sampledata/sampleHOData';
 import axios from 'axios';
 
 export default function OperatorProfileDirectory({ jwt }){
-    console.log("JWT: ", jwt);
     const API_URL = process.env.REACT_APP_API_URL;
 
     const [directoryData, setDirectoryData] = useState([]);
