@@ -7,12 +7,13 @@ import Button from '@mui/material/Button';
 import { AuthenticationDetails, CognitoUser, CognitoUserPool } from 'amazon-cognito-identity-js';
 
 const Login = ({ loginStatus, setLoginStatus, jwt, setJwt }) => {
-    const [showError, setShowError] = useState(false);
+    const [error, setError] = useState(null);
     const [pageState, setPageState] = useState(0);
     const [cognitoUser, setCognitoUser] = useState('');
     const navigate = useNavigate(); 
     let   username;
     let   password;
+    let confirmPassword;
 
     const poolData = {
         UserPoolId: process.env.REACT_APP_USERPOOL_ID,
@@ -72,12 +73,13 @@ const Login = ({ loginStatus, setLoginStatus, jwt, setJwt }) => {
             onFailure: (err) => {
                 // Handle other authentication failures
                 console.log("Error: ", err);
-                setShowError(true);
+                setError({ message: "Your username or password are incorrect, please contact the system admin to reset your password" });
             },
             newPasswordRequired: () => {   
                 // User needs to set a new password
                 setCognitoUser(cognitoUser);
                 setPageState(1); // Change page state to prompt for new password
+                setError(null);
             }
           });
     }
@@ -93,20 +95,28 @@ const Login = ({ loginStatus, setLoginStatus, jwt, setJwt }) => {
     };
 
     const handleNewPassword = (cognitoUser) => {
-        cognitoUser.completeNewPasswordChallenge(password, {}, {
-            onSuccess: (session) => {
-                // Handle successful password change
-                setLoginStatus(true);
-                navigate("/map");
-                const jwtToken = session.getAccessToken().getJwtToken();
-                setJwt(jwtToken);
-            },
-            onFailure: (err) => {
-                // Handle failure in setting new password
-                console.log("Error: ", err);
-                setShowError(true);
-            }
-        });
+        setError(null);
+        if (password === confirmPassword){
+            cognitoUser.completeNewPasswordChallenge(password, {}, {
+                onSuccess: (session) => {
+                    // Handle successful password change
+                    setLoginStatus(true);
+                    navigate("/map");
+                    const jwtToken = session.getAccessToken().getJwtToken();
+                    setJwt(jwtToken);
+                },
+                onFailure: (err) => {
+                    // Handle failure in setting new password
+                    if (err.code === "InvalidPasswordException") {
+                        setError({ message: "Invalid password. All passwords must have: minimum length of 8 characters, at least one lowercase letter, at least one uppercase letter, at least one digit, and at least one symbol" });
+                    }   
+                    console.log(err);
+                }
+            });
+        }
+        else{
+            setError({ message: "The passwords do not match" });
+        }
     };
     
 
@@ -153,8 +163,8 @@ const Login = ({ loginStatus, setLoginStatus, jwt, setJwt }) => {
                         sx={{m:1}}
                     >
                     </TextField>
-                    {showError && (
-                        <Alert severity="error">Your username or password are incorrect, please contact the system admin to reset your password</Alert>
+                    {error && (
+                        <Alert severity="error">{error.message}</Alert>
                     )}
                     <Button 
                         className="containedbutton"
@@ -166,24 +176,37 @@ const Login = ({ loginStatus, setLoginStatus, jwt, setJwt }) => {
                 </>
             ) : (
                 // Prompt for new password
-                <div>
+                <>
                     <TextField
                         className="textbox"
-                        onChange={(event) => { password = event.target.value }}
+                        onChange={(event) => { password=event.target.value }}
                         id="newPasswordInput"
                         label="New Password"
                         type="password"
                         variant="outlined"
                         sx={{ m: 1 }}
                     />
+                    <TextField
+                        className="textbox"
+                        onChange={(event) => { confirmPassword=event.target.value }}
+                        id="confirmNewPasswordInput"
+                        label="Confirm New Password"
+                        type="password"
+                        variant="outlined"
+                        sx={{ m: 1 }}
+                    />
+                    {error && (
+                        <Alert severity="error">{error.message}</Alert>
+                    )}
                     <Button
                         className="containedbutton"
                         variant="contained"
-                        onClick={() => { handleNewPassword(cognitoUser) }}
+                        onClick={() => {handleNewPassword(cognitoUser)} }
                         sx={{ m: 1 }}
-                    >Set New Password
+                    >
+                        Set New Password
                     </Button>
-                </div>
+                </>
                 )}
             </Box>
         )
