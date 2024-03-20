@@ -89,7 +89,8 @@ export class APIStack extends Stack {
           effect: iam.Effect.ALLOW,
           actions: [
             "cognito-idp:AdminCreateUser",
-            "cognito-idp:AdminDeleteUser"
+            "cognito-idp:AdminDeleteUser",
+            "cognito-idp:AdminAddUserToGroup"
           ],
           resources: [
             `arn:aws:cognito-idp:${this.region}:${this.account}:userpool/${functionalityStack.userPoolId}`

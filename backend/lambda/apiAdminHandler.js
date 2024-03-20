@@ -38,7 +38,7 @@ async function retrieveCognitoSecrets() {
 	return JSON.parse(secret.SecretString)
 }
 
-async function createCognitoUser(email, userPoolId, userPoolClientId) {
+async function createCognitoUser(email, userPoolId) {
   const params = {
     UserPoolId: userPoolId,
     Username: email,
@@ -55,6 +55,22 @@ async function createCognitoUser(email, userPoolId, userPoolClientId) {
     console.log('Cognito user created:', createUserResponse);
   } catch (error) {
     console.error('Error creating Cognito user:', error);
+    throw error;
+  }
+}
+
+async function addCognitoUserToGroup(email, userPoolId, groupName){
+	const params = {
+    UserPoolId: userPoolId,
+    Username: email,
+    GroupName: groupName
+  };
+
+  try {
+    const addUserToGroupResponse = await CognitoIdentityServiceProvider.adminAddUserToGroup(params).promise();
+    console.log('User added to group:', addUserToGroupResponse);
+  } catch (error) {
+    console.error('Error adding Cognito user to group:', error);
     throw error;
   }
 }
@@ -257,7 +273,10 @@ exports.handler = async (event) => {
     				const credentials = await retrieveCognitoSecrets();
 					
 					// Create Cognito user and send invitation
-    				await createCognitoUser(body.contact_info, credentials.REACT_APP_USERPOOL_ID, credentials.REACT_APP_USERPOOL_WEB_CLIENT_ID);
+    				await createCognitoUser(body.contact_info, credentials.REACT_APP_USERPOOL_ID);
+    				
+    				// Add Cognito user to group
+    				await addCognitoUserToGroup(body.contact_info, credentials.REACT_APP_USERPOOL_ID, "OPERATOR_USER");
             	}
 				
             	break;
