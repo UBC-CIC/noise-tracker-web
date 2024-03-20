@@ -12,6 +12,7 @@ import AdminDashboard from './pages/AdminDashboard';
 function App() {
   const [loginStatus, setLoginStatus] = useState(false);
   const [jwt, setJwt] = useState('');
+  const [group, setGroup] = useState('');
 
   const poolData = {
     UserPoolId: process.env.REACT_APP_USERPOOL_ID,
@@ -30,7 +31,9 @@ function App() {
             setLoginStatus(false);
           } else {
             const jwtToken = session.getAccessToken().getJwtToken();
+            const userGroup = session.getAccessToken().payload['cognito:groups'][0]
             setJwt(jwtToken);
+            setGroup(userGroup);
             setLoginStatus(true);
           }
         });
@@ -43,20 +46,27 @@ function App() {
 
   return (
     <Router>
-      <NavBar loginStatus={loginStatus} />
+      <NavBar loginStatus={loginStatus} group={group} />
       <Routes>
         <Route path="/" element={<InteractiveMap />} />
         <Route path="/map/*" element={<InteractiveMap />} />
         <Route path="/map/:hydrophoneName/:metricName" element={<InteractiveMap />} />
         {loginStatus ? (
           <>
-            <Route path="/signout" element={<LoginPage loginStatus={false} setLoginStatus={setLoginStatus} jwt={jwt} setJwt={setJwt} />} />
-            <Route path="/operatorprofile" element={<OperatorProfile jwt={jwt} />} />
-            <Route path="/admin" element={<AdminDashboard jwt={jwt} />} />
+          {group === 'OPERATOR_USER' && (
+              <Route path="/operatorprofile" element={<OperatorProfile jwt={jwt} />} />
+              
+            )}
+          {group === 'ADMIN_USER' && (
+            <>
+              <Route path="/admin" element={<AdminDashboard jwt={jwt} />} />
+            </>
+          )}
+            <Route path="/signout" element={<LoginPage loginStatus={false} setLoginStatus={setLoginStatus} jwt={jwt} setJwt={setJwt} group={group} setGroup={setGroup} />} />
           </>
         ) : (
           <>
-            <Route path="/login"element={<LoginPage loginStatus={loginStatus} setLoginStatus={setLoginStatus} jwt={jwt} setJwt={setJwt} />} />
+            <Route path="/login"element={<LoginPage loginStatus={loginStatus} setLoginStatus={setLoginStatus} jwt={jwt} setJwt={setJwt} group={group} setGroup={setGroup} />} />
           </>
         )}
       </Routes>

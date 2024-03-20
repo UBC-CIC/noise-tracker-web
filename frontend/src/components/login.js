@@ -6,7 +6,7 @@ import Button from '@mui/material/Button';
 
 import { AuthenticationDetails, CognitoUser, CognitoUserPool } from 'amazon-cognito-identity-js';
 
-const Login = ({ loginStatus, setLoginStatus, jwt, setJwt }) => {
+const Login = ({ loginStatus, setLoginStatus, jwt, setJwt, group, setGroup }) => {
     const [error, setError] = useState(null);
     const [pageState, setPageState] = useState(0);
     const [cognitoUser, setCognitoUser] = useState('');
@@ -32,6 +32,8 @@ const Login = ({ loginStatus, setLoginStatus, jwt, setJwt }) => {
               setLoginStatus(false);
             } else {
               const jwtToken = session.getAccessToken().getJwtToken();
+              const userGroup = session.getAccessToken().payload['cognito:groups'][0]
+              setGroup(userGroup);
               setJwt(jwtToken);
               setLoginStatus(true);
             }
@@ -68,6 +70,8 @@ const Login = ({ loginStatus, setLoginStatus, jwt, setJwt }) => {
               setLoginStatus(true);
               navigate("/map");
               const jwtToken = session.getAccessToken().getJwtToken();
+              const userGroup = session.getAccessToken().payload['cognito:groups'][0]
+              setGroup(userGroup);
               setJwt(jwtToken);
             },
             onFailure: (err) => {
@@ -103,6 +107,8 @@ const Login = ({ loginStatus, setLoginStatus, jwt, setJwt }) => {
                     setLoginStatus(true);
                     navigate("/map");
                     const jwtToken = session.getAccessToken().getJwtToken();
+                    const userGroup = session.getAccessToken().payload['cognito:groups'][0]
+                    setGroup(userGroup);
                     setJwt(jwtToken);
                 },
                 onFailure: (err) => {
