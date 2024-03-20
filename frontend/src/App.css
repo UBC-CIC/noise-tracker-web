@@ -1,38 +1,32 @@
-.App {
-  text-align: center;
+/* Apply color style to table header cells */
+.MuiTableCell-head {
+  background-color: #0c4850 !important;
+  color: #fff !important;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+/* Apply font size style to table body cells */
+.MuiTableCell-body {
+  font-size: 14px !important;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+/* Apply color style to buttons */
+.MuiButton-root {
+  background-color: #4B9690 !important;
+  color: #fff !important;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+/* Indicator color for selected tab */
+.MuiTabs-indicator {
+  background-color: #4B9690 !important;
 }
 
-.App-link {
-  color: #61dafb;
+/* Text color for selected tab */
+.Mui-selected {
+  color: #4B9690 !important;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* Apply color style to AppBar */
+.MuiAppBar-root {
+  background-color: #4B9690 !important;
+  color: #fff !important;
 }

@@ -1,9 +1,68 @@
+
+import { useState, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
-import { Table, TableBody, TableCell, tableCellClasses, TableContainer, TableHead, TableRow, Paper, IconButton } from '@mui/material';
+import { Table, TableBody, TableCell, tableCellClasses, TableContainer, TableHead, TableRow, Paper, CircularProgress } from '@mui/material';
 import sampleHydrophoneData from '../sampledata/sampleHydrophoneData';
 import HydrophoneForm from './adminSettings/hydrophoneForm';
+import DeleteForm from './adminSettings/deleteForm';
+import axios from 'axios';
 
-export default function AdminHydrophones(){
+export default function AdminHydrophones({ jwt }){
+    const API_URL = process.env.REACT_APP_API_URL;
+
+    const [hydrophoneData, setHydrophoneData] = useState([]);
+    const [operatorData, setOperatorData] = useState([]);
+    const [loading, setLoading] = useState(false); // State to track loading status
+
+    useEffect(() => {
+      setLoading(true); // Set loading to true when data fetching starts
+      fetchHydrophoneData();
+      fetchOperators();
+    }, []);
+
+    const fetchHydrophoneData = async () => {
+      try{
+        const response = await axios.get(
+          API_URL + 'admin/hydrophones',
+          {
+            headers: {
+              'Authorization': jwt
+            }
+          }
+        );
+
+        const data = response.data;
+        setHydrophoneData(data);
+      } 
+      
+      catch(error){
+        console.error("Error fetching hydrophone data: ", error);
+      } 
+      finally {
+        setLoading(false); // Set loading to false when data fetching completes 
+      }
+    }
+
+    const fetchOperators = async () => {
+      try{
+              const response = await axios.get(
+                  API_URL + 'admin/operators?query=getOperatorData',
+                  {
+                    headers: {
+                      'Authorization': jwt
+                    }
+                  }
+              );
+              
+              const data = response.data;
+              setOperatorData(data); 
+      }
+      catch(error){
+          console.log("Error fetching operators: ", error);
+      }
+  };
+
+
     const StyledTableCell = styled(TableCell)(({ theme }) => ({
         [`&.${tableCellClasses.head}`]: {
           backgroundColor: '#024959',
@@ -20,50 +79,77 @@ export default function AdminHydrophones(){
           flex: 1,
           justifyContent: 'center',
         }}>
-          <HydrophoneForm mode="create" />
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow style={{ background: '#f2f2f2' }}>
-                  <StyledTableCell>Hydrophone</StyledTableCell>
-                  <StyledTableCell>Location</StyledTableCell>
-                  <StyledTableCell>Summary</StyledTableCell>
-                  <StyledTableCell>Metrics</StyledTableCell>
-                  <StyledTableCell>Contact</StyledTableCell>
-                  <StyledTableCell></StyledTableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {sampleHydrophoneData.map((hydrophone, index) => (
-                  <TableRow key={hydrophone.name} style={{ background: index % 2 === 0 ? '#f9f9f9' : 'white' }}>
-                    <TableCell>{hydrophone.name}</TableCell>
-                    <TableCell>{hydrophone.coordinates}</TableCell>
-                    <TableCell>Summary goes here</TableCell>
-                    <TableCell>
-                      <div>
-                        <p>Public:</p>
-                        <ul>
-                          {hydrophone.metrics.map((metric, metricIndex) => (
-                            <li key={metricIndex}>{metric}</li>
-                          ))}
-                        </ul>
-                      </div>
-                      <div>
-                        <p>Private:</p>
-                        <ul>
-                          <li>N/A</li>
-                        </ul>
-                      </div>
-                    </TableCell>
-                    <TableCell>contact@gmail.com</TableCell>
-                    <TableCell>
-                      <HydrophoneForm mode="modify" />
-                    </TableCell>
+          <HydrophoneForm mode="create" onUpdate={fetchHydrophoneData} jwt={jwt} operatorData={operatorData} />
+          {loading ? ( // Render circular progress if loading is true
+                <center>
+                    <CircularProgress color="success" />
+                </center>
+          ) : (
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow style={{ background: '#f2f2f2' }}>
+                    <StyledTableCell>Hydrophone</StyledTableCell>
+                    <StyledTableCell>Hydrophone ID</StyledTableCell>
+                    <StyledTableCell>Operator</StyledTableCell>
+                    <StyledTableCell>Model</StyledTableCell>
+                    <StyledTableCell>Coordinates</StyledTableCell>
+                    <StyledTableCell>Deployment Date</StyledTableCell>
+                    <StyledTableCell>Angle of View (°)</StyledTableCell>
+                    <StyledTableCell>Depth (m)</StyledTableCell>
+                    <StyledTableCell>Range (m)</StyledTableCell>
+                    <StyledTableCell>Sampling Frequency (kHz)</StyledTableCell>
+                    <StyledTableCell>Edit</StyledTableCell>
+                    <StyledTableCell>Delete</StyledTableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                </TableHead>
+                <TableBody>
+                  {hydrophoneData.map((hydrophone, index) => (
+                    <TableRow key={hydrophone.hydrophone_id} style={{ background: index % 2 === 0 ? '#f9f9f9' : 'white' }}>
+                      <StyledTableCell>{hydrophone.hydrophone_site}</StyledTableCell>
+                      <StyledTableCell>{hydrophone.hydrophone_id}</StyledTableCell>
+                      <StyledTableCell>{hydrophone.hydrophone_operator_name}</StyledTableCell>
+                      <StyledTableCell>{hydrophone.hydrophone_name}</StyledTableCell>
+                      <StyledTableCell>{hydrophone.hydrophone_coordinates}</StyledTableCell>
+                      <StyledTableCell>{hydrophone.deployment_date}</StyledTableCell>
+                      <StyledTableCell>{hydrophone.angle_of_view}</StyledTableCell>
+                      <StyledTableCell>{hydrophone.depth}</StyledTableCell>
+                      <StyledTableCell>{hydrophone.range}</StyledTableCell>
+                      <StyledTableCell>{hydrophone.sampling_frequency}</StyledTableCell>
+                      <StyledTableCell>
+                        <HydrophoneForm 
+                          mode="modify" 
+                          onUpdate={fetchHydrophoneData} 
+                          hydrophoneData={{
+                            "hydrophone_id": hydrophone.hydrophone_id,
+                            "hydrophone_operator_id": hydrophone.hydrophone_operator_id,
+                            "hydrophone_operator_name": hydrophone.hydrophone_operator_name,
+                            "hydrophone_name": hydrophone.hydrophone_name,
+                            "hydrophone_site": hydrophone.hydrophone_site,
+                            "hydrophone_coordinates": hydrophone.hydrophone_coordinates,
+                            "sampling_frequency": hydrophone.sampling_frequency,
+                            "depth": hydrophone.depth,
+                            "deployment_date": hydrophone.deployment_date,
+                            "range": hydrophone.range,
+                            "angle_of_view": hydrophone.angle_of_view
+                          }}
+                          jwt={jwt}
+                          operatorData={operatorData}
+                        />
+                      </StyledTableCell>
+                      <StyledTableCell>
+                          <DeleteForm 
+                            mode="hydrophone" 
+                            itemId={hydrophone.hydrophone_id} 
+                            onDelete={fetchHydrophoneData}
+                            jwt={jwt}/>
+                      </StyledTableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
         </div>
       );
 }

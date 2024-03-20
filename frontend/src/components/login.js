@@ -6,16 +6,18 @@ import Button from '@mui/material/Button';
 
 import { AuthenticationDetails, CognitoUser, CognitoUserPool } from 'amazon-cognito-identity-js';
 
-const Login = ({ loginStatus, setLoginStatus  }) => {
-    const [showError, setShowError] = useState(false);
+const Login = ({ loginStatus, setLoginStatus, jwt, setJwt }) => {
+    const [error, setError] = useState(null);
     const [pageState, setPageState] = useState(0);
+    const [cognitoUser, setCognitoUser] = useState('');
     const navigate = useNavigate(); 
     let   username;
     let   password;
+    let confirmPassword;
 
     const poolData = {
-        UserPoolId: process.env.REACT_APP_USER_POOL_ID,
-        ClientId: process.env.REACT_APP_COGCLIENT,
+        UserPoolId: process.env.REACT_APP_USERPOOL_ID,
+        ClientId: process.env.REACT_APP_USERPOOL_WEB_CLIENT_ID,
     };
 
     const userPool = new CognitoUserPool(poolData);
@@ -29,6 +31,8 @@ const Login = ({ loginStatus, setLoginStatus  }) => {
             if (err) {
               setLoginStatus(false);
             } else {
+              const jwtToken = session.getAccessToken().getJwtToken();
+              setJwt(jwtToken);
               setLoginStatus(true);
             }
           });
@@ -63,10 +67,20 @@ const Login = ({ loginStatus, setLoginStatus  }) => {
             onSuccess: (session) => {
               setLoginStatus(true);
               navigate("/map");
+              const jwtToken = session.getAccessToken().getJwtToken();
+              setJwt(jwtToken);
             },
             onFailure: (err) => {
-              setShowError(true);
+                // Handle other authentication failures
+                console.log("Error: ", err);
+                setError({ message: "Your username or password are incorrect, please contact the system admin to reset your password" });
             },
+            newPasswordRequired: () => {   
+                // User needs to set a new password
+                setCognitoUser(cognitoUser);
+                setPageState(1); // Change page state to prompt for new password
+                setError(null);
+            }
           });
     }
 
@@ -77,6 +91,31 @@ const Login = ({ loginStatus, setLoginStatus  }) => {
             cognitoUser.signOut();
             setLoginStatus(false);
             navigate("/map");
+        }
+    };
+
+    const handleNewPassword = (cognitoUser) => {
+        setError(null);
+        if (password === confirmPassword){
+            cognitoUser.completeNewPasswordChallenge(password, {}, {
+                onSuccess: (session) => {
+                    // Handle successful password change
+                    setLoginStatus(true);
+                    navigate("/map");
+                    const jwtToken = session.getAccessToken().getJwtToken();
+                    setJwt(jwtToken);
+                },
+                onFailure: (err) => {
+                    // Handle failure in setting new password
+                    if (err.code === "InvalidPasswordException") {
+                        setError({ message: "Invalid password. All passwords must have: minimum length of 8 characters, at least one lowercase letter, at least one uppercase letter, at least one digit, and at least one symbol" });
+                    }   
+                    console.log(err);
+                }
+            });
+        }
+        else{
+            setError({ message: "The passwords do not match" });
         }
     };
     
@@ -103,35 +142,72 @@ const Login = ({ loginStatus, setLoginStatus  }) => {
                 alignItems="center"
                 minHeight="60vh"
             >
-                <TextField
-                    className="textbox" 
-                    onChange={(event)=>{username=event.target.value}}
-                    id="usernameinput" 
-                    label="username" 
-                    variant="outlined" 
-                    sx={{m:1}}
-                >
-                </TextField>
-                <TextField
-                    className="textbox" 
-                    onChange={(event)=>{password=event.target.value}}
-                    id="pwinput" 
-                    label="password" 
-                    type="password"
-                    variant="outlined" 
-                    sx={{m:1}}
-                >
-                </TextField>
-                {showError && (
-                    <Alert severity="error">Your username or password are incorrect, please contact the system admin to reset your password</Alert>
+                {pageState === 0 ? (
+                <>
+                    <TextField
+                        className="textbox" 
+                        onChange={(event)=>{username=event.target.value}}
+                        id="usernameinput" 
+                        label="username" 
+                        variant="outlined" 
+                        sx={{m:1}}
+                    >
+                    </TextField>
+                    <TextField
+                        className="textbox" 
+                        onChange={(event)=>{password=event.target.value}}
+                        id="pwinput" 
+                        label="password" 
+                        type="password"
+                        variant="outlined" 
+                        sx={{m:1}}
+                    >
+                    </TextField>
+                    {error && (
+                        <Alert severity="error">{error.message}</Alert>
+                    )}
+                    <Button 
+                        className="containedbutton"
+                        variant="contained" 
+                        onClick={() => {signIn()}}
+                        sx={{m:1}}
+                    >Login
+                    </Button>
+                </>
+            ) : (
+                // Prompt for new password
+                <>
+                    <TextField
+                        className="textbox"
+                        onChange={(event) => { password=event.target.value }}
+                        id="newPasswordInput"
+                        label="New Password"
+                        type="password"
+                        variant="outlined"
+                        sx={{ m: 1 }}
+                    />
+                    <TextField
+                        className="textbox"
+                        onChange={(event) => { confirmPassword=event.target.value }}
+                        id="confirmNewPasswordInput"
+                        label="Confirm New Password"
+                        type="password"
+                        variant="outlined"
+                        sx={{ m: 1 }}
+                    />
+                    {error && (
+                        <Alert severity="error">{error.message}</Alert>
+                    )}
+                    <Button
+                        className="containedbutton"
+                        variant="contained"
+                        onClick={() => {handleNewPassword(cognitoUser)} }
+                        sx={{ m: 1 }}
+                    >
+                        Set New Password
+                    </Button>
+                </>
                 )}
-                <Button 
-                    className="containedbutton"
-                    variant="contained" 
-                    onClick={() => {signIn()}}
-                    sx={{m:1}}
-                >Login
-                </Button>
             </Box>
         )
     }

@@ -11,7 +11,7 @@ const LineGraph = ({ hydrophoneData }) => {
       y: yAxis,
       type: 'scatter',
       mode: 'lines',
-      marker: { color: '#1976D2' },
+      marker: { color: '#4B9690' },
     },
   ];
 
