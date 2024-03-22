@@ -238,8 +238,8 @@ exports.handler = async (event) => {
 						LEFT JOIN
 						    hydrophones ON hydrophone_operators.hydrophone_operator_id = hydrophones.hydrophone_operator_id
 						GROUP BY
-						    hydrophone_operators.hydrophone_operator_id, hydrophone_operators.hydrophone_operator_name, hydrophone_operators.contact_info;
-					`;
+						    hydrophone_operators.hydrophone_operator_id;
+						`;
 	            	response.body= JSON.stringify(data);
             	}
             	
@@ -251,10 +251,22 @@ exports.handler = async (event) => {
             		
             		data = await dbConnection`
 		            	INSERT INTO hydrophone_operators
-			            	(hydrophone_operator_name, contact_info)
-			            VALUES 
-			            	(${body.hydrophone_operator_name}, ${body.contact_info})
-			            RETURNING hydrophone_operator_id;
+						    (
+						        hydrophone_operator_name,
+						        contact_name,
+						        contact_email,
+						        website,
+						        in_directory
+						    )
+						VALUES 
+						    (
+						        ${body.hydrophone_operator_name},
+						        ${body.contact_name},
+						        ${body.contact_email},
+						        ${body.website},
+						        ${body.in_directory}
+						    )
+						RETURNING hydrophone_operator_id;
 						`;
 
 			        // The result will be an array, get the first element as the UUID
@@ -273,10 +285,10 @@ exports.handler = async (event) => {
     				const credentials = await retrieveCognitoSecrets();
 					
 					// Create Cognito user and send invitation
-    				await createCognitoUser(body.contact_info, credentials.REACT_APP_USERPOOL_ID);
+    				await createCognitoUser(body.contact_email, credentials.REACT_APP_USERPOOL_ID);
     				
     				// Add Cognito user to group
-    				await addCognitoUserToGroup(body.contact_info, credentials.REACT_APP_USERPOOL_ID, "OPERATOR_USER");
+    				await addCognitoUserToGroup(body.contact_email, credentials.REACT_APP_USERPOOL_ID, "OPERATOR_USER");
             	}
 				
             	break;
@@ -287,8 +299,14 @@ exports.handler = async (event) => {
             		
             		data = await dbConnection`
 		            	UPDATE hydrophone_operators
-			            SET hydrophone_operator_name = ${body.hydrophone_operator_name}, contact_info = ${body.contact_info}
-			            WHERE hydrophone_operator_id = ${body.hydrophone_operator_id};
+						SET 
+						    hydrophone_operator_name = ${body.hydrophone_operator_name},
+						    contact_name = ${body.contact_name},
+						    contact_email = ${body.contact_email},
+						    website = ${body.website},
+						    in_directory = ${body.in_directory}
+						WHERE 
+						    hydrophone_operator_id = ${body.hydrophone_operator_id};
 						`;
             	}
 				
@@ -298,15 +316,15 @@ exports.handler = async (event) => {
             	if (event.queryStringParameters['operator_id'] != null){
             		const operator_id = event.queryStringParameters['operator_id'];
 
-            		// Delete the hydrophone operator from the database and return the hydrophone_operator_id and contact_info
+            		// Delete the hydrophone operator from the database and return the hydrophone_operator_id and contact_email
 			        data = await dbConnection`
 			            DELETE FROM hydrophone_operators
 			            WHERE hydrophone_operator_id = ${operator_id}
-			            RETURNING hydrophone_operator_id, contact_info;`;
+			            RETURNING hydrophone_operator_id, contact_email;`;
 			
 			        if (data.length > 0) {
 			            const hydrophone_operator_id = data[0].hydrophone_operator_id;
-			            const username = data[0].contact_info;
+			            const username = data[0].contact_email;
 			            
 			            // Fetch Cognito credentials
     					const credentials = await retrieveCognitoSecrets();
