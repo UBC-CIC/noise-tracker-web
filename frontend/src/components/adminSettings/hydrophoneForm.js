@@ -304,7 +304,7 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt, op
                                     onChange={handleChange}
                                 />
                                 <Typography style={{ marginTop: '20px' }}>
-                                    Calibration information is available
+                                    Is calibration information available?
                                 </Typography>
                                 <FormControlLabel
                                   control={
@@ -313,7 +313,7 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt, op
                                         checked={formData.calibration_available}
                                         onChange={handleCheckboxChange}
                                     />}
-                                  label="True"
+                                  label="Yes"
                                 />
                         </LocalizationProvider>
                     </DialogContent>
