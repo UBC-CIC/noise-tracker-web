@@ -112,30 +112,52 @@ exports.handler = async (event) => {
 	        		const operator_id = await dbConnection`
 					    SELECT hydrophone_operator_id
 					    FROM hydrophone_operators
-					    WHERE hydrophone_operator_name = ${body.hydrophone_operator_id};
+					    WHERE hydrophone_operator_name = ${body.hydrophone_operator_name};
 					`;
 					
 	        		data = await dbConnection`
 		            	INSERT INTO hydrophones
 			            	(hydrophone_operator_id, 
-			            	 hydrophone_name, 
-			            	 hydrophone_site,
-			            	 hydrophone_coordinates, 
+			            	 site,
+			            	 coordinates,
+			        		 model,
+			        		 mounting_type,
+			        		 height_from_seafloor,
 			            	 sampling_frequency,
 			            	 depth,
-			            	 deployment_date,
+			            	 first_deployment_date,
+			            	 last_deployment_date,
 			            	 range,
-			            	 angle_of_view)
+			            	 angle_of_view,
+			            	 file_length,
+			            	 file_format,
+			            	 directory,
+			            	 file_name,
+			            	 timezone,
+			            	 storage_interval,
+			            	 last_data_upload,
+			            	 calibration_available)
 			            VALUES 
 			            	(${operator_id[0].hydrophone_operator_id}, 
-			            	 ${body.hydrophone_name},
-			            	 ${body.hydrophone_site},
-			            	 ${body.hydrophone_coordinates},
+			            	 ${body.site},
+			            	 ${body.coordinates},
+			            	 ${body.model},
+			            	 ${body.mounting_type},
+			            	 ${body.height_from_seafloor},
 			            	 ${body.sampling_frequency},
 			            	 ${body.depth},
-			            	 ${body.deployment_date},
+			            	 ${body.first_deployment_date},
+			            	 ${body.last_deployment_date},
 			            	 ${body.range},
-			            	 ${body.angle_of_view})
+			            	 ${body.angle_of_view},
+			            	 ${body.file_length},
+			            	 ${body.file_format},
+			            	 ${body.directory},
+			            	 ${body.file_name},
+			            	 ${body.timezone},
+			            	 ${body.storage_interval},
+			            	 ${body.last_data_upload},
+			            	 ${body.calibration_available})
 			        	RETURNING hydrophone_id;
 						`;
 					
@@ -167,15 +189,26 @@ exports.handler = async (event) => {
             		data = await dbConnection`
 		            	UPDATE hydrophones
 			            SET 
-			            	hydrophone_operator_id = ${operator_id[0].hydrophone_operator_id},
-						    hydrophone_name = ${body.hydrophone_name},
-						    hydrophone_site = ${body.hydrophone_site},
-						    hydrophone_coordinates = ${body.hydrophone_coordinates},
+			            	hydrophone_operator_id = ${operator_id[0].hydrophone_operator_id}, 
+						    site = ${body.site},
+						    coordinates = ${body.coordinates},
+						    model = ${body.model},
+						    mounting_type = ${body.mounting_type},
+			            	height_from_seafloor = ${body.height_from_seafloor},
 						    sampling_frequency = ${body.sampling_frequency},
 						    depth = ${body.depth},
-						    deployment_date = ${body.deployment_date},
+						    first_deployment_date = ${body.first_deployment_date},
+						    last_deployment_date = ${body.last_deployment_date},
 						    range = ${body.range},
-						    angle_of_view = ${body.angle_of_view}
+						    angle_of_view = ${body.angle_of_view},
+						    file_length = ${body.file_length},
+						    file_format = ${body.file_format},
+						    directory = ${body.directory},
+						    file_name = ${body.file_name},
+						    timezone = ${body.timezone},
+						    storage_interval = ${body.storage_interval},
+						    last_data_upload = ${body.last_data_upload},
+						    calibration_available = ${body.calibration_available}
 			            WHERE hydrophone_id = ${body.hydrophone_id};
 						`;
             	}
@@ -232,7 +265,7 @@ exports.handler = async (event) => {
 	            	data = await dbConnection`
 		            	SELECT
 						    hydrophone_operators.*,
-							ARRAY_AGG(CONCAT(hydrophones.hydrophone_site)) AS hydrophone_info
+							ARRAY_AGG(CONCAT(hydrophones.site)) AS hydrophone_info
 						FROM
 						    hydrophone_operators
 						LEFT JOIN

@@ -52,7 +52,7 @@ exports.handler = async (event) => {
 	            	SELECT
 					    hydrophone_operators.hydrophone_operator_name,
 					    hydrophone_operators.contact_email,
-					    ARRAY_AGG(CONCAT(hydrophones.hydrophone_site)) AS hydrophone_info
+					    ARRAY_AGG(CONCAT(hydrophones.site)) AS hydrophone_info
 					FROM
 					    hydrophone_operators
 					LEFT JOIN
