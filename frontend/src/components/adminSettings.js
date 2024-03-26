@@ -48,6 +48,18 @@ export default function AdminSettings({ jwt }) {
         [`&.${tableCellClasses.body}`]: {
           fontSize: 14,
         },
+        '&:nth-last-child(2)': {
+          position: 'sticky',
+          right: '72px',
+          backgroundColor: '#f9f9f9',
+          zIndex: 1,
+        },
+        '&:last-child': { 
+          position: 'sticky',
+          right: 0,
+          backgroundColor: '#f9f9f9',
+          zIndex: 1,
+        },
       }));
 
     return(
@@ -62,7 +74,7 @@ export default function AdminSettings({ jwt }) {
                     <CircularProgress color="success" />
                 </center>
             ) : (
-              <TableContainer component={Paper}>
+              <TableContainer component={Paper} stickyHeader>
               <Table>
                   <TableHead>
                       <TableRow style={{ background: '#f2f2f2' }}>

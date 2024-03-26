@@ -71,6 +71,18 @@ export default function AdminHydrophones({ jwt }){
         [`&.${tableCellClasses.body}`]: {
           fontSize: 14,
         },
+        '&:nth-last-child(2)': {
+          position: 'sticky',
+          right: '72px',
+          backgroundColor: '#f9f9f9',
+          zIndex: 1,
+        },
+        '&:last-child': { 
+          position: 'sticky',
+          right: 0,
+          backgroundColor: '#f9f9f9',
+          zIndex: 1,
+        },
       }));
 
     return (
@@ -86,7 +98,7 @@ export default function AdminHydrophones({ jwt }){
                 </center>
           ) : (
             <div style={{ width: '100%', overflowX: 'auto' }}>
-            <TableContainer component={Paper}>
+            <TableContainer component={Paper} stickyHeader>
               <Table>
                 <TableHead>
                   <TableRow style={{ background: '#f2f2f2' }}>
