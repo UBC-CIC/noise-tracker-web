@@ -48,6 +48,24 @@ export default function AdminSettings({ jwt }) {
         [`&.${tableCellClasses.body}`]: {
           fontSize: 14,
         },
+        '&:first-child': { 
+          position: 'sticky',
+          left: 0,
+          backgroundColor: '#f9f9f9',
+          zIndex: 1,
+        },
+        '&:nth-last-child(2)': {
+          position: 'sticky',
+          right: '72px',
+          backgroundColor: '#f9f9f9',
+          zIndex: 1,
+        },
+        '&:last-child': { 
+          position: 'sticky',
+          right: 0,
+          backgroundColor: '#f9f9f9',
+          zIndex: 1,
+        },
       }));
 
     return(
@@ -62,14 +80,17 @@ export default function AdminSettings({ jwt }) {
                     <CircularProgress color="success" />
                 </center>
             ) : (
-              <TableContainer component={Paper}>
+              <TableContainer component={Paper} stickyHeader>
               <Table>
                   <TableHead>
                       <TableRow style={{ background: '#f2f2f2' }}>
-                      <StyledTableCell>Operator</StyledTableCell>
+                      <StyledTableCell>Organization</StyledTableCell>
                       <StyledTableCell>Operator ID</StyledTableCell>
                       <StyledTableCell>Hydrophones</StyledTableCell>
-                      <StyledTableCell>Contact</StyledTableCell>
+                      <StyledTableCell>Contact Name</StyledTableCell>
+                      <StyledTableCell>Contact Email</StyledTableCell>
+                      <StyledTableCell>Organization Website</StyledTableCell>
+                      <StyledTableCell>Opted in to Directory</StyledTableCell>
                       <StyledTableCell>Edit</StyledTableCell>
                       <StyledTableCell>Delete</StyledTableCell>
                       </TableRow>
@@ -85,7 +106,10 @@ export default function AdminSettings({ jwt }) {
                           ))}
                           </ul>
                       </StyledTableCell>
-                      <StyledTableCell>{operator.contact_info}</StyledTableCell>
+                      <StyledTableCell>{operator.contact_name}</StyledTableCell>
+                      <StyledTableCell>{operator.contact_email}</StyledTableCell>
+                      <StyledTableCell>{operator.website}</StyledTableCell>
+                      <StyledTableCell>{operator.in_directory ? 'Yes' : 'No'}</StyledTableCell>
                       <StyledTableCell>
                           <OperatorForm 
                             mode="modify" 
@@ -93,7 +117,10 @@ export default function AdminSettings({ jwt }) {
                             operatorData={{
                               "hydrophone_operator_id": operator.hydrophone_operator_id,
                               "hydrophone_operator_name": operator.hydrophone_operator_name, 
-                              "contact_info": operator.contact_info
+                              "contact_name": operator.contact_name,
+                              "contact_email": operator.contact_email,
+                              "website": operator.website,
+                              "in_directory": operator.in_directory,
                             }}
                             jwt={jwt}
                           />

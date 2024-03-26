@@ -71,6 +71,24 @@ export default function AdminHydrophones({ jwt }){
         [`&.${tableCellClasses.body}`]: {
           fontSize: 14,
         },
+        '&:first-child': { 
+          position: 'sticky',
+          left: 0,
+          backgroundColor: '#f9f9f9',
+          zIndex: 1,
+        },
+        '&:nth-last-child(2)': {
+          position: 'sticky',
+          right: '72px',
+          backgroundColor: '#f9f9f9',
+          zIndex: 1,
+        },
+        '&:last-child': { 
+          position: 'sticky',
+          right: 0,
+          backgroundColor: '#f9f9f9',
+          zIndex: 1,
+        },
       }));
 
     return (
@@ -85,20 +103,32 @@ export default function AdminHydrophones({ jwt }){
                     <CircularProgress color="success" />
                 </center>
           ) : (
-            <TableContainer component={Paper}>
+            <div style={{ width: '100%', overflowX: 'auto' }}>
+            <TableContainer component={Paper} stickyHeader>
               <Table>
                 <TableHead>
                   <TableRow style={{ background: '#f2f2f2' }}>
                     <StyledTableCell>Hydrophone</StyledTableCell>
                     <StyledTableCell>Hydrophone ID</StyledTableCell>
                     <StyledTableCell>Operator</StyledTableCell>
-                    <StyledTableCell>Model</StyledTableCell>
                     <StyledTableCell>Coordinates</StyledTableCell>
-                    <StyledTableCell>Deployment Date</StyledTableCell>
-                    <StyledTableCell>Angle of View (°)</StyledTableCell>
-                    <StyledTableCell>Depth (m)</StyledTableCell>
-                    <StyledTableCell>Range (m)</StyledTableCell>
+                    <StyledTableCell>Model</StyledTableCell>
+                    <StyledTableCell>Mounting Type</StyledTableCell>
+                    <StyledTableCell>Height from Seafloor</StyledTableCell>
                     <StyledTableCell>Sampling Frequency (kHz)</StyledTableCell>
+                    <StyledTableCell>Depth (m)</StyledTableCell>
+                    <StyledTableCell>First Deployment Date</StyledTableCell>
+                    <StyledTableCell>Last Deployment Date</StyledTableCell>
+                    <StyledTableCell>Range (m)</StyledTableCell>
+                    <StyledTableCell>Angle of View (°)</StyledTableCell>
+                    <StyledTableCell>File Length</StyledTableCell>
+                    <StyledTableCell>File Format</StyledTableCell>
+                    <StyledTableCell>Directory</StyledTableCell>
+                    <StyledTableCell>File Name</StyledTableCell>
+                    <StyledTableCell>Timezone</StyledTableCell>
+                    <StyledTableCell>Storage Interval</StyledTableCell>
+                    <StyledTableCell>Last Data Upload</StyledTableCell>
+                    <StyledTableCell>Calibration Available</StyledTableCell>
                     <StyledTableCell>Edit</StyledTableCell>
                     <StyledTableCell>Delete</StyledTableCell>
                   </TableRow>
@@ -106,16 +136,27 @@ export default function AdminHydrophones({ jwt }){
                 <TableBody>
                   {hydrophoneData.map((hydrophone, index) => (
                     <TableRow key={hydrophone.hydrophone_id} style={{ background: index % 2 === 0 ? '#f9f9f9' : 'white' }}>
-                      <StyledTableCell>{hydrophone.hydrophone_site}</StyledTableCell>
+                      <StyledTableCell>{hydrophone.site}</StyledTableCell>
                       <StyledTableCell>{hydrophone.hydrophone_id}</StyledTableCell>
                       <StyledTableCell>{hydrophone.hydrophone_operator_name}</StyledTableCell>
-                      <StyledTableCell>{hydrophone.hydrophone_name}</StyledTableCell>
-                      <StyledTableCell>{hydrophone.hydrophone_coordinates}</StyledTableCell>
-                      <StyledTableCell>{hydrophone.deployment_date}</StyledTableCell>
-                      <StyledTableCell>{hydrophone.angle_of_view}</StyledTableCell>
-                      <StyledTableCell>{hydrophone.depth}</StyledTableCell>
-                      <StyledTableCell>{hydrophone.range}</StyledTableCell>
+                      <StyledTableCell>{hydrophone.coordinates}</StyledTableCell>
+                      <StyledTableCell>{hydrophone.model}</StyledTableCell>
+                      <StyledTableCell>{hydrophone.mounting_type}</StyledTableCell>
+                      <StyledTableCell>{hydrophone.height_from_seafloor}</StyledTableCell>
                       <StyledTableCell>{hydrophone.sampling_frequency}</StyledTableCell>
+                      <StyledTableCell>{hydrophone.depth}</StyledTableCell>
+                      <StyledTableCell>{hydrophone.first_deployment_date}</StyledTableCell>
+                      <StyledTableCell>{hydrophone.last_deployment_date}</StyledTableCell>
+                      <StyledTableCell>{hydrophone.range}</StyledTableCell>
+                      <StyledTableCell>{hydrophone.angle_of_view}</StyledTableCell>
+                      <StyledTableCell>{hydrophone.file_length}</StyledTableCell>
+                      <StyledTableCell>{hydrophone.file_format}</StyledTableCell>
+                      <StyledTableCell>{hydrophone.directory}</StyledTableCell>
+                      <StyledTableCell>{hydrophone.file_name}</StyledTableCell>
+                      <StyledTableCell>{hydrophone.timezone}</StyledTableCell>
+                      <StyledTableCell>{hydrophone.storage_interval}</StyledTableCell>
+                      <StyledTableCell>{hydrophone.last_data_upload}</StyledTableCell>
+                      <StyledTableCell>{hydrophone.calibration_available ? 'Yes' : 'No'}</StyledTableCell>
                       <StyledTableCell>
                         <HydrophoneForm 
                           mode="modify" 
@@ -124,14 +165,25 @@ export default function AdminHydrophones({ jwt }){
                             "hydrophone_id": hydrophone.hydrophone_id,
                             "hydrophone_operator_id": hydrophone.hydrophone_operator_id,
                             "hydrophone_operator_name": hydrophone.hydrophone_operator_name,
-                            "hydrophone_name": hydrophone.hydrophone_name,
-                            "hydrophone_site": hydrophone.hydrophone_site,
-                            "hydrophone_coordinates": hydrophone.hydrophone_coordinates,
+                            "site": hydrophone.site,
+                            "coordinates": hydrophone.coordinates,
+                            "model": hydrophone.model,
+                            "mounting_type": hydrophone.mounting_type,
                             "sampling_frequency": hydrophone.sampling_frequency,
                             "depth": hydrophone.depth,
-                            "deployment_date": hydrophone.deployment_date,
+                            "first_deployment_date": hydrophone.first_deployment_date,
+                            "last_deployment_date": hydrophone.last_deployment_date,
                             "range": hydrophone.range,
-                            "angle_of_view": hydrophone.angle_of_view
+                            "angle_of_view": hydrophone.angle_of_view,
+                            "height_from_seafloor": hydrophone.height_from_seafloor,
+                            "file_length": hydrophone.file_length,
+                            "file_format": hydrophone.file_format,
+                            "directory": hydrophone.directory,
+                            "file_name": hydrophone.file_name,
+                            "timezone": hydrophone.timezone,
+                            "storage_interval": hydrophone.storage_interval,
+                            "last_data_upload": hydrophone.last_data_upload,
+                            "calibration_available": hydrophone.calibration_available
                           }}
                           jwt={jwt}
                           operatorData={operatorData}
@@ -149,6 +201,7 @@ export default function AdminHydrophones({ jwt }){
                 </TableBody>
               </Table>
             </TableContainer>
+            </div>
           )}
         </div>
       );

@@ -51,14 +51,16 @@ exports.handler = async (event) => {
                 data = await dbConnection`
 	            	SELECT
 					    hydrophone_operators.hydrophone_operator_name,
-					    hydrophone_operators.contact_info,
-					    ARRAY_AGG(CONCAT(hydrophones.hydrophone_site)) AS hydrophone_info
+					    hydrophone_operators.contact_email,
+					    ARRAY_AGG(CONCAT(hydrophones.site)) AS hydrophone_info
 					FROM
 					    hydrophone_operators
 					LEFT JOIN
 					    hydrophones ON hydrophone_operators.hydrophone_operator_id = hydrophones.hydrophone_operator_id
+					WHERE
+    					hydrophone_operators.in_directory = 'true'
 					GROUP BY
-					    hydrophone_operators.hydrophone_operator_name, hydrophone_operators.contact_info;
+					    hydrophone_operators.hydrophone_operator_name, hydrophone_operators.contact_email;
 				`;
                 response.body = JSON.stringify(data);
                 

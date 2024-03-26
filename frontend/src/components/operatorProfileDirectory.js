@@ -79,7 +79,7 @@ export default function OperatorProfileDirectory({ jwt }){
                           ))}
                           </ul>
                       </StyledTableCell>
-                      <StyledTableCell>{operator.contact_info}</StyledTableCell>
+                      <StyledTableCell>{operator.contact_email}</StyledTableCell>
                       </TableRow>
                   ))}
               </Table>

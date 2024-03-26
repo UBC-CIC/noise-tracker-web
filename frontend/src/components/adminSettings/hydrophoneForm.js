@@ -1,4 +1,17 @@
-import { Typography, TextField, Button, Dialog, DialogTitle, DialogContent, DialogActions, IconButton, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
+import { Typography, 
+         TextField, 
+         Button, 
+         Dialog, 
+         DialogTitle, 
+         DialogContent, 
+         DialogActions, 
+         IconButton, 
+         Select, 
+         MenuItem, 
+         FormControl, 
+         InputLabel, 
+         FormControlLabel,
+         Checkbox } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -12,15 +25,28 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt, op
     const API_URL = process.env.REACT_APP_API_URL;
 
     const [open, setOpen] = useState(false);
-    const [operator, setOperator] = useState(hydrophoneData?.hydrophone_operator_name || '');
-    const [site, setSite] = useState(hydrophoneData?.hydrophone_site || '');
-    const [location, setLocation] = useState(hydrophoneData?.hydrophone_coordinates || '');
-    const [hydrophone, setHydrophone] = useState(hydrophoneData?.hydrophone_name || '');
-    const [samplingFrequency, setSamplingFrequency] = useState(hydrophoneData?.sampling_frequency || '');
-    const [depth, setDepth] = useState(hydrophoneData?.depth || '');
-    const [deploymentDate, setDeploymentDate] = useState(dayjs(hydrophoneData?.deployment_date) || null);
-    const [range, setRange] = useState(hydrophoneData?.range || '');
-    const [angleOfView, setAngleOfView] = useState(hydrophoneData?.angle_of_view || '');
+    const [formData, setFormData] = useState({
+        hydrophone_operator_name: hydrophoneData?.hydrophone_operator_name || '',
+        site: hydrophoneData?.site || '',
+        coordinates: hydrophoneData?.coordinates || '',
+        model: hydrophoneData?.model || '',
+        mounting_type: hydrophoneData?.mounting_type || '',
+        height_from_seafloor: hydrophoneData?.height_from_seafloor || '',
+        sampling_frequency: hydrophoneData?.sampling_frequency || '',
+        depth: hydrophoneData?.depth || '',
+        first_deployment_date: dayjs(hydrophoneData?.first_deployment_date) || null,
+        last_deployment_date: dayjs(hydrophoneData?.last_deployment_date) || null,
+        range: hydrophoneData?.range || '',
+        angle_of_view: hydrophoneData?.angle_of_view || '',
+        file_length: hydrophoneData?.file_length || '',
+        file_format: hydrophoneData?.file_format || '',
+        directory: hydrophoneData?.directory || '',
+        file_name: hydrophoneData?.file_name || '',
+        timezone: hydrophoneData?.timezone || '',
+        storage_interval: hydrophoneData?.storage_interval || '',
+        last_data_upload: 'N/A',
+        calibration_available: hydrophoneData?.calibration_available || ''
+    });
 
     const handleOpen = () => {
         setOpen(true);
@@ -31,21 +57,13 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt, op
     };
 
     const handleSave = async () => {
+        const requestData = { ...formData };
+
         if (mode === 'create'){
             try{
                 const response = await axios.post(
                   API_URL + 'admin/hydrophones',
-                  {
-                    "hydrophone_operator_id": operator,
-                    "hydrophone_site": site,
-                    "hydrophone_name": hydrophone,
-                    "hydrophone_coordinates": location,
-                    "deployment_date": deploymentDate,
-                    "angle_of_view": angleOfView,
-                    "depth": depth,
-                    "range": range,
-                    "sampling_frequency": samplingFrequency
-                  },
+                  requestData,
                   {
                     headers: {
                       'Authorization': jwt
@@ -61,21 +79,12 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt, op
               }
         }
         else if (mode === 'modify'){
+            requestData.hydrophone_id = hydrophoneData.hydrophone_id;
+
             try{
                 const response = await axios.put(
                   API_URL + 'admin/hydrophones',
-                  {
-                    "hydrophone_id": hydrophoneData.hydrophone_id,
-                    "hydrophone_operator_name": operator,
-                    "hydrophone_site": site,
-                    "hydrophone_name": hydrophone,
-                    "hydrophone_coordinates": location,
-                    "deployment_date": deploymentDate,
-                    "angle_of_view": angleOfView,
-                    "depth": depth,
-                    "range": range,
-                    "sampling_frequency": samplingFrequency
-                  },
+                  requestData,
                   {
                     headers: {
                       'Authorization': jwt
@@ -94,40 +103,18 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt, op
         handleClose(); // Close the dialog after saving
     };
 
-    const handleOperatorChange = (event) => {
-        setOperator(event.target.value);
+    const handleChange = (event) => {
+        const { name, value } = event.target;
+        setFormData({ ...formData, [name]: value });
     };
 
-    const handleSiteChange = (event) => {
-        setSite(event.target.value);
+    const handleDateChange = (date, name) => {
+        setFormData({ ...formData, [name]: date });
     };
 
-    const handleLocationChange = (event) => {
-        setLocation(event.target.value);
-    };
-
-    const handleHydrophoneChange = (event) => {
-        setHydrophone(event.target.value);
-    };
-
-    const handleSamplingFrequencyChange = (event) => {
-        setSamplingFrequency(event.target.value);
-    };
-
-    const handleDepthChange = (event) => {
-        setDepth(event.target.value);
-    };
-
-    const handleDeploymentDateChange = (date) => {
-        setDeploymentDate(date);
-    };
-
-    const handleRangeChange = (event) => {
-        setRange(event.target.value);
-    };
-
-    const handleAngleOfViewChange = (event) => {
-        setAngleOfView(event.target.value);
+    const handleCheckboxChange = (event) => {
+        const { name, checked } = event.target;
+        setFormData({ ...formData, [name]: checked });
     };
 
     return (
@@ -149,9 +136,10 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt, op
                                     <InputLabel id="operator-label">Operator</InputLabel>
                                     <Select
                                         labelId="operator-label"
+                                        name="hydrophone_operator_name"
                                         label="Operator"
-                                        value={operator}
-                                        onChange={handleOperatorChange}
+                                        value={formData.hydrophone_operator_name}
+                                        onChange={handleChange}
                                         fullWidth
                                     >
                                         {operatorData.length > 0 && operatorData.map((operator, index) => (
@@ -163,67 +151,169 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt, op
                                 </FormControl>
                                 <TextField
                                     label="Site"
+                                    name="site"
                                     variant="outlined"
                                     fullWidth
                                     margin="normal"
-                                    value={site}
-                                    onChange={handleSiteChange}
+                                    value={formData.site}
+                                    onChange={handleChange}
                                 />
                                 <TextField
                                     label="Location (Coordinates)"
+                                    name="coordinates"
                                     variant="outlined"
                                     fullWidth
                                     margin="normal"
-                                    value={location}
-                                    onChange={handleLocationChange}
+                                    value={formData.coordinates}
+                                    onChange={handleChange}
                                 />
                                 <TextField
-                                    label="Hydrophone Model"
+                                    label="Hydrophone Brand and Model"
+                                    name="model"
                                     variant="outlined"
                                     fullWidth
                                     margin="normal"
-                                    value={hydrophone}
-                                    onChange={handleHydrophoneChange}
+                                    value={formData.model}
+                                    onChange={handleChange}
+                                />
+                                <TextField
+                                    label="Mounting Type"
+                                    name="mounting_type"
+                                    variant="outlined"
+                                    fullWidth
+                                    margin="normal"
+                                    value={formData.mounting_type}
+                                    onChange={handleChange}
+                                />
+
+                                <TextField
+                                    label="Height from Seafloor (m)"
+                                    name="height_from_seafloor"
+                                    variant="outlined"
+                                    fullWidth
+                                    margin="normal"
+                                    value={formData.height_from_seafloor}
+                                    onChange={handleChange}
                                 />
                                 <TextField
                                     label="Sampling Frequency (kHz)"
+                                    name="sampling_frequency"
                                     variant="outlined"
                                     fullWidth
                                     margin="normal"
-                                    value={samplingFrequency}
-                                    onChange={handleSamplingFrequencyChange}
+                                    value={formData.sampling_frequency}
+                                    onChange={handleChange}
                                 />
                                 <TextField
                                     label="Depth (m, at median tide)"
+                                    name="depth"
                                     variant="outlined"
                                     fullWidth
                                     margin="normal"
-                                    value={depth}
-                                    onChange={handleDepthChange}
+                                    value={formData.depth}
+                                    onChange={handleChange}
                                 />
                                 <DatePicker
-                                    label="Deployment Date"
+                                    label="First Deployment Date"
+                                    name="first_deployment_date"
                                     variant="outlined"
                                     fullWidth
                                     margin="normal"
-                                    value={deploymentDate}
-                                    onChange={handleDeploymentDateChange}
+                                    value={formData.first_deployment_date}
+                                    onChange={(date) => handleDateChange(date, 'first_deployment_date')}
+                                />
+                                <DatePicker
+                                    label="Last Deployment Date"
+                                    name="last_deployment_date"
+                                    variant="outlined"
+                                    fullWidth
+                                    margin="normal"
+                                    value={formData.last_deployment_date}
+                                    onChange={(date) => handleDateChange(date, 'last_deployment_date')}
                                 />
                                 <TextField
                                     label="Estimated Range (m)"
+                                    name="range"
                                     variant="outlined"
                                     fullWidth
                                     margin="normal"
-                                    value={range}
-                                    onChange={handleRangeChange}
+                                    value={formData.range}
+                                    onChange={handleChange}
                                 />
                                 <TextField
                                     label="Estimated Angle of View (degs)"
+                                    name="angle_of_view"
                                     variant="outlined"
                                     fullWidth
                                     margin="normal"
-                                    value={angleOfView}
-                                    onChange={handleAngleOfViewChange}
+                                    value={formData.angle_of_view}
+                                    onChange={handleChange}
+                                />
+                                <TextField
+                                    label="File Length (mins)"
+                                    name="file_length"
+                                    variant="outlined"
+                                    fullWidth
+                                    margin="normal"
+                                    value={formData.file_length}
+                                    onChange={handleChange}
+                                />
+                                <TextField
+                                    label="File Format"
+                                    name="file_format" 
+                                    variant="outlined"
+                                    fullWidth
+                                    margin="normal"
+                                    value={formData.file_format}
+                                    onChange={handleChange}
+                                />
+                                <TextField
+                                    label="Directory"
+                                    name="directory"
+                                    variant="outlined"
+                                    fullWidth
+                                    margin="normal"
+                                    value={formData.directory}
+                                    onChange={handleChange}
+                                />
+                                <TextField
+                                    label="Sample File Name"
+                                    name="file_name"  
+                                    variant="outlined"
+                                    fullWidth
+                                    margin="normal"
+                                    value={formData.file_name}
+                                    onChange={handleChange}
+                                />
+                                <TextField
+                                    label="Timezone"
+                                    name="timezone"
+                                    variant="outlined"
+                                    fullWidth
+                                    margin="normal"
+                                    value={formData.timezone}
+                                    onChange={handleChange}
+                                />
+                                <TextField
+                                    label="Storage Interval (e.g., daily, monthly)"
+                                    name="storage_interval"
+                                    variant="outlined"
+                                    fullWidth
+                                    margin="normal"
+                                    value={formData.storage_interval}
+                                    onChange={handleChange}
+                                />
+                                <Typography style={{ marginTop: '20px' }}>
+                                    Is calibration information available?
+                                </Typography>
+                                <FormControlLabel
+                                  control={
+                                    <Checkbox
+                                        name="calibration_available"
+                                        checked={formData.calibration_available}
+                                        onChange={handleCheckboxChange}
+                                    />}
+                                  label="Yes"
                                 />
                         </LocalizationProvider>
                     </DialogContent>

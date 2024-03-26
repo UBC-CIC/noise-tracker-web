@@ -16,9 +16,11 @@ export default function AdminDashboard({ jwt }){
         <div className="admin-dashboard-container">
             <AdminSidebar onButtonClick={handleButtonClick}/>
 
-            {selectedOption === 'general' && <AdminGeneral />}
-            {selectedOption === 'hydrophones' && <AdminHydrophones jwt={jwt} />}
-            {selectedOption === 'operators' && <AdminSettings jwt={jwt} />}
+            <div style={{ flex: 1, overflowX: 'auto' }}>
+                {selectedOption === 'general' && <AdminGeneral />}
+                {selectedOption === 'hydrophones' && <AdminHydrophones jwt={jwt} />}
+                {selectedOption === 'operators' && <AdminSettings jwt={jwt} />}
+            </div>
         </div>
     )
 }
