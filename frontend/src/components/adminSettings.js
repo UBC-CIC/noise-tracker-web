@@ -91,7 +91,7 @@ export default function AdminSettings({ jwt }) {
                       <StyledTableCell>{operator.contact_name}</StyledTableCell>
                       <StyledTableCell>{operator.contact_email}</StyledTableCell>
                       <StyledTableCell>{operator.website}</StyledTableCell>
-                      <StyledTableCell>{operator.in_directory}</StyledTableCell>
+                      <StyledTableCell>{operator.in_directory ? 'Yes' : 'No'}</StyledTableCell>
                       <StyledTableCell>
                           <OperatorForm 
                             mode="modify" 
