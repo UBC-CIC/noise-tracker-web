@@ -21,9 +21,14 @@ const Sidebar = ({ hydrophoneData, onCloseSidebar, selectedMetric }) => {
     }, [selectedMetric]);
 
     return (
-      <div style={{ position: 'relative', width: '35%', backgroundColor: '#f0f0f0', padding: '20px', display: 'flex', flexDirection: 'column' }}>
-        <div style={{ marginBottom: 'auto' }}>
-          <Typography variant='h4'>{hydrophoneData.name}</Typography>
+      <div className="sidebar-container">
+        <div className="sidebar-header">
+        <Typography variant='h4'>{hydrophoneData.name}</Typography>
+        <IconButton onClick={handleSidebarClose}>
+          <CloseIcon />
+        </IconButton>
+      </div>
+        <div className="sidebar-content">
           <Tabs 
             value={selectedTab} 
             onChange={handleTabChange} 
@@ -32,9 +37,7 @@ const Sidebar = ({ hydrophoneData, onCloseSidebar, selectedMetric }) => {
             variant="scrollable"
             scrollButtons
             allowScrollButtonsMobile
-            style={{ 
-              marginTop: '20px'
-            }}
+            className="tabs-margin-top"
             sx={{
               [`& .${tabsClasses.scrollButtons}`]: {
                 '&.Mui-disabled': { opacity: 0.3 },
@@ -46,18 +49,13 @@ const Sidebar = ({ hydrophoneData, onCloseSidebar, selectedMetric }) => {
           </Tabs>
           {selectedTab === "Sound Pressure Level" && (
             <>
-              <Typography style={{ paddingTop: '20px', paddingBottom: '20px' }}>Contextual information about the metric goes here.</Typography>
+              <Typography className="sidebar-typography-padding">Contextual information about the metric goes here.</Typography>
               <LineGraph hydrophoneData={hydrophoneData} />
             </>
           )} 
         </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto' }}>
+        <div>
           <Typography>Last Updated: {hydrophoneData.lastUpdated}</Typography>
-          <div style={{ position: 'absolute', top: 10, right: 10 }}>
-            <IconButton onClick={handleSidebarClose}>
-              <CloseIcon />
-            </IconButton>
-          </div>
         </div>
       </div>
     );   

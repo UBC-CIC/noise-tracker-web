@@ -1,3 +1,104 @@
+/* InteractiveMap.js  */
+
+.interactive-map-container {
+  display: flex;
+  height: 100vh;
+}
+
+.map-container-with-sidebar {
+  flex: 1;
+  height: 100%;
+}
+
+.map-container-full {
+  flex: 100%;
+  height: 100%;
+}
+
+/* AdminDashboard.js */
+
+.admin-dashboard-container {
+  display: flex;
+  height: 100vh;
+}
+
+/* OperatorProfile.js */
+
+.operator-profile-tabs {
+  padding-bottom: 16px;
+}
+
+/* Sidebar.js */
+.sidebar-container {
+  position: relative;
+  width: 35%;
+  background-color: #f0f0f0;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sidebar-content {
+  margin-bottom: auto;
+}
+
+.tabs-margin-top {
+  margin-top: 20px;
+}
+
+.sidebar-typography-padding {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+/* popup.js */
+
+.popup-container {
+  display: flex;
+  align-items: center;
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  z-index: 1000;
+  background: white;
+  border-radius: 8px;
+}
+
+.popup-typography-padding {
+  padding-right: 8px;
+}
+
+/* map.js */
+.map-container-full-height {
+  flex: 1;
+  height: 100vh;
+}
+
+/* login.js */
+
+.login-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+  margin-top: 20px;
+}
+
+.login-page-flex-end {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 8px;
+}
+
+
+/* Tables */
 /* Apply color style to table header cells */
 .MuiTableCell-head {
   background-color: #0c4850 !important;

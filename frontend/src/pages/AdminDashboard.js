@@ -13,7 +13,7 @@ export default function AdminDashboard({ jwt }){
     };
 
     return(
-        <div style={{ display: 'flex', height: '100vh' }}>
+        <div className="admin-dashboard-container">
             <AdminSidebar onButtonClick={handleButtonClick}/>
 
             {selectedOption === 'general' && <AdminGeneral />}

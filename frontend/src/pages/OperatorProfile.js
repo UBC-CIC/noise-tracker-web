@@ -31,7 +31,7 @@ export default function OperatorProfile({ jwt }){
 
     return(
         <div>
-            <div style={{ paddingBottom: '16px' }}>
+            <div className="operator-profile-tabs">
                 <Tabs value={selectedTab} onChange={handleTabChange}>
                     {tabs.map((tab, index) => (
                         <Tab key={index} label={tab} value={tab} />

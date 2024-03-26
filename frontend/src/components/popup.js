@@ -20,31 +20,18 @@ export default function Popup(){
     };
 
     return (
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            position: 'absolute',
-            bottom: 16,
-            left: 16,
-            zIndex: 1000,
-            background: 'white', 
-            borderRadius: '8px', // border-radius for rounded corners
-          }}
-        >
+        <div className="popup-container">
           <IconButton onClick={handleClick}>
             <InfoIcon sx={{ fontSize: 30 }} />
           </IconButton>
-          <Typography style={{ paddingRight: '8px' }}>
+          <Typography className="popup-typography-padding">
             How to Use This Map
           </Typography>
           <Dialog open={open} onClose={handleClose}>
             <DialogTitle>How to Use This Map</DialogTitle>
             <DialogContent>
               <DialogContentText>
-                Information about how to use the map goes here. Information about how
-                to use the map goes here. Information about how to use the map goes
-                here.
+                Use your mouse or keypad to pan in all directions, and to zoom in and out. Click on the hydrophone icons to view their data.
               </DialogContentText>
             </DialogContent>
             <DialogActions>
