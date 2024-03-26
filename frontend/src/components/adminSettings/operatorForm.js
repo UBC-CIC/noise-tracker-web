@@ -11,11 +11,13 @@ export default function OperatorForm({ mode, onUpdate, operatorData, jwt }) {
     const API_URL = process.env.REACT_APP_API_URL;
 
     const [open, setOpen] = useState(false);
-    const [organization, setOrganization] = useState(operatorData?.hydrophone_operator_name || '');
-    const [contact, setContact] = useState(operatorData?.contact_email || '');
-    const [contactName, setcontactName] = useState(operatorData?.contact_name || '');
-    const [organizationWebsite, setorganizationWebsite] = useState(operatorData?.website || '');
-    const [checked, setChecked] = useState(operatorData?.in_directory || false);
+    const [formData, setFormData] = useState({
+      hydrophone_operator_name: operatorData?.hydrophone_operator_name || '',
+      contact_email: operatorData?.contact_email || '',
+      contact_name: operatorData?.contact_name || '',
+      website: operatorData?.website || '',
+      in_directory: operatorData?.in_directory || false
+  });
 
     const handleOpen = () => {
         setOpen(true);
@@ -26,80 +28,59 @@ export default function OperatorForm({ mode, onUpdate, operatorData, jwt }) {
     };
 
     const handleSave = async () => {
-        if (mode === 'create'){
-            try{
-                const response = await axios.post(
-                  API_URL + 'admin/operators',
-                  {
-                    "hydrophone_operator_name": organization,
-                    "contact_name": contactName,
-                    "contact_email": contact,
-                    "website": organizationWebsite,
-                    "in_directory": checked,
-                  },
-                  {
-                    headers: {
-                      'Authorization': jwt
-                    }
-                  }
-                );
+      const requestData = { ...formData };
 
-                onUpdate();
-              } 
-              
-              catch(error){
-                console.error("Error creating operator: ", error);
-              }
+      if (mode === 'create'){
+          try{
+              const response = await axios.post(
+                API_URL + 'admin/operators',
+                requestData,
+                {
+                  headers: {
+                    'Authorization': jwt
+                  }
+                }
+              );
+
+              onUpdate();
+            } 
+            
+            catch(error){
+              console.error("Error creating operator: ", error);
+            }
         }
         else if (mode === 'modify'){
-          console.log("Checked value: ", checked);
-            try{
-                const response = await axios.put(
-                  API_URL + 'admin/operators',
-                  {
-                    "hydrophone_operator_id": operatorData.hydrophone_operator_id,
-                    "hydrophone_operator_name": organization,
-                    "contact_name": contactName,
-                    "contact_email": contact,
-                    "website": organizationWebsite,
-                    "in_directory": checked
-                  },
-                  {
-                    headers: {
-                      'Authorization': jwt
-                    }
+          requestData.hydrophone_operator_id = operatorData.hydrophone_operator_id;
+          try{
+              const response = await axios.put(
+                API_URL + 'admin/operators',
+                requestData,
+                {
+                  headers: {
+                    'Authorization': jwt
                   }
-                );
+                }
+              );
 
-                onUpdate();
-              } 
-              
-              catch(error){
-                console.error("Error creating operator: ", error);
-              }
+              onUpdate();
+            } 
+            
+            catch(error){
+              console.error("Error creating operator: ", error);
+            }
         }
         handleClose(); // Close the dialog 
     };
 
-    const handleOrganizationChange = (event) => {
-        setOrganization(event.target.value);
-    };
-
-    const handleContactChange = (event) => {
-        setContact(event.target.value);
-    };
-
-    const handleContactNameChange = (event) => {
-      setcontactName(event.target.value);
-    };
-
-    const handleOrganizationWebsiteChange = (event) => {
-      setorganizationWebsite(event.target.value);
+    const handleChange = (event) => {
+      const { name, value } = event.target;
+      setFormData({ ...formData, [name]: value });
     };
 
     const handleCheckboxChange = (event) => {
-      setChecked(event.target.checked);
-    };
+      const { name, checked } = event.target;
+      setFormData({ ...formData, [name]: checked });
+  };
 
     return (
         <div style={{ paddingBottom: '20px' }}>
@@ -118,35 +99,39 @@ export default function OperatorForm({ mode, onUpdate, operatorData, jwt }) {
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                                 <TextField
                                     label="Organization"
+                                    name="hydrophone_operator_name"
                                     variant="outlined"
                                     fullWidth
                                     margin="normal"
-                                    value={organization}
-                                    onChange={handleOrganizationChange}
+                                    value={formData.hydrophone_operator_name}
+                                    onChange={handleChange}
                                 />
                                 <TextField
                                     label="Organization Website"
+                                    name="website"
                                     variant="outlined"
                                     fullWidth
                                     margin="normal"
-                                    value={organizationWebsite}
-                                    onChange={handleOrganizationWebsiteChange}
+                                    value={formData.website}
+                                    onChange={handleChange}
                                 />
                                 <TextField
                                     label="Contact Name"
+                                    name="contact_name"  
                                     variant="outlined"
                                     fullWidth
                                     margin="normal"
-                                    value={contactName}
-                                    onChange={handleContactNameChange}
+                                    value={formData.contact_name}
+                                    onChange={handleChange}
                                 />
                                 <TextField
                                     label="Contact Email"
+                                    name="contact_email" 
                                     variant="outlined"
                                     fullWidth
                                     margin="normal"
-                                    value={contact}
-                                    onChange={handleContactChange}
+                                    value={formData.contact_email}
+                                    onChange={handleChange}
                                 />
                                 <Typography style={{ marginTop: '20px' }}>Do you agree to these details being shared in the password-protected 
                                   Hydrophone Operator directory, so that other NoiseTracker Hydrophone Operators 
@@ -156,7 +141,8 @@ export default function OperatorForm({ mode, onUpdate, operatorData, jwt }) {
                                 <FormControlLabel
                                   control={
                                     <Checkbox
-                                        checked={checked}
+                                        name="in_directory"
+                                        checked={formData.in_directory}
                                         onChange={handleCheckboxChange}
                                     />}
                                   label="I agree"
