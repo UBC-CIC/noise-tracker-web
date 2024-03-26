@@ -48,6 +48,12 @@ export default function AdminSettings({ jwt }) {
         [`&.${tableCellClasses.body}`]: {
           fontSize: 14,
         },
+        '&:first-child': { 
+          position: 'sticky',
+          left: 0,
+          backgroundColor: '#f9f9f9',
+          zIndex: 1,
+        },
         '&:nth-last-child(2)': {
           position: 'sticky',
           right: '72px',
