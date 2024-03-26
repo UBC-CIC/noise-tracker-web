@@ -38,8 +38,8 @@ export default function InteractiveMap(){
   }, [hydrophoneName, metricName]);
 
     return (
-        <div style={{ display: 'flex', height: '100vh' }}>
-          <div style={{ flex: showSidebar ? '1' : '100%', height: '100%' }}>
+        <div className="interactive-map-container">
+          <div className={showSidebar ? "map-container-with-sidebar" : "map-container-full"}>
             <Map onToggleSidebar={handleToggleSidebar} hydrophoneData={sampleHydrophoneData} selectedHydrophoneFromProfile={selectedHydrophone}/>
           </div>
           {showSidebar && <Sidebar onCloseSidebar={handleCloseSidebar} hydrophoneData={selectedHydrophone} selectedMetric={selectedMetric} />}

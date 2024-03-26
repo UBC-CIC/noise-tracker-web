@@ -13,7 +13,7 @@ export default function AdminDashboard({ jwt }){
     };
 
     return(
-        <div style={{ display: 'flex', height: '100vh', width: '100%'}}>
+        <div className="admin-dashboard-container">
             <AdminSidebar onButtonClick={handleButtonClick}/>
 
             <div style={{ flex: 1, overflowX: 'auto' }}>

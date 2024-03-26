@@ -77,7 +77,7 @@ const Login = ({ loginStatus, setLoginStatus, jwt, setJwt, group, setGroup }) =>
             onFailure: (err) => {
                 // Handle other authentication failures
                 console.log("Error: ", err);
-                setError({ message: "Your username or password are incorrect, please contact the system admin to reset your password" });
+                setError({ message: "Your username or password is incorrect. Please contact the system admin to reset your password." });
             },
             newPasswordRequired: () => {   
                 // User needs to set a new password
@@ -114,7 +114,7 @@ const Login = ({ loginStatus, setLoginStatus, jwt, setJwt, group, setGroup }) =>
                 onFailure: (err) => {
                     // Handle failure in setting new password
                     if (err.code === "InvalidPasswordException") {
-                        setError({ message: "Invalid password. All passwords must have: minimum length of 8 characters, at least one lowercase letter, at least one uppercase letter, at least one digit, and at least one symbol" });
+                        setError({ message: "Invalid password. All passwords must have: minimum length of 8 characters, at least one lowercase letter, at least one uppercase letter, at least one digit, and at least one symbol." });
                     }   
                     console.log(err);
                 }
@@ -129,7 +129,6 @@ const Login = ({ loginStatus, setLoginStatus, jwt, setJwt, group, setGroup }) =>
     const LogoutButton = () => {
         return (
             <Button 
-                className="containedbutton"
                 variant="contained" 
                 onClick={() => {signout()}}
                 sx={{m:1}}
@@ -141,29 +140,21 @@ const Login = ({ loginStatus, setLoginStatus, jwt, setJwt, group, setGroup }) =>
 
     const LoginPage = () => {
         return(
-            <Box
-                display="flex"
-                flexDirection="column"
-                justifyContent="center"
-                alignItems="center"
-                minHeight="60vh"
-            >
+            <Box className="login-container">
                 {pageState === 0 ? (
                 <>
                     <TextField
-                        className="textbox" 
                         onChange={(event)=>{username=event.target.value}}
                         id="usernameinput" 
-                        label="username" 
+                        label="Username" 
                         variant="outlined" 
                         sx={{m:1}}
                     >
                     </TextField>
                     <TextField
-                        className="textbox" 
                         onChange={(event)=>{password=event.target.value}}
                         id="pwinput" 
-                        label="password" 
+                        label="Password" 
                         type="password"
                         variant="outlined" 
                         sx={{m:1}}
@@ -173,7 +164,6 @@ const Login = ({ loginStatus, setLoginStatus, jwt, setJwt, group, setGroup }) =>
                         <Alert severity="error">{error.message}</Alert>
                     )}
                     <Button 
-                        className="containedbutton"
                         variant="contained" 
                         onClick={() => {signIn()}}
                         sx={{m:1}}
@@ -184,7 +174,6 @@ const Login = ({ loginStatus, setLoginStatus, jwt, setJwt, group, setGroup }) =>
                 // Prompt for new password
                 <>
                     <TextField
-                        className="textbox"
                         onChange={(event) => { password=event.target.value }}
                         id="newPasswordInput"
                         label="New Password"
@@ -193,7 +182,6 @@ const Login = ({ loginStatus, setLoginStatus, jwt, setJwt, group, setGroup }) =>
                         sx={{ m: 1 }}
                     />
                     <TextField
-                        className="textbox"
                         onChange={(event) => { confirmPassword=event.target.value }}
                         id="confirmNewPasswordInput"
                         label="Confirm New Password"
@@ -205,7 +193,6 @@ const Login = ({ loginStatus, setLoginStatus, jwt, setJwt, group, setGroup }) =>
                         <Alert severity="error">{error.message}</Alert>
                     )}
                     <Button
-                        className="containedbutton"
                         variant="contained"
                         onClick={() => {handleNewPassword(cognitoUser)} }
                         sx={{ m: 1 }}
@@ -219,18 +206,11 @@ const Login = ({ loginStatus, setLoginStatus, jwt, setJwt, group, setGroup }) =>
     }
 
     return(
-        <Box
-            display="flex"
-            flexDirection="column"
-            justifyContent="center"
-            alignItems="center"
-            minHeight="60vh"
-            style={{ marginTop: '20px' }}
-        >
+        <Box className="login-container">
             {!loginStatus && <LoginPage />}
             {(loginStatus && (pageState === 0)) && (
                 <div>
-                    <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "8px" }}>
+                    <div className="login-page-flex-end">
                         <LogoutButton />
                     </div>
                 </div>
