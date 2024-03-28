@@ -33,22 +33,21 @@
 /* adminSidebar.js */
 .admin-sidebar-container {
   position: relative;
-  width: 100%;
   background-color: #f0f0f0;
   padding: 2%;
   display: flex;
   flex-direction: column;
 }
 
-/* Styles for larger screens */
+/* Larger screens */
 @media (min-width: 600px) {
   .admin-dashboard-container {
-    flex-direction: row; /* Sidebar next to content on larger screens */
+    flex-direction: row;
     height: 100vh;
   }
 
   .admin-sidebar-container {
-    width: 200px; /* Fixed sidebar width on larger screens */
+    width: 200px;
   }
 
 }
@@ -131,7 +130,7 @@
 /* Tables */
 /* Apply color style to table header cells */
 .MuiTableCell-head {
-  background-color: #0c4850 !important;
+  background-color: var(--secondary-color) !important;
   color: #fff !important;
 }
 
@@ -142,22 +141,22 @@
 
 /* Apply color style to buttons */
 .MuiButton-root {
-  background-color: #4B9690 !important;
+  background-color: var(--primary-color) !important;
   color: #fff !important;
 }
 
 /* Indicator color for selected tab */
 .MuiTabs-indicator {
-  background-color: #4B9690 !important;
+  background-color: var(--primary-color) !important;
 }
 
 /* Text color for selected tab */
 .Mui-selected {
-  color: #4B9690 !important;
+  color: var(--primary-color)!important;
 }
 
 /* Apply color style to AppBar */
 .MuiAppBar-root {
-  background-color: #4B9690 !important;
+  background-color: var(--primary-color)!important;
   color: #fff !important;
 }

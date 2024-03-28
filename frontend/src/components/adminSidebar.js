@@ -13,16 +13,14 @@ export default function AdminSidebar({ onButtonClick }){
         '&:active': {
             backgroundColor: '#e0e0e0', 
         },
-        width: '100%', // Full width buttons
+        width: '100%',
         justifyContent: 'flex-start',
     };
 
     const labelSx = {
         marginLeft: '10%', 
-        fontFamily: 'Arial, sans-serif', 
         fontSize: '16px', 
         fontWeight: 'bold',
-        display: { xs: 'none', sm: 'inline' } // Hide labels on small screens
     };
 
     return (

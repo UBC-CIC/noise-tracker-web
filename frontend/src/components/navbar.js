@@ -1,9 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
+import { AppBar, Toolbar, Typography, Button, IconButton, Drawer, List, ListItem, ListItemText, useMediaQuery } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
+import MenuIcon from '@mui/icons-material/Menu';
 
 const pages = ["Map", "About", "Education Hub", "Login"];
 const loggedInPages = {
@@ -11,7 +10,24 @@ const loggedInPages = {
   ADMIN_USER: ["Map", "About", "Education Hub", "Admin", "Signout"]
 }; 
 const NavBar = ({ loginStatus, group }) => {
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const tabs = loginStatus ? loggedInPages[group] || [] : pages;
+
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
+
+  const drawer = (
+    <List>
+      {tabs.map((tab, index) => (
+        <ListItem key={index} component={Link} to={`/${tab.toLowerCase().replace(/\s+/g, '')}`}>
+          <ListItemText primary={tab} />
+        </ListItem>
+      ))}
+    </List>
+  );
 
   return (
     <AppBar position="static">
@@ -19,16 +35,44 @@ const NavBar = ({ loginStatus, group }) => {
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           NoiseTracker
         </Typography>
-        {tabs.map((tab, index) => (
-          <Button
-            key={index}
-            color="inherit"
-            component={Link}
-            to={`/${tab.toLowerCase().replace(/\s+/g, '')}`}
-          >
-            {tab}
-          </Button>
-        ))}
+        {isMobile ? (
+          <>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              edge="start"
+              onClick={handleDrawerToggle}
+              sx={{ mr: 2}}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Drawer
+              variant="temporary"
+              anchor="right"
+              open={mobileOpen}
+              onClose={handleDrawerToggle}
+              ModalProps={{
+                keepMounted: true,
+              }}
+              sx={{
+                '& .MuiDrawer-paper': { boxSizing: 'border-box', width: '60%'},
+              }}
+            >
+              {drawer}
+            </Drawer>
+          </>
+        ) : (
+          tabs.map((tab, index) => (
+            <Button
+              key={index}
+              color="inherit"
+              component={Link}
+              to={`/${tab.toLowerCase().replace(/\s+/g, '')}`}
+            >
+              {tab}
+            </Button>
+          ))
+        )}
       </Toolbar>
     </AppBar>
   );

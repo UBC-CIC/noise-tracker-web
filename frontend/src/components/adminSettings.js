@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Table, TableBody, TableCell, tableCellClasses, TableContainer, TableHead, TableRow, Paper, CircularProgress } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import sampleHOData from "../sampledata/sampleHOData";
 import OperatorForm from "./adminSettings/operatorForm";
 import DeleteForm from './adminSettings/deleteForm';
 import axios from "axios";
