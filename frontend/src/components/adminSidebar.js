@@ -4,7 +4,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 
 export default function AdminSidebar({ onButtonClick }){
-    const buttonStyle = {
+    const buttonSx = {
         borderRadius: '0', 
         color: 'black', 
         '&:hover': {
@@ -13,33 +13,31 @@ export default function AdminSidebar({ onButtonClick }){
         '&:active': {
             backgroundColor: '#e0e0e0', 
         },
+        width: '100%', // Full width buttons
+        justifyContent: 'flex-start',
     };
 
-    return(
-        <div style={{ 
-            position: 'relative', 
-            width: '10%',
-            minWidth: '200px', 
-            maxWidth: '200px',
-            backgroundColor: '#f0f0f0', 
-            padding: '2%',
+    const labelSx = {
+        marginLeft: '10%', 
+        fontFamily: 'Arial, sans-serif', 
+        fontSize: '16px', 
+        fontWeight: 'bold',
+        display: { xs: 'none', sm: 'inline' } // Hide labels on small screens
+    };
 
-            flex: 1,
-            flexDirection: 'column',
-            justifyContent: 'flex-start', 
-            alignItems: 'flex-start',
-            }}>
-            <IconButton style={buttonStyle} onClick={() => onButtonClick('general')}>
-                <HomeIcon /> <span style={{ marginLeft: '10%', fontFamily: 'Arial, sans-serif', fontSize: '16px', fontWeight: 'bold' }}>General</span>
+    return (
+        <div className="admin-sidebar-container">
+            <IconButton sx={buttonSx} onClick={() => onButtonClick('general')}>
+                <HomeIcon /><span style={labelSx}>General</span>
             </IconButton>
 
-            <IconButton style={buttonStyle} onClick={() => onButtonClick('hydrophones')}>
-                <MicIcon /> <span style={{ marginLeft: '10%', fontFamily: 'Arial, sans-serif', fontSize: '16px', fontWeight: 'bold' }}>Hydrophones</span>
+            <IconButton sx={buttonSx} onClick={() => onButtonClick('hydrophones')}>
+                <MicIcon /><span style={labelSx}>Hydrophones</span>
             </IconButton>
 
-            <IconButton style={buttonStyle} onClick={() => onButtonClick('operators')}>
-                <PeopleAltIcon /> <span style={{ marginLeft: '10%', fontFamily: 'Arial, sans-serif', fontSize: '16px', fontWeight: 'bold' }}>Operators</span>
+            <IconButton sx={buttonSx} onClick={() => onButtonClick('operators')}>
+                <PeopleAltIcon /><span style={labelSx}>Operators</span>
             </IconButton>
         </div>
-    )
+    );
 }

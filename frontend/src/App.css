@@ -15,13 +15,43 @@
   height: 100%;
 }
 
+/* Admin Page */
 /* AdminDashboard.js */
 
 .admin-dashboard-container {
   display: flex;
-  height: 100vh;
+  /* height: 100vh; */
+  flex-direction: column;
 }
 
+.admin-dashboard-content {
+  flex: 1;
+  overflow-x: auto;
+  padding: 20px;
+}
+
+/* adminSidebar.js */
+.admin-sidebar-container {
+  position: relative;
+  width: 100%;
+  background-color: #f0f0f0;
+  padding: 2%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Styles for larger screens */
+@media (min-width: 600px) {
+  .admin-dashboard-container {
+    flex-direction: row; /* Sidebar next to content on larger screens */
+    height: 100vh;
+  }
+
+  .admin-sidebar-container {
+    width: 200px; /* Fixed sidebar width on larger screens */
+  }
+
+}
 /* OperatorProfile.js */
 
 .operator-profile-tabs {
