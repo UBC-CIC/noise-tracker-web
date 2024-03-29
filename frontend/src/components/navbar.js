@@ -23,7 +23,7 @@ const NavBar = ({ loginStatus, group }) => {
     <List>
       {tabs.map((tab, index) => (
         <ListItem key={index} component={Link} to={`/${tab.toLowerCase().replace(/\s+/g, '')}`}>
-          <ListItemText primary={tab} />
+          <ListItemText primary={tab}/>
         </ListItem>
       ))}
     </List>
@@ -42,7 +42,6 @@ const NavBar = ({ loginStatus, group }) => {
               aria-label="open drawer"
               edge="start"
               onClick={handleDrawerToggle}
-              sx={{ mr: 2}}
             >
               <MenuIcon />
             </IconButton>
@@ -53,9 +52,6 @@ const NavBar = ({ loginStatus, group }) => {
               onClose={handleDrawerToggle}
               ModalProps={{
                 keepMounted: true,
-              }}
-              sx={{
-                '& .MuiDrawer-paper': { boxSizing: 'border-box', width: '60%'},
               }}
             >
               {drawer}

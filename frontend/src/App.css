@@ -1,18 +1,28 @@
+/* App.js */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* map.js */
+.map-container-full-height {
+  flex: 1;
+  height: calc(100vh - 64px); /* 64px is the default height of the MUI AppBar */
+}
 /* InteractiveMap.js  */
 
 .interactive-map-container {
   display: flex;
-  height: 100vh;
+  overflow-y: hidden;
 }
 
 .map-container-with-sidebar {
   flex: 1;
-  height: 100%;
 }
 
 .map-container-full {
-  flex: 100%;
-  height: 100%;
+  flex: 1;
 }
 
 /* Admin Page */
@@ -20,7 +30,6 @@
 
 .admin-dashboard-container {
   display: flex;
-  /* height: 100vh; */
   flex-direction: column;
 }
 
@@ -51,6 +60,14 @@
   }
 
 }
+
+/* adminHydrophones.js and adminSettings.js */
+.admin-content-area {
+  margin: 3%;
+  flex: 1;
+  justify-content: center;
+}
+
 /* OperatorProfile.js */
 
 .operator-profile-tabs {
@@ -103,12 +120,6 @@
   padding-right: 8px;
 }
 
-/* map.js */
-.map-container-full-height {
-  flex: 1;
-  height: 100vh;
-}
-
 /* login.js */
 
 .login-container {
@@ -126,37 +137,3 @@
   margin-bottom: 8px;
 }
 
-
-/* Tables */
-/* Apply color style to table header cells */
-.MuiTableCell-head {
-  background-color: var(--secondary-color) !important;
-  color: #fff !important;
-}
-
-/* Apply font size style to table body cells */
-.MuiTableCell-body {
-  font-size: 14px !important;
-}
-
-/* Apply color style to buttons */
-.MuiButton-root {
-  background-color: var(--primary-color) !important;
-  color: #fff !important;
-}
-
-/* Indicator color for selected tab */
-.MuiTabs-indicator {
-  background-color: var(--primary-color) !important;
-}
-
-/* Text color for selected tab */
-.Mui-selected {
-  color: var(--primary-color)!important;
-}
-
-/* Apply color style to AppBar */
-.MuiAppBar-root {
-  background-color: var(--primary-color)!important;
-  color: #fff !important;
-}

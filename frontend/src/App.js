@@ -46,7 +46,8 @@ function App() {
 
   return (
     <Router>
-      <NavBar loginStatus={loginStatus} group={group} />
+      <div className="app-container">
+      <NavBar loginStatus={loginStatus} group={group}/>
       <Routes>
         <Route path="/" element={<InteractiveMap />} />
         <Route path="/map/*" element={<InteractiveMap />} />
@@ -70,6 +71,7 @@ function App() {
           </>
         )}
       </Routes>
+      </div>
     </Router>
   );
 }

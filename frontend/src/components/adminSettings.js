@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Table, TableBody, TableCell, tableCellClasses, TableContainer, TableHead, TableRow, Paper, CircularProgress } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import { Table, TableContainer, TableHead, TableRow, Paper, CircularProgress } from '@mui/material';
 import OperatorForm from "./adminSettings/operatorForm";
 import DeleteForm from './adminSettings/deleteForm';
 import axios from "axios";
+import StyledTableCell from './adminTableCellStyle';
 
 export default function AdminSettings({ jwt }) {
   const API_URL = process.env.REACT_APP_API_URL;
@@ -39,50 +39,20 @@ export default function AdminSettings({ jwt }) {
     }
   }
 
-    const StyledTableCell = styled(TableCell)(({ theme }) => ({
-        [`&.${tableCellClasses.head}`]: {
-          backgroundColor: '#024959',
-          color: theme.palette.common.white,
-        },
-        [`&.${tableCellClasses.body}`]: {
-          fontSize: 14,
-        },
-        '&:first-child': { 
-          position: 'sticky',
-          left: 0,
-          backgroundColor: '#f9f9f9',
-          zIndex: 1,
-        },
-        '&:nth-last-child(2)': {
-          position: 'sticky',
-          right: '72px',
-          backgroundColor: '#f9f9f9',
-          zIndex: 1,
-        },
-        '&:last-child': { 
-          position: 'sticky',
-          right: 0,
-          backgroundColor: '#f9f9f9',
-          zIndex: 1,
-        },
-      }));
+    
 
     return(
-        <div style={{
-            margin: '3%',
-            flex: 1,
-            justifyContent: 'center',
-          }}>
+        <div className="admin-content-area">
             <OperatorForm mode="create" onUpdate={fetchOperatorData} jwt={jwt} />
             {loading ? ( // Render circular progress if loading is true
                 <center>
                     <CircularProgress color="success" />
                 </center>
             ) : (
-              <TableContainer component={Paper} stickyHeader>
+              <TableContainer component={Paper}>
               <Table>
                   <TableHead>
-                      <TableRow style={{ background: '#f2f2f2' }}>
+                      <TableRow>
                       <StyledTableCell>Organization</StyledTableCell>
                       <StyledTableCell>Operator ID</StyledTableCell>
                       <StyledTableCell>Hydrophones</StyledTableCell>

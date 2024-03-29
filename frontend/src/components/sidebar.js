@@ -50,7 +50,9 @@ const Sidebar = ({ hydrophoneData, onCloseSidebar, selectedMetric }) => {
           {selectedTab === "Sound Pressure Level" && (
             <>
               <Typography className="sidebar-typography-padding">Contextual information about the metric goes here.</Typography>
-              <LineGraph hydrophoneData={hydrophoneData} />
+              <div>
+                <LineGraph hydrophoneData={hydrophoneData} />
+              </div>
             </>
           )} 
         </div>
