@@ -39,7 +39,7 @@ export default function InteractiveMap(){
 
     return (
         <div className="interactive-map-container">
-          <div className={showSidebar ? "map-container-with-sidebar" : "map-container-full"}>
+          <div className={showSidebar ? "map-container-when-sidebar" : "map-container-no-sidebar"}>
             <Map onToggleSidebar={handleToggleSidebar} hydrophoneData={sampleHydrophoneData} selectedHydrophoneFromProfile={selectedHydrophone}/>
           </div>
           {showSidebar && <Sidebar onCloseSidebar={handleCloseSidebar} hydrophoneData={selectedHydrophone} selectedMetric={selectedMetric} />}

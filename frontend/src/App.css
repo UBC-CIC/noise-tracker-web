@@ -6,22 +6,22 @@
 }
 
 /* map.js */
-.map-container-full-height {
-  flex: 1;
+.map-container {
   height: calc(100vh - 64px); /* 64px is the default height of the MUI AppBar */
 }
 /* InteractiveMap.js  */
 
 .interactive-map-container {
   display: flex;
+  flex-direction: row;
   overflow-y: hidden;
 }
 
-.map-container-with-sidebar {
+.map-container-when-sidebar {
   flex: 1;
 }
 
-.map-container-full {
+.map-container-no-sidebar {
   flex: 1;
 }
 
@@ -48,7 +48,6 @@
   flex-direction: column;
 }
 
-/* Larger screens */
 @media (min-width: 600px) {
   .admin-dashboard-container {
     flex-direction: row;
@@ -68,22 +67,7 @@
   justify-content: center;
 }
 
-/* OperatorProfile.js */
-
-.operator-profile-tabs {
-  padding-bottom: 16px;
-}
-
 /* Sidebar.js */
-.sidebar-container {
-  position: relative;
-  width: 35%;
-  background-color: #f0f0f0;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-}
-
 .sidebar-header {
   display: flex;
   justify-content: space-between;
@@ -103,17 +87,29 @@
   padding-bottom: 20px;
 }
 
+/* OperatorProfile.js */
+
+.operator-profile-tabs {
+  padding-bottom: 16px;
+}
+
 /* popup.js */
 
 .popup-container {
   display: flex;
   align-items: center;
   position: absolute;
-  bottom: 16px;
-  left: 16px;
+  bottom: 2vh;
+  left: 2vw;
   z-index: 1000;
   background: white;
   border-radius: 8px;
+}
+
+@media (max-width: 600px) {
+  .popup-container {
+    display: none;
+  }
 }
 
 .popup-typography-padding {

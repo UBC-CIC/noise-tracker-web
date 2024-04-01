@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Table, TableContainer, TableHead, TableRow, Paper, CircularProgress } from '@mui/material';
+import { Table, TableContainer, TableHead, TableRow, Paper, CircularProgress, TableBody } from '@mui/material';
 import OperatorForm from "./adminSettings/operatorForm";
 import DeleteForm from './adminSettings/deleteForm';
 import axios from "axios";
@@ -64,45 +64,47 @@ export default function AdminSettings({ jwt }) {
                       <StyledTableCell>Delete</StyledTableCell>
                       </TableRow>
                   </TableHead>
-                  {operatorData.map((operator, index) => (
-                      <TableRow key={index} style={{ background: index % 2 === 0 ? '#f9f9f9' : 'white' }}>
-                      <StyledTableCell>{operator.hydrophone_operator_name}</StyledTableCell>
-                      <StyledTableCell>{operator.hydrophone_operator_id}</StyledTableCell>
-                      <StyledTableCell>
-                          <ul>
-                          {operator.hydrophone_info.map((hydrophone) => (
-                              <li key={hydrophone}>{hydrophone === '' ? 'N/A' : hydrophone}</li>
-                          ))}
-                          </ul>
-                      </StyledTableCell>
-                      <StyledTableCell>{operator.contact_name}</StyledTableCell>
-                      <StyledTableCell>{operator.contact_email}</StyledTableCell>
-                      <StyledTableCell>{operator.website}</StyledTableCell>
-                      <StyledTableCell>{operator.in_directory ? 'Yes' : 'No'}</StyledTableCell>
-                      <StyledTableCell>
-                          <OperatorForm 
-                            mode="modify" 
-                            onUpdate={fetchOperatorData}
-                            operatorData={{
-                              "hydrophone_operator_id": operator.hydrophone_operator_id,
-                              "hydrophone_operator_name": operator.hydrophone_operator_name, 
-                              "contact_name": operator.contact_name,
-                              "contact_email": operator.contact_email,
-                              "website": operator.website,
-                              "in_directory": operator.in_directory,
-                            }}
-                            jwt={jwt}
-                          />
-                      </StyledTableCell>
-                      <StyledTableCell>
-                          <DeleteForm 
-                            mode="operator" 
-                            itemId={operator.hydrophone_operator_id} 
-                            onDelete={fetchOperatorData}
-                            jwt={jwt}/>
-                      </StyledTableCell>
-                      </TableRow>
-                  ))}
+                  <TableBody>
+                    {operatorData.map((operator, index) => (
+                        <TableRow key={index} style={{ background: index % 2 === 0 ? '#f9f9f9' : 'white' }}>
+                        <StyledTableCell>{operator.hydrophone_operator_name}</StyledTableCell>
+                        <StyledTableCell>{operator.hydrophone_operator_id}</StyledTableCell>
+                        <StyledTableCell>
+                            <ul>
+                            {operator.hydrophone_info.map((hydrophone) => (
+                                <li key={hydrophone}>{hydrophone === '' ? 'N/A' : hydrophone}</li>
+                            ))}
+                            </ul>
+                        </StyledTableCell>
+                        <StyledTableCell>{operator.contact_name}</StyledTableCell>
+                        <StyledTableCell>{operator.contact_email}</StyledTableCell>
+                        <StyledTableCell>{operator.website}</StyledTableCell>
+                        <StyledTableCell>{operator.in_directory ? 'Yes' : 'No'}</StyledTableCell>
+                        <StyledTableCell>
+                            <OperatorForm 
+                              mode="modify" 
+                              onUpdate={fetchOperatorData}
+                              operatorData={{
+                                "hydrophone_operator_id": operator.hydrophone_operator_id,
+                                "hydrophone_operator_name": operator.hydrophone_operator_name, 
+                                "contact_name": operator.contact_name,
+                                "contact_email": operator.contact_email,
+                                "website": operator.website,
+                                "in_directory": operator.in_directory,
+                              }}
+                              jwt={jwt}
+                            />
+                        </StyledTableCell>
+                        <StyledTableCell>
+                            <DeleteForm 
+                              mode="operator" 
+                              itemId={operator.hydrophone_operator_id} 
+                              onDelete={fetchOperatorData}
+                              jwt={jwt}/>
+                        </StyledTableCell>
+                        </TableRow>
+                    ))}
+                  </TableBody>
               </Table>
             </TableContainer>
           )}

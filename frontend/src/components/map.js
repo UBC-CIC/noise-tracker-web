@@ -71,7 +71,7 @@ export default function Map({ onToggleSidebar, hydrophoneData, selectedHydrophon
 
   return (
     <div>
-      <MapContainer center={initialPosition} zoom={initialZoom} className="map-container-full-height" attributionControl={false} maxZoom={13}>
+      <MapContainer center={initialPosition} zoom={initialZoom} className="map-container" attributionControl={false} maxZoom={13}>
         <TileLayer
           url="https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}        "
           attribution='CHS, Esri, GEBCO, Garmin, NaturalVue | CHS, Esri, GEBCO, Garmin, NGS'
