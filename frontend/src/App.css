@@ -1,43 +1,73 @@
+/* App.js */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* map.js */
+.map-container {
+  height: calc(100vh - 64px); /* 64px is the default height of the MUI AppBar */
+}
 /* InteractiveMap.js  */
 
 .interactive-map-container {
   display: flex;
-  height: 100vh;
+  flex-direction: row;
+  overflow-y: hidden;
 }
 
-.map-container-with-sidebar {
+.map-container-when-sidebar {
   flex: 1;
-  height: 100%;
 }
 
-.map-container-full {
-  flex: 100%;
-  height: 100%;
+.map-container-no-sidebar {
+  flex: 1;
 }
 
+/* Admin Page */
 /* AdminDashboard.js */
 
 .admin-dashboard-container {
   display: flex;
-  height: 100vh;
+  flex-direction: column;
 }
 
-/* OperatorProfile.js */
-
-.operator-profile-tabs {
-  padding-bottom: 16px;
-}
-
-/* Sidebar.js */
-.sidebar-container {
-  position: relative;
-  width: 35%;
-  background-color: #f0f0f0;
+.admin-dashboard-content {
+  flex: 1;
+  overflow-x: auto;
   padding: 20px;
+}
+
+/* adminSidebar.js */
+.admin-sidebar-container {
+  position: relative;
+  background-color: #f0f0f0;
+  padding: 2%;
   display: flex;
   flex-direction: column;
 }
 
+@media (min-width: 600px) {
+  .admin-dashboard-container {
+    flex-direction: row;
+    height: 100vh;
+  }
+
+  .admin-sidebar-container {
+    width: 200px;
+  }
+
+}
+
+/* adminHydrophones.js and adminSettings.js */
+.admin-content-area {
+  margin: 3%;
+  flex: 1;
+  justify-content: center;
+}
+
+/* Sidebar.js */
 .sidebar-header {
   display: flex;
   justify-content: space-between;
@@ -57,27 +87,33 @@
   padding-bottom: 20px;
 }
 
+/* OperatorProfile.js */
+
+.operator-profile-tabs {
+  padding-bottom: 16px;
+}
+
 /* popup.js */
 
 .popup-container {
   display: flex;
   align-items: center;
   position: absolute;
-  bottom: 16px;
-  left: 16px;
+  bottom: 2vh;
+  left: 2vw;
   z-index: 1000;
   background: white;
   border-radius: 8px;
 }
 
-.popup-typography-padding {
-  padding-right: 8px;
+@media (max-width: 600px) {
+  .popup-container {
+    display: none;
+  }
 }
 
-/* map.js */
-.map-container-full-height {
-  flex: 1;
-  height: 100vh;
+.popup-typography-padding {
+  padding-right: 8px;
 }
 
 /* login.js */
@@ -97,37 +133,3 @@
   margin-bottom: 8px;
 }
 
-
-/* Tables */
-/* Apply color style to table header cells */
-.MuiTableCell-head {
-  background-color: #0c4850 !important;
-  color: #fff !important;
-}
-
-/* Apply font size style to table body cells */
-.MuiTableCell-body {
-  font-size: 14px !important;
-}
-
-/* Apply color style to buttons */
-.MuiButton-root {
-  background-color: #4B9690 !important;
-  color: #fff !important;
-}
-
-/* Indicator color for selected tab */
-.MuiTabs-indicator {
-  background-color: #4B9690 !important;
-}
-
-/* Text color for selected tab */
-.Mui-selected {
-  color: #4B9690 !important;
-}
-
-/* Apply color style to AppBar */
-.MuiAppBar-root {
-  background-color: #4B9690 !important;
-  color: #fff !important;
-}

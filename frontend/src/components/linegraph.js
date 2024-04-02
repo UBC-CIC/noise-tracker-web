@@ -30,21 +30,22 @@ const LineGraph = ({ hydrophoneData }) => {
   // Layout configuration for the graph
   const layout = {
     title: 'Sound Pressure Level',
-    xaxis: { title: 'Date', tickvals, ticktext},
-    yaxis: { title: 'dB'},
-    autosize: false,
-    width: 600,
-    height: 400,
+    xaxis: { title: 'Date', tickvals, ticktext },
+    yaxis: { title: 'dB' },
     margin: {
-        l: 50,
-        r: 50,
-        b: 50,
-        t: 50,
-        pad: 4
-  },
+      l: 50,
+      r: 50,
+      b: 100,
+      t: 100,
+      pad: 4
+    },
   };
 
-  return <Plot data={data} layout={layout} />;
+  const config = {
+    responsive: true
+  };
+
+  return <Plot data={data} layout={layout} config={config} useResizeHandler={true} style={{ width: "100%", height: "100%" }}/>;
 };
 
 export default LineGraph;
