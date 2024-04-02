@@ -1,4 +1,4 @@
-import {Stack, StackProps, triggers } from 'aws-cdk-lib';
+import {Stack, StackProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { Duration } from 'aws-cdk-lib';
 
@@ -9,7 +9,7 @@ import * as iam from 'aws-cdk-lib/aws-iam';
 
 // Stack import
 import { VpcStack } from './vpc-stack';
-import {DBStack} from './database-stack';
+import { DBStack } from './database-stack';
 import { FunctionalityStack } from './functionality-stack';
 
 export class APIStack extends Stack {
@@ -74,7 +74,8 @@ export class APIStack extends Stack {
             actions: [
               "s3:PutObject",
               "s3:DeleteObject",
-              "s3:ListBucket"
+              "s3:ListBucket",
+              "s3:GetObject",
             ],
             resources: [
               `arn:aws:s3:::${functionalityStack.bucketName}`,
@@ -98,14 +99,32 @@ export class APIStack extends Stack {
         })
     );
 
-        /* 
-         * Create Integration Lambda layer for PSQL
-         */ 
+        /**
+         *
+         * Create layers
+         */
+
+        // Create Integration Lambda layer for PSQL
         const postgres = new lambda.LayerVersion(this, 'postgres', {
             code: lambda.Code.fromAsset('./lambda/layers/postgres.zip'),
             compatibleRuntimes: [lambda.Runtime.NODEJS_16_X],
             description: 'Contains the postgres library for JS',
         }); 
+
+        // Create Integration Lambda layer for aws-jwt-verify
+        const jwt = new lambda.LayerVersion(this, "aws-jwt-verify", {
+          code: lambda.Code.fromAsset("./lambda/layers/aws-jwt-verify.zip"),
+          compatibleRuntimes: [lambda.Runtime.NODEJS_16_X],
+          description: "Contains the aws-jwt-verify library for JS",
+        });
+
+        // Create Integration Lambda layer for jwt-decode
+        const jwtDecode = new lambda.LayerVersion(this, "jwt-decode", {
+          code: lambda.Code.fromAsset("./lambda/layers/jwt-decode.zip"),
+          compatibleRuntimes: [lambda.Runtime.NODEJS_16_X],
+          description: "Contains the jwt-decode library for JS",
+        });
+
 
         // Create an admin handler for the api
         const apiAdminHandler = new lambda.Function(this, "apiAdminHandler", {
@@ -134,22 +153,27 @@ export class APIStack extends Stack {
           memorySize: 512,
           environment:{
               SM_DB_CREDENTIALS: db.secretPathUser.secretName, 
-              BUCKET_NAME: functionalityStack.bucketName,   
           },
           vpc: vpcStack.vpc,
           code: lambda.Code.fromAsset("lambda"),
-          layers: [postgres],
+          layers: [postgres, jwtDecode],
           role: lambdaRole,
         });
 
-          /**
-         *
-         * Create Integration Lambda layer for aws-jwt-verify
-         */
-        const jwt = new lambda.LayerVersion(this, "aws-jwt-verify", {
-          code: lambda.Code.fromAsset("./lambda/layers/aws-jwt-verify.zip"),
-          compatibleRuntimes: [lambda.Runtime.NODEJS_16_X],
-          description: "Contains the aws-jwt-verify library for JS",
+        // Create a lambda to handle requests to download metric data from s3
+        const operatorDownloadHandler = new lambda.Function(this, "noiseTracker-operatorDownloadHandler", {
+          functionName: "noiseTracker-operatorDownloadHandler",
+          runtime: lambda.Runtime.PYTHON_3_9,
+          handler: "operatorDownloadHandler.handler",
+          timeout: Duration.seconds(300),
+          memorySize: 512,
+          environment:{
+            SM_DB_CREDENTIALS: db.secretPathUser.secretName,
+            BUCKET_NAME: functionalityStack.bucketName,   
+          },
+          vpc: vpcStack.vpc,
+          code: lambda.Code.fromAsset("lambda"),
+          role: lambdaRole,
         });
 
         /**
@@ -234,6 +258,7 @@ export class APIStack extends Stack {
           const adminMetrics = adminResource.addResource('metrics')
 
           const operatorResource = api.root.addResource('operator');
+          const operatorDownload = operatorResource.addResource('download')
           const operatorHydrophones = operatorResource.addResource('hydrophones')
           const operatorOperators = operatorResource.addResource('operators')
           const operatorMetrics = operatorResource.addResource('metrics')
@@ -302,6 +327,12 @@ export class APIStack extends Stack {
           adminMetrics.addMethod('DELETE', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}),
           {
             authorizer: adminAuthorizer,
+            authorizationType: apigateway.AuthorizationType.CUSTOM,
+          });
+
+          operatorDownload.addMethod('GET', new apigateway.LambdaIntegration(operatorDownloadHandler, {proxy: true}),
+          {
+            authorizer: operatorAuthorizer,
             authorizationType: apigateway.AuthorizationType.CUSTOM,
           });
 

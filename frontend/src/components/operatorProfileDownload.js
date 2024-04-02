@@ -1,50 +1,97 @@
-import React, { useState } from 'react';
-import { Typography, Checkbox, FormControlLabel, Button } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Typography, Checkbox, FormControlLabel, Button, CircularProgress } from '@mui/material';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import sampleHydrophoneData from '../sampledata/sampleHydrophoneData';
+import axios from 'axios';
 
 export default function OperatorProfileDownload({ jwt }) {
+    const API_URL = process.env.REACT_APP_API_URL;
+
     // Create a state to store selected metrics for each hydrophone
-    const [selectedMetrics, setSelectedMetrics] = useState({});
+    const [checkedHydrophones, setCheckedHydrophones] = useState({}); // State to hold checked status
 
     // Create a state to store start and end date times 
     const [startDateTime, setStartDateTime] = useState(null);
     const [endDateTime, setEndDateTime] = useState(null);
 
-    const handleCheckboxChange = (hydrophoneName, metric) => {
-        setSelectedMetrics((prevSelectedMetrics) => {
-            const hydrophoneSelectedMetrics = {
-                ...prevSelectedMetrics,
-                [hydrophoneName]: {
-                    ...(prevSelectedMetrics[hydrophoneName] || {}),
-                    [metric]: !prevSelectedMetrics[hydrophoneName]?.[metric],
-                },
-            };
-            return hydrophoneSelectedMetrics;
+    const [hydrophoneData, setHydrophoneData] = useState([]);
+    const [downloadURL, setDownloadURL] = useState(null);
+
+    // States to track loading statuses
+    const [loadingHydrophoneData, setLoadingHydrophoneData] = useState(false); 
+    const [loadingPresignedURL, setLoadingPresignedURL] = useState(false); 
+
+
+    useEffect(() => {
+        fetchHydrophoneData();
+      }, []);
+  
+    const fetchHydrophoneData = async () => {
+    try{
+        setLoadingHydrophoneData(true);
+
+        const response = await axios.get(
+        API_URL + 'operator/hydrophones',
+        {
+            headers: {
+            'Authorization': jwt
+            }
+        }
+        );
+
+        const data = response.data;
+        setHydrophoneData(data);
+    } 
+    
+    catch(error){
+        console.error("Error fetching hydrophone data: ", error);
+    } 
+    finally {
+        setLoadingHydrophoneData(false); // Set loading to false when data fetching completes 
+    }
+    }
+
+    const fetchPresignedURL = async () => {
+    try{
+        setLoadingPresignedURL(true);
+
+        const params = new URLSearchParams();
+        Object.entries(checkedHydrophones).forEach(([site, checked]) => {
+            if (checked) {
+                params.append('hydrophones', site);
+            }
         });
-    };
 
-    const handleSelectAllChange = (hydrophoneName, checked) => {
-        setSelectedMetrics((prevSelectedMetrics) => {
-            const hydrophoneMetrics = {
-                ...(prevSelectedMetrics[hydrophoneName] || {}),
-            };
+        params.append('startTime', startDateTime);
+        params.append('endTime', endDateTime);
+    
+        const response = await axios.get(
+            API_URL + 'operator/download',
+            {
+            headers: {
+                'Authorization': jwt
+            }
+            }
+        );
 
-            // Initialize all metrics for the hydrophone if not present
-            sampleHydrophoneData
-                .find((hydrophone) => hydrophone.name === hydrophoneName)
-                .metrics.forEach((metric) => {
-                    hydrophoneMetrics[metric] = checked;
-                });
+        const data = response.data;
+        console.log(data);
+        setDownloadURL(data);
+    } 
+    
+    catch(error){
+        console.error("Error fetching pre-signed URL: ", error);
+    } 
+    finally {
+        setLoadingPresignedURL(false); // Set loading to false when data fetching completes 
+    }
+    }
 
-            return {
-                ...prevSelectedMetrics,
-                [hydrophoneName]: hydrophoneMetrics,
-            };
-        });
+    const handleCheckboxChange = (event, site) => {
+        setCheckedHydrophones({ ...checkedHydrophones, [site]: event.target.checked });
     };
 
     const handleStartDateTimeChange = (date) => {
@@ -58,7 +105,7 @@ export default function OperatorProfileDownload({ jwt }) {
     };
 
     const handleDownloadClick = () => {
-        // Add download logic here
+        fetchPresignedURL();
     };
 
     const dateTimePickerStyling = { 
@@ -70,44 +117,26 @@ export default function OperatorProfileDownload({ jwt }) {
     return (
         <div style={{ paddingLeft: '20px' }}>
             <Typography style={{ fontSize: '24px', paddingBottom: '20px' }}>
-                Select the metrics you would like to download.
+                Select which hydrophones' data you would like to download.
             </Typography>
 
-            {sampleHydrophoneData.map((hydrophone) => (
-                <div key={hydrophone.name} style={{ paddingBottom: '20px' }}>
-                    <Typography variant="h6">{hydrophone.name}</Typography>
-
+            {loadingHydrophoneData ? ( // Render circular progress if loading is true
+                <CircularProgress color="success" />
+            ) : (
                 <div>
-                    <FormControlLabel
-                        control={
+                {hydrophoneData.map((hydrophone) => (
+                    <div key={hydrophone.site} style={{ paddingBottom: '20px' }}>
+                        <div key={hydrophone.site} style={{ paddingBottom: '20px', display: 'flex', alignItems: 'center' }}>
                             <Checkbox
-                                checked={Object.keys(selectedMetrics[hydrophone.name] || {}).length >= hydrophone.metrics.length && 
-                                         Object.values(selectedMetrics[hydrophone.name] || {}).every(Boolean)}
-                                onChange={(e) => handleSelectAllChange(hydrophone.name, e.target.checked)}
+                                checked={checkedHydrophones[hydrophone.site] || false}
+                                onChange={(event) => handleCheckboxChange(event, hydrophone.site)}
                             />
-                        }
-                        label="Select All"
-                    />
+                            <Typography variant="h6">{hydrophone.site}</Typography>
+                        </div>
+                    </div>
+                ))}
                 </div>
-
-                    {hydrophone.metrics && hydrophone.metrics.length > 0 ? (
-                        hydrophone.metrics.map((metric) => (
-                            <FormControlLabel
-                                key={metric}
-                                control={
-                                    <Checkbox
-                                        checked={selectedMetrics[hydrophone.name]?.[metric] || false}
-                                        onChange={() => handleCheckboxChange(hydrophone.name, metric)}
-                                    />
-                                }
-                                label={metric}
-                            />
-                        ))
-                    ) : (
-                        <Typography>No metrics available for this hydrophone</Typography>
-                    )}
-                </div>
-            ))}
+            )}
 
             <Typography style={{ fontSize: '24px', paddingBottom: '20px', paddingTop: '20px' }}>
                 Select the time period that you would like to download from.
@@ -137,9 +166,29 @@ export default function OperatorProfileDownload({ jwt }) {
                 </LocalizationProvider>
             </div>
 
-            <Button sx={{mt: 2, mb: 2}} variant="contained" onClick={handleDownloadClick}>
-                Download
-            </Button>
+            {loadingPresignedURL ? (
+                <div>
+                    <CircularProgress color="success" />
+                    <Typography>Generating a download URL. This may take a while.</Typography>
+                </div>
+            ) : (
+                <div>
+                    {downloadURL ? (
+                        <div>
+                            <Typography>Download URL generated. Click below to begin download.</Typography>
+                            <a href={downloadURL} target="_blank" rel="noopener noreferrer">
+                                <Button sx={{ mt: 2, mb: 2 }} variant="contained">
+                                    Download
+                                </Button>
+                            </a>
+                        </div>
+                    ) : (
+                        <Button sx={{ mt: 2, mb: 2 }} variant="contained" onClick={handleDownloadClick}>
+                            Generate Download URL
+                        </Button>
+                    )}
+                </div>
+            )}
         </div>
     );
 }

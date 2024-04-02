@@ -1,4 +1,5 @@
 const postgres = require("postgres");
+const { jwtDecode } = require("jwt-decode");
 const AWS = require("aws-sdk");
 
 // Gather AWS services
@@ -61,6 +62,21 @@ exports.handler = async (event) => {
     					hydrophone_operators.in_directory = 'true'
 					GROUP BY
 					    hydrophone_operators.hydrophone_operator_name, hydrophone_operators.contact_email;
+				`;
+                response.body = JSON.stringify(data);
+                
+                break;
+                
+            case "GET /operator/hydrophones":
+            	const token = event.headers.Authorization; // Assuming the token is in the Authorization header
+            	const decodedToken = jwtDecode(token);
+            	const username = decodedToken.username;
+            	
+                data = await dbConnection`
+	            	SELECT hydrophones.site
+					FROM hydrophones
+					JOIN hydrophone_operators ON hydrophones.hydrophone_operator_id = hydrophone_operators.hydrophone_operator_id
+					WHERE hydrophone_operators.contact_email = ${username};
 				`;
                 response.body = JSON.stringify(data);
                 
