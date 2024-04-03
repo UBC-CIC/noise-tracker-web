@@ -75,7 +75,11 @@
 }
 
 .sidebar-content {
-  margin-bottom: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow-y: auto;
+  height: 100%;
 }
 
 .tabs-margin-top {
