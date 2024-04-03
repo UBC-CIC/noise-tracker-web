@@ -16,15 +16,16 @@ import EditIcon from '@mui/icons-material/Edit';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import sampleHydrophoneData from "../../sampledata/sampleHydrophoneData";
 import axios from "axios";
 import dayjs from "dayjs";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt, operatorData }) {
     const API_URL = process.env.REACT_APP_API_URL;
 
     const [open, setOpen] = useState(false);
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [fileExists, setFileExists] = useState(hydrophoneData && hydrophoneData.calibration_available ? true : false);
     const [formData, setFormData] = useState({
         hydrophone_operator_name: hydrophoneData?.hydrophone_operator_name || '',
         site: hydrophoneData?.site || '',
@@ -48,6 +49,8 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt, op
         calibration_available: hydrophoneData?.calibration_available || ''
     });
 
+    const [fileError, setFileError] = useState(false); 
+
     const handleOpen = () => {
         setOpen(true);
     };
@@ -61,6 +64,12 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt, op
 
         if (mode === 'create'){
             try{
+                // Check if calibration is available but no file selected and file doesn't already exist from previous upload
+                if (formData.calibration_available && !selectedFile && !fileExists) { 
+                    setFileError(true);
+                    return; 
+                }
+
                 const response = await axios.post(
                   API_URL + 'admin/hydrophones',
                   requestData,
@@ -70,6 +79,12 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt, op
                     }
                   }
                 );
+
+                const presignedURL = response.data;
+
+                if (formData.calibration_available && selectedFile) {
+                    handleUpload(presignedURL);
+                }
 
                 onUpdate();
               } 
@@ -82,6 +97,12 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt, op
             requestData.hydrophone_id = hydrophoneData.hydrophone_id;
 
             try{
+                // Check if calibration is available but no file selected and file doesn't already exist from previous upload
+                if (formData.calibration_available && !selectedFile && !fileExists) { 
+                    setFileError(true);
+                    return; 
+                }
+
                 const response = await axios.put(
                   API_URL + 'admin/hydrophones',
                   requestData,
@@ -92,6 +113,12 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt, op
                   }
                 );
 
+                const presignedURL = response.data;
+
+                if (formData.calibration_available && selectedFile) {
+                    handleUpload(presignedURL);
+                }
+
                 onUpdate();
               } 
               
@@ -101,6 +128,21 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt, op
         }
 
         handleClose(); // Close the dialog after saving
+    };
+
+    const handleUpload = async (presignedURL) => {    
+        try {
+            const response = await axios.put(presignedURL, selectedFile, {
+                headers: {
+                    'Content-Type': selectedFile.type
+                }
+            });
+    
+            // Reset the selected file after upload
+            setSelectedFile(null);
+        } catch (error) {
+            console.error("Error uploading file: ", error);
+        }
     };
 
     const handleChange = (event) => {
@@ -115,6 +157,15 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt, op
     const handleCheckboxChange = (event) => {
         const { name, checked } = event.target;
         setFormData({ ...formData, [name]: checked });
+        if (!checked) {
+            setFileError(false);
+        }
+    };
+
+    const handleFileChange = (event) => {
+        setSelectedFile(event.target.files[0]);
+        setFileExists(false);
+        setFileError(false);
     };
 
     return (
@@ -315,6 +366,48 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt, op
                                     />}
                                   label="Yes"
                                 />
+                                {formData.calibration_available && (
+                                    <div>
+                                        <input
+                                            accept=".csv"
+                                            style={{ display: 'none' }}
+                                            id="file-upload"
+                                            type="file"
+                                            onChange={handleFileChange}
+                                        />
+                                        <label htmlFor="file-upload">
+                                            <Typography  style={{ marginTop: '20px', marginBottom: '5px' }}>
+                                                Select calibration file
+                                            </Typography>
+                                            <Button color="primary" component="span">
+                                                Select File
+                                            </Button>
+                                        </label>
+                                        {selectedFile ? (
+                                            <Typography variant="body2" style={{ marginTop: '10px' }}>
+                                                Selected file: {selectedFile.name}
+                                            </Typography>
+                                        ) : (
+                                            fileExists ? (
+                                                <Typography variant="body2" style={{ marginTop: '10px' }}>
+                                                    Selected file: 
+                                                    <a href={hydrophoneData.presignedUrl} target="_blank" rel="noopener noreferrer">
+                                                        Previously uploaded file
+                                                    </a>
+                                                </Typography>
+                                            ) : (
+                                                <Typography variant="body2" style={{ marginTop: '10px' }}>
+                                                    No file chosen
+                                                </Typography>
+                                            )
+                                        )}
+                                    </div>
+                                )}
+                                {fileError && ( 
+                                    <Typography variant="body2" style={{ color: "red", marginTop: "10px" }}>
+                                        Please select a file for calibration.
+                                    </Typography>
+                                )}
                         </LocalizationProvider>
                     </DialogContent>
                     <DialogActions>

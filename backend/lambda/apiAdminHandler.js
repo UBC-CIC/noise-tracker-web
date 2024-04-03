@@ -101,6 +101,20 @@ exports.handler = async (event) => {
 					FROM hydrophones
 					JOIN hydrophone_operators ON hydrophones.hydrophone_operator_id = hydrophone_operators.hydrophone_operator_id;
 				`;
+				
+				// Generating presigned URLs for each row
+			    for (let i = 0; i < data.length; i++) {
+			        const { hydrophone_operator_id, hydrophone_id } = data[i];
+			        const Key = `${hydrophone_operator_id}/${hydrophone_id}/calibration.csv`;
+			        const params = {
+			            Bucket: BUCKET_NAME,
+			            Key: Key,
+			            Expires: 3600 // URL expiration time in seconds
+			        };
+			        const presignedUrl = s3.getSignedUrl('getObject', params);
+			        data[i].presignedUrl = presignedUrl;
+			    }
+			    
                 response.body = JSON.stringify(data);
                 
                 break;
@@ -163,6 +177,19 @@ exports.handler = async (event) => {
 					
 					// The result will be an array, get the first element as the UUID
 			        const hydrophone_id = data[0].hydrophone_id;
+			        
+			        // Define presigned url parameters 
+					const signedUrlParams = {
+					  Bucket: BUCKET_NAME,
+					  Key: `${operator_id[0].hydrophone_operator_id}/${hydrophone_id}/calibration.csv`,
+					  Expires: 3600
+					};
+					
+					// Generate a presigned URL
+        			const signedUrl = await s3.getSignedUrlPromise('putObject', signedUrlParams);
+        			
+					// Append the presigned URL to the response
+        			response.body = JSON.stringify(signedUrl);
 						
 					// Define an object
 					const params = {
@@ -211,6 +238,19 @@ exports.handler = async (event) => {
 						    calibration_available = ${body.calibration_available}
 			            WHERE hydrophone_id = ${body.hydrophone_id};
 						`;
+					
+					// Define presigned url parameters 
+			        const signedUrlParams = {
+			            Bucket: BUCKET_NAME,
+			            Key: `${operator_id[0].hydrophone_operator_id}/${body.hydrophone_id}/calibration.csv`,
+			            Expires: 3600
+			        };
+			        
+			        // Generate a presigned URL
+			        const signedUrl = await s3.getSignedUrlPromise('putObject', signedUrlParams);
+			        
+			        // Append the presigned URL to the response
+			        response.body = JSON.stringify(signedUrl);
             	}
 				
             	break;

@@ -5,6 +5,7 @@ import HydrophoneForm from './adminSettings/hydrophoneForm';
 import DeleteForm from './adminSettings/deleteForm';
 import axios from 'axios';
 import StyledTableCell from './adminTableCellStyle';
+import DownloadIcon from '@mui/icons-material/Download';
 
 export default function AdminHydrophones({ jwt }){
     const API_URL = process.env.REACT_APP_API_URL;
@@ -94,6 +95,7 @@ export default function AdminHydrophones({ jwt }){
                     <StyledTableCell>Storage Interval</StyledTableCell>
                     <StyledTableCell>Last Data Upload</StyledTableCell>
                     <StyledTableCell>Calibration Available</StyledTableCell>
+                    <StyledTableCell>Calibration File</StyledTableCell>
                     <StyledTableCell>Edit</StyledTableCell>
                     <StyledTableCell>Delete</StyledTableCell>
                   </TableRow>
@@ -123,6 +125,15 @@ export default function AdminHydrophones({ jwt }){
                       <StyledTableCell>{hydrophone.last_data_upload}</StyledTableCell>
                       <StyledTableCell>{hydrophone.calibration_available ? 'Yes' : 'No'}</StyledTableCell>
                       <StyledTableCell>
+                      {hydrophone.calibration_available ? (
+                        <a href={hydrophone.presignedUrl} target="_blank" rel="noopener noreferrer">
+                            <DownloadIcon style={{ color: '#6E6E6E' }}/>
+                          </a>
+                        ) : (
+                          "N/A"
+                        )}
+                      </StyledTableCell>
+                      <StyledTableCell>
                         <HydrophoneForm 
                           mode="modify" 
                           onUpdate={fetchHydrophoneData} 
@@ -148,7 +159,8 @@ export default function AdminHydrophones({ jwt }){
                             "timezone": hydrophone.timezone,
                             "storage_interval": hydrophone.storage_interval,
                             "last_data_upload": hydrophone.last_data_upload,
-                            "calibration_available": hydrophone.calibration_available
+                            "calibration_available": hydrophone.calibration_available,
+                            "presignedUrl": hydrophone.presignedUrl
                           }}
                           jwt={jwt}
                           operatorData={operatorData}
