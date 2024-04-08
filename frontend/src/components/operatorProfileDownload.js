@@ -55,39 +55,40 @@ export default function OperatorProfileDownload({ jwt }) {
     }
 
     const fetchPresignedURL = async () => {
-    try{
-        setLoadingPresignedURL(true);
+        try{
+            setLoadingPresignedURL(true);
 
-        const params = new URLSearchParams();
-        Object.entries(checkedHydrophones).forEach(([site, checked]) => {
-            if (checked) {
-                params.append('hydrophones', site);
-            }
-        });
+            const params = new URLSearchParams();
+            Object.entries(checkedHydrophones).forEach(([site, checked]) => {
+                if (checked) {
+                    params.append('hydrophones', site);
+                }
+            });
 
-        params.append('startTime', startDateTime);
-        params.append('endTime', endDateTime);
-    
-        const response = await axios.get(
-            API_URL + 'operator/download',
-            {
-            headers: {
-                'Authorization': jwt
-            }
-            }
-        );
+            params.append('startTime', startDateTime);
+            params.append('endTime', endDateTime);
+        
+            const response = await axios.get(
+                API_URL + 'operator/download',
+                {
+                headers: {
+                    'Authorization': jwt
+                },
+                params: params
+                }
+            );
 
-        const data = response.data;
-        console.log(data);
-        setDownloadURL(data);
-    } 
-    
-    catch(error){
-        console.error("Error fetching pre-signed URL: ", error);
-    } 
-    finally {
-        setLoadingPresignedURL(false); // Set loading to false when data fetching completes 
-    }
+            const data = response.data;
+            console.log(data);
+            setDownloadURL(data);
+        } 
+        
+        catch(error){
+            console.error("Error fetching pre-signed URL: ", error);
+        } 
+        finally {
+            setLoadingPresignedURL(false); // Set loading to false when data fetching completes 
+        }
     }
 
     const handleCheckboxChange = (event, site) => {

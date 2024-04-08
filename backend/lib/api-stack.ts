@@ -125,6 +125,18 @@ export class APIStack extends Stack {
           description: "Contains the jwt-decode library for JS",
         });
 
+        const pyJWT = new lambda.LayerVersion(this, "pyjwt", {
+          code: lambda.Code.fromAsset("./lambda/layers/pyjwt.zip"),
+          compatibleRuntimes: [lambda.Runtime.PYTHON_3_9],
+          description: "Contains the PyJWT library",
+        });
+
+        const psyscopg2 = new lambda.LayerVersion(this, "psyscopg2", {
+          code: lambda.Code.fromAsset("./lambda/layers/psycopg2.zip"),
+          compatibleRuntimes: [lambda.Runtime.PYTHON_3_9],
+          description: "psycopg2 library for connecting to the PostgreSQL database",
+        });
+
 
         // Create an admin handler for the api
         const apiAdminHandler = new lambda.Function(this, "apiAdminHandler", {
@@ -173,6 +185,7 @@ export class APIStack extends Stack {
           },
           vpc: vpcStack.vpc,
           code: lambda.Code.fromAsset("lambda"),
+          layers: [pyJWT, psyscopg2],
           role: lambdaRole,
         });
 
