@@ -268,13 +268,11 @@ export class APIStack extends Stack {
           const adminResource = api.root.addResource('admin');
           const adminHydrophones = adminResource.addResource('hydrophones')
           const adminOperators = adminResource.addResource('operators')
-          const adminMetrics = adminResource.addResource('metrics')
 
           const operatorResource = api.root.addResource('operator');
           const operatorDownload = operatorResource.addResource('download')
           const operatorHydrophones = operatorResource.addResource('hydrophones')
           const operatorOperators = operatorResource.addResource('operators')
-          const operatorMetrics = operatorResource.addResource('metrics')
 
           const publicResource = api.root.addResource('public');
           const publicHydrophones = publicResource.addResource('hydrophones')
@@ -322,27 +320,6 @@ export class APIStack extends Stack {
             authorizationType: apigateway.AuthorizationType.CUSTOM,
           });
 
-          adminMetrics.addMethod('GET', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}),
-          {
-            authorizer: adminAuthorizer,
-            authorizationType: apigateway.AuthorizationType.CUSTOM,
-          });
-          adminMetrics.addMethod('POST', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}),
-          {
-            authorizer: adminAuthorizer,
-            authorizationType: apigateway.AuthorizationType.CUSTOM,
-          });
-          adminMetrics.addMethod('PUT', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}),
-          {
-            authorizer: adminAuthorizer,
-            authorizationType: apigateway.AuthorizationType.CUSTOM,
-          });
-          adminMetrics.addMethod('DELETE', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}),
-          {
-            authorizer: adminAuthorizer,
-            authorizationType: apigateway.AuthorizationType.CUSTOM,
-          });
-
           operatorDownload.addMethod('GET', new apigateway.LambdaIntegration(operatorDownloadHandler, {proxy: true}),
           {
             authorizer: operatorAuthorizer,
@@ -356,12 +333,6 @@ export class APIStack extends Stack {
           });
 
           operatorOperators.addMethod('GET', new apigateway.LambdaIntegration(apiOperatorHandler, {proxy: true}),
-          {
-            authorizer: operatorAuthorizer,
-            authorizationType: apigateway.AuthorizationType.CUSTOM,
-          });
-
-          operatorMetrics.addMethod('GET', new apigateway.LambdaIntegration(apiOperatorHandler, {proxy: true}),
           {
             authorizer: operatorAuthorizer,
             authorizationType: apigateway.AuthorizationType.CUSTOM,
