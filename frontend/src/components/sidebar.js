@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { IconButton, Typography, Tab, Tabs, Box, tabsClasses, useMediaQuery, useTheme } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import SidebarOverview from './sidebarOverview';
+import SidebarNoiseMetrics from './sidebarNoiseMetrics';
+import SidebarTrends from './sidebarTrends';
+import SidebarStationInformation from './sidebarStationInformation';
 import LineGraph from './linegraph';
 
 const Sidebar = ({ hydrophoneData, onCloseSidebar, selectedMetric }) => {
-    const [selectedTab, setSelectedTab] = useState("Sound Pressure Level"); // Initialize selectedTab state
+    const [selectedTab, setSelectedTab] = useState("Overview"); // Initialize selectedTab state
     const tabs = ["Overview", "Noise Metrics", "Trends", "Station Information"];
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -39,6 +43,22 @@ const Sidebar = ({ hydrophoneData, onCloseSidebar, selectedMetric }) => {
       zIndex: 1000,
   };
 
+  // Render different components based on selected tab
+  const renderTabContent = () => {
+    switch (selectedTab) {
+      case "Overview":
+        return <SidebarOverview hydrophoneData={hydrophoneData} />;
+      case "Noise Metrics":
+        return <SidebarNoiseMetrics hydrophoneData={hydrophoneData} />;
+      case "Trends":
+        return <SidebarTrends hydrophoneData={hydrophoneData} />;
+      case "Station Information":
+        return <SidebarStationInformation hydrophoneData={hydrophoneData} />;
+      default:
+        return null;
+    }
+  };
+
   return (
       <Box sx={sidebarStyles}>
           <div className="sidebar-header">
@@ -66,16 +86,17 @@ const Sidebar = ({ hydrophoneData, onCloseSidebar, selectedMetric }) => {
                   ))}
               </Tabs>
           <div className="sidebar-content">
-            <div className="sidebar-graph">
+            {renderTabContent()}
+            {/* <div className="sidebar-graph">
               {selectedTab === "Sound Pressure Level" && (
                   <>
                       <Typography className="sidebar-typography-padding">Contextual information about the metric goes here.</Typography>
-                      {/* <div>
+                      <div>
                         <LineGraph hydrophoneData={hydrophoneData} />
-                      </div> */}
+                      </div>
                   </>
               )}
-              </div>
+              </div> */}
               <div className="sidebar-updated-timestamp">
               <Typography>Last Updated: {hydrophoneData.lastUpdated}</Typography>
               </div>
