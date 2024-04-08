@@ -22,7 +22,7 @@ export default function Map({ onToggleSidebar, hydrophoneData, selectedHydrophon
 
   const handleIconClick = (hydrophone, map) => {
     // Update the selected hydrophone
-    setSelectedHydrophone(hydrophone.name)
+    setSelectedHydrophone(hydrophone.site)
 
     // Icon zoom level
     const zoomLevel = 9;
@@ -50,23 +50,24 @@ export default function Map({ onToggleSidebar, hydrophoneData, selectedHydrophon
     const zoomAdjustedTotalLongitude = zoomIn ? currentTotalLongitude/(2**zoomDifference) : currentTotalLongitude*(2**Math.abs(zoomDifference));
 
     // Calculate the adjusted longitude based on the sidebar width
-    const adjustedLongitude = hydrophone.coordinates[1] + (zoomAdjustedTotalLongitude*(sidebarPercentage/2));
+    const adjustedLongitude = parseFloat(hydrophone.coordinates.split(', ')[1]) + (zoomAdjustedTotalLongitude*(sidebarPercentage/2));
 
     // Update the coordinates with the adjusted longitude
-    const adjustedCoordinates = [hydrophone.coordinates[0], adjustedLongitude];
+    const adjustedCoordinates = [hydrophone.coordinates.split(', ')[0], adjustedLongitude];
 
     // Zoom in on icon
     map.flyTo(adjustedCoordinates, zoomLevel);
 
     // Open sidebar
-    onToggleSidebar(hydrophone.name);
+    onToggleSidebar(hydrophone.site);
   };
 
-  useEffect(() => {
+/*   useEffect(() => {
     if (selectedHydrophoneFromProfile){
       setSelectedHydrophone(selectedHydrophoneFromProfile.name);
     }
-  }, [selectedHydrophoneFromProfile]); 
+    console.log("Selected hydrophone MAP: ", selectedHydrophone);
+  }, [selectedHydrophoneFromProfile]);  */
 
 
   return (
@@ -83,8 +84,8 @@ export default function Map({ onToggleSidebar, hydrophoneData, selectedHydrophon
         {hydrophoneData.map((hydrophone, index) => (
           <Marker
             key={index}
-            position={hydrophone.coordinates}
-            icon={hydrophone.name === selectedHydrophone ? hydrophoneIconSelected : hydrophoneIcon}
+            position={hydrophone.coordinates.split(', ')}
+            icon={hydrophone.site === selectedHydrophone ? hydrophoneIconSelected : hydrophoneIcon}
             eventHandlers={{
               click: (e) => handleIconClick(hydrophone, e.target._map),
             }}

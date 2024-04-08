@@ -5,6 +5,7 @@ import LineGraph from './linegraph';
 
 const Sidebar = ({ hydrophoneData, onCloseSidebar, selectedMetric }) => {
     const [selectedTab, setSelectedTab] = useState("Sound Pressure Level"); // Initialize selectedTab state
+    const tabs = ["Overview", "Noise Metrics", "Trends", "Station Information"];
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
     
@@ -41,7 +42,7 @@ const Sidebar = ({ hydrophoneData, onCloseSidebar, selectedMetric }) => {
   return (
       <Box sx={sidebarStyles}>
           <div className="sidebar-header">
-              <Typography variant='h4'>{hydrophoneData.name}</Typography>
+              <Typography variant='h4'>{`${hydrophoneData.site} (${hydrophoneData.hydrophone_operator_name})`}</Typography>
               <IconButton onClick={handleSidebarClose}>
                   <CloseIcon />
               </IconButton>
@@ -60,7 +61,7 @@ const Sidebar = ({ hydrophoneData, onCloseSidebar, selectedMetric }) => {
                   '&.Mui-disabled': { opacity: 0.3 },
                 },
               }}>
-                  {hydrophoneData.metrics.map((metric, index) => (
+                  {tabs.map((metric, index) => (
                       <Tab key={index} label={metric} value={metric} />
                   ))}
               </Tabs>
@@ -69,9 +70,9 @@ const Sidebar = ({ hydrophoneData, onCloseSidebar, selectedMetric }) => {
               {selectedTab === "Sound Pressure Level" && (
                   <>
                       <Typography className="sidebar-typography-padding">Contextual information about the metric goes here.</Typography>
-                      <div>
+                      {/* <div>
                         <LineGraph hydrophoneData={hydrophoneData} />
-                      </div>
+                      </div> */}
                   </>
               )}
               </div>

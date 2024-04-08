@@ -172,6 +172,23 @@ export class APIStack extends Stack {
           role: lambdaRole,
         });
 
+         // Create a public request handler for the api
+         const apiPublicHandler = new lambda.Function(this, "apiPublicHandler", {
+          functionName: "apiPublicHandler",
+          runtime: lambda.Runtime.NODEJS_16_X,
+          handler: "apiPublicHandler.handler",
+          timeout: Duration.seconds(300),
+          memorySize: 512,
+          environment:{
+              SM_DB_CREDENTIALS: db.secretPathUser.secretName,
+              BUCKET_NAME: functionalityStack.bucketName, 
+          },
+          vpc: vpcStack.vpc,
+          code: lambda.Code.fromAsset("lambda"),
+          layers: [postgres],
+          role: lambdaRole,
+        });
+
         // Create a lambda to handle requests to download metric data from s3
         const operatorDownloadHandler = new lambda.Function(this, "noiseTracker-operatorDownloadHandler", {
           functionName: "noiseTracker-operatorDownloadHandler",
@@ -337,5 +354,7 @@ export class APIStack extends Stack {
             authorizer: operatorAuthorizer,
             authorizationType: apigateway.AuthorizationType.CUSTOM,
           });
+
+          publicHydrophones.addMethod('GET', new apigateway.LambdaIntegration(apiPublicHandler, {proxy: true}));
     }
 }
