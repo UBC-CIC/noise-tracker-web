@@ -30,8 +30,16 @@ export default function Popup(){
           <Dialog open={open} onClose={handleClose}>
             <DialogTitle>How to Use This Map</DialogTitle>
             <DialogContent>
+              <div style={{ paddingBottom: "20px" }}>
+                <DialogContentText>
+                  Each icon on this map represents a hydrophone. 
+                  These underwater microphones listen to the sounds of the underwater world and gather valuable acoustic information. 
+                  Click on these icons to access real-time noise data at different locations along the coast and learn more about the 
+                  various metrics that scientists use to understand the ocean soundscape. 
+                </DialogContentText>
+              </div>
               <DialogContentText>
-                Use your mouse or keypad to pan in all directions, and to zoom in and out. Click on the hydrophone icons to view their data.
+                Don’t forget to check out our comprehensive Education Hub to learn more about the underwater noise!
               </DialogContentText>
             </DialogContent>
             <DialogActions>
