@@ -12,11 +12,14 @@ export default function InteractiveMap(){
 
     const [showSidebar, setShowSidebar] = useState(false);
     const [selectedHydrophone, setSelectedHydrophone] = useState(null);
+    const [selectedSpectrogram, setSelectedSpectrogram] = useState(null);
     const [selectedMetric, setSelectedMetric] = useState(null);
     const [hydrophoneData, setHydrophoneData] = useState([]);
+    const [spectrogramData, setSpectrogramData] = useState([]);
 
     useEffect(() => {
       fetchHydrophoneData();
+      fetchSpectrogramData();
     }, []);
 
     const fetchHydrophoneData = async () => {
@@ -35,13 +38,31 @@ export default function InteractiveMap(){
       } 
     }
 
+    const fetchSpectrogramData = async () => {
+      try{
+        const response = await axios.get(
+          API_URL + 'public/spectrograms',
+        );
 
-    const handleToggleSidebar = (hydrophoneName) => {
-        const selectedHydrophone = hydrophoneData.find(hydrophone => hydrophone.site === hydrophoneName);
+        const data = response.data;
+
+        setSpectrogramData(data);
+      } 
+      
+      catch(error){
+        console.error("Error fetching spectrogram data: ", error);
+      } 
+    }
+
+
+    const handleToggleSidebar = (hydrophoneId) => {
+        const selectedHydrophone = hydrophoneData.find(hydrophone => hydrophone.hydrophone_id === hydrophoneId);
+        const selectedSpectrogram = spectrogramData.find(spectrogram => spectrogram.hydrophone_id === hydrophoneId);
         
         if (selectedHydrophone) {
           setShowSidebar(true);
           setSelectedHydrophone(selectedHydrophone);
+          setSelectedSpectrogram(selectedSpectrogram);
           
           /* const selectedMetric = selectedHydrophone.metrics.includes(metricName) ? metricName : null;
 
@@ -67,7 +88,13 @@ export default function InteractiveMap(){
           <div className={showSidebar ? "map-container-when-sidebar" : "map-container-no-sidebar"}>
             <Map onToggleSidebar={handleToggleSidebar} hydrophoneData={hydrophoneData} selectedHydrophoneFromProfile={selectedHydrophone}/>
           </div>
-          {showSidebar && <Sidebar onCloseSidebar={handleCloseSidebar} hydrophoneData={selectedHydrophone} selectedMetric={selectedMetric} />}
+          {showSidebar && 
+            <Sidebar 
+              onCloseSidebar={handleCloseSidebar} 
+              hydrophoneData={selectedHydrophone} 
+              spectrogramData={selectedSpectrogram} 
+              selectedMetric={selectedMetric} 
+            />}
         </div>
       );      
 }

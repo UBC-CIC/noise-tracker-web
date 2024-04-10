@@ -59,7 +59,7 @@ export default function Map({ onToggleSidebar, hydrophoneData, selectedHydrophon
     map.flyTo(adjustedCoordinates, zoomLevel);
 
     // Open sidebar
-    onToggleSidebar(hydrophone.site);
+    onToggleSidebar(hydrophone.hydrophone_id);
   };
 
 /*   useEffect(() => {

@@ -3,8 +3,9 @@ const AWS = require("aws-sdk");
 
 // Gather AWS services
 const secretsManager = new AWS.SecretsManager();
+const s3 = new AWS.S3();
 
-let { SM_DB_CREDENTIALS } = process.env;
+let { SM_DB_CREDENTIALS, BUCKET_NAME } = process.env;
 let dbConnection;  // Global variable to hold the database connection
 
 async function initializeConnection(){
@@ -59,7 +60,69 @@ exports.handler = async (event) => {
 				`;
                 response.body = JSON.stringify(data);
                 
-            	break;
+                break;
+                
+            case "GET /public/spectrograms":
+			    const hydrophones = await dbConnection`
+			        SELECT hydrophone_operator_id, hydrophone_id FROM hydrophones;
+			    `;
+			
+			    const promises = hydrophones.map(async hydrophone => {
+			        const { hydrophone_operator_id, hydrophone_id } = hydrophone;
+			        const params = {
+			            Bucket: BUCKET_NAME,
+			            Prefix: `${hydrophone_operator_id}/${hydrophone_id}/spectrogram/2`
+			        };
+			        try {
+			            const objects = await s3.listObjectsV2(params).promise();
+			            
+			            // The month needs to be adjusted by -1 because JavaScript uses a zero-based indexing for months (January is 0, December is 11).
+			            const getDateFromKey = key => {
+					        const match = key.match(/(\d{4})-(\d{2})-(\d{2})-(\d{2})-(\d{2})-(\d{2})/);
+						    return match ? new Date(match[1], match[2] - 1, match[3], match[4], match[5], match[6]) : null;
+					    };
+			            
+			            // Sort objects based on datetime in the file name
+			            const sortedObjects = objects.Contents.sort((a, b) => {
+			                const dateA = getDateFromKey(a.Key);
+			                const dateB = getDateFromKey(b.Key);
+
+			                return dateB - dateA;
+			            });
+            
+			            if (sortedObjects.length > 0) {
+			                const recentObjects = sortedObjects.slice(0, 7);
+			                const presignedUrls = await Promise.all(recentObjects.map(async obj => {
+				                const presignedUrl = await s3.getSignedUrlPromise('getObject', {
+				                    Bucket: BUCKET_NAME,
+				                    Key: obj.Key,
+				                    Expires: 3600 // 1 hour
+				                });
+				                
+				                // Extract date from key
+						        const date = getDateFromKey(obj.Key);
+
+						        return {
+						          date,
+						          presignedUrl
+						        };
+				            }));
+			                return {
+			                    hydrophone_id: hydrophone_id,
+			                    presignedUrls
+			                };
+			            } else {
+			                return null;
+			            }
+			        } catch (error) {
+			            console.error("Error fetching S3 objects:", error);
+			            return null;
+			        }
+			    });
+			
+			    const presignedUrls = await Promise.all(promises);
+			    response.body = JSON.stringify(presignedUrls.filter(url => url !== null));
+			    break;
         }
     }
     catch(error){
