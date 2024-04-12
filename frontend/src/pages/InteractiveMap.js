@@ -11,15 +11,20 @@ export default function InteractiveMap(){
     const { hydrophoneName, metricName } = useParams();
 
     const [showSidebar, setShowSidebar] = useState(false);
+
     const [selectedHydrophone, setSelectedHydrophone] = useState(null);
     const [selectedSpectrogram, setSelectedSpectrogram] = useState(null);
+    const [selectedSpl, setSelectedSpl] = useState(null);
+
     const [selectedMetric, setSelectedMetric] = useState(null);
     const [hydrophoneData, setHydrophoneData] = useState([]);
     const [spectrogramData, setSpectrogramData] = useState([]);
+    const [splData, setSplData] = useState([]);
 
     useEffect(() => {
       fetchHydrophoneData();
       fetchSpectrogramData();
+      fetchSplData();
     }, []);
 
     const fetchHydrophoneData = async () => {
@@ -54,15 +59,33 @@ export default function InteractiveMap(){
       } 
     }
 
+    const fetchSplData = async () => {
+      try{
+        const response = await axios.get(
+          API_URL + 'public/spl',
+        );
+
+        const data = response.data;
+
+        setSplData(data);
+      } 
+      
+      catch(error){
+        console.error("Error fetching spl data: ", error);
+      } 
+    }
+
 
     const handleToggleSidebar = (hydrophoneId) => {
         const selectedHydrophone = hydrophoneData.find(hydrophone => hydrophone.hydrophone_id === hydrophoneId);
         const selectedSpectrogram = spectrogramData.find(spectrogram => spectrogram.hydrophone_id === hydrophoneId);
+        const selectedSpl = splData.find(spl => spl.hydrophone_id === hydrophoneId);
         
         if (selectedHydrophone) {
           setShowSidebar(true);
           setSelectedHydrophone(selectedHydrophone);
           setSelectedSpectrogram(selectedSpectrogram);
+          setSelectedSpl(selectedSpl);
           
           /* const selectedMetric = selectedHydrophone.metrics.includes(metricName) ? metricName : null;
 
@@ -93,6 +116,7 @@ export default function InteractiveMap(){
               onCloseSidebar={handleCloseSidebar} 
               hydrophoneData={selectedHydrophone} 
               spectrogramData={selectedSpectrogram} 
+              splData={selectedSpl}
               selectedMetric={selectedMetric} 
             />}
         </div>

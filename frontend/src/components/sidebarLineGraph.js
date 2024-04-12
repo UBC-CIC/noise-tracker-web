@@ -1,0 +1,79 @@
+import { Typography } from '@mui/material';
+import React from 'react';
+import Plot from 'react-plotly.js';
+
+const SidebarLineGraph = ({ splData }) => {
+  // Check if splData is defined
+  if (!splData || !splData.data || splData.data.length === 0) {
+    return <div>No Sound Pressure Level data available</div>;
+  }
+
+  // Extracting dates and values for each trace
+  const dates = splData?.data.map(data => data.date);
+  const values = splData?.data.map(data => data.values);
+  
+  // Calculate least f_min and greatest f_max
+  let lowerFrequency = Infinity;
+  let upperFrequency = -Infinity;
+  values[0].forEach(value => {
+    if (value.f_min < lowerFrequency) {
+      lowerFrequency = value.f_min;
+    }
+    if (value.f_max > upperFrequency) {
+      upperFrequency = value.f_max;
+    }
+  });
+
+  // Creating traces
+  const traces = values[0].map((_, index) => ({
+    x: dates,
+    y: values.map(data => data[index].val),
+    name: `${values[0][index].f_min} to ${values[0][index].f_max} Hz`,
+    type: 'scatter',
+  }));
+
+  const config = {
+    responsive: true
+  };
+
+  return (
+    <div>
+      <Plot
+        style={{ width: "100%", height: "100%" }}
+        data={traces}
+        layout={{
+          title: 'Sound Pressure Levels',
+          xaxis: { title: 'Date' },
+          yaxis: { title: 'Value' },
+          legend: { 
+            traceorder: 'reversed',
+            "orientation": "h",
+            x: 0,
+            y: -0.3
+          },
+        }}
+        config={config} 
+        useResizeHandler={true}
+      />
+      <Typography className='sidebar-typography-padding'>
+        This plot shows Sound Pressure Levels in specific frequency bands over the last 24 hours. 
+      </Typography>
+      <Typography>These frequency bands are defined as: </Typography>
+      <ul>
+        <li>Broadband - the full frequency range that this hydrophone records</li>
+        <li>10-100Hz - communication range of larger baleen whales. Larger vessels may produce noise in this range.</li>
+        <li>100-1000Hz - shows the levels in the communication range of humpback whales. Larger vessels may produce noise in this range</li>
+        <li>0.5-15kHz - communication range of killer whales. Smaller vessels may produce noise in this range.</li>
+        <li>15-150kHz - echolocation range of killer whales. Smaller vessels may produce noise in this range.</li>
+      </ul>
+      <Typography style={{ paddingTop: '20px' }}>
+        Note: This hydrophone has a recording frequency range of {lowerFrequency}Hz to {upperFrequency}Hz.
+      </Typography>
+      <Typography className='sidebar-typography-padding'>
+        Learn more about Sound Pressure Levels as a tool to understanding the ocean soundscape in our Education Hub.
+      </Typography>
+    </div>
+  );
+};
+
+export default SidebarLineGraph;

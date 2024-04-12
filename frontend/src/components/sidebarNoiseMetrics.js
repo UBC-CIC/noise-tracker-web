@@ -1,13 +1,12 @@
-import { Typography } from "@mui/material";
-import { useEffect, useState } from "react";
 import SidebarSpectrogram from "./sidebarSpectrogram";
-import LineGraph from "./linegraph";
+import SidebarLineGraph from "./sidebarLineGraph";
 
-import { Button } from '@mui/material';
-
-export default function SidebarNoiseMetrics({ spectrogramData }) {
+export default function SidebarNoiseMetrics({ spectrogramData, splData }) {
   return (
-    <SidebarSpectrogram spectrogramData={spectrogramData} />
+    <div>
+      <SidebarSpectrogram spectrogramData={spectrogramData} />
+      <SidebarLineGraph splData={splData} />
+    </div>
   );
 }
 

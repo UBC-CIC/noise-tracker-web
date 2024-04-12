@@ -28,6 +28,12 @@ async function initializeConnection(){
     dbConnection = postgres(connectionConfig);
 }
 
+// The month needs to be adjusted by -1 because JavaScript uses a zero-based indexing for months (January is 0, December is 11).
+const getDateFromKey = key => {
+    const match = key.match(/(\d{4})-(\d{2})-(\d{2})-(\d{2})-(\d{2})-(\d{2})/);
+    return match ? new Date(match[1], match[2] - 1, match[3], match[4], match[5], match[6]) : null;
+};
+
 exports.handler = async (event) => {
 	if(!dbConnection){
 		await initializeConnection();
@@ -76,12 +82,6 @@ exports.handler = async (event) => {
 			        try {
 			            const objects = await s3.listObjectsV2(params).promise();
 			            
-			            // The month needs to be adjusted by -1 because JavaScript uses a zero-based indexing for months (January is 0, December is 11).
-			            const getDateFromKey = key => {
-					        const match = key.match(/(\d{4})-(\d{2})-(\d{2})-(\d{2})-(\d{2})-(\d{2})/);
-						    return match ? new Date(match[1], match[2] - 1, match[3], match[4], match[5], match[6]) : null;
-					    };
-			            
 			            // Sort objects based on datetime in the file name
 			            const sortedObjects = objects.Contents.sort((a, b) => {
 			                const dateA = getDateFromKey(a.Key);
@@ -122,6 +122,59 @@ exports.handler = async (event) => {
 			
 			    const presignedUrls = await Promise.all(promises);
 			    response.body = JSON.stringify(presignedUrls.filter(url => url !== null));
+			    break;
+		
+			case "GET /public/spl":
+			    const hydrophonesSpl = await dbConnection`
+			        SELECT hydrophone_operator_id, hydrophone_id FROM hydrophones;
+			    `;
+			
+			    const splPromises = hydrophonesSpl.map(async hydrophone => {
+			        const { hydrophone_operator_id, hydrophone_id } = hydrophone;
+			        const params = {
+			            Bucket: BUCKET_NAME,
+			            Prefix: `${hydrophone_operator_id}/${hydrophone_id}/biospl/2`
+			        };
+			        try {
+			            const objects = await s3.listObjectsV2(params).promise();
+
+			            // Sort objects based on datetime in the file name
+			            const sortedObjects = objects.Contents.sort((a, b) => {
+			                const dateA = getDateFromKey(a.Key);
+			                const dateB = getDateFromKey(b.Key);
+			
+			                return dateB - dateA;
+			            });
+			            
+			            if (sortedObjects.length > 0) {
+			                const recentObjects = sortedObjects.slice(0, 10);
+			                const data = await Promise.all(recentObjects.map(async obj => {
+			                    const getObject = await s3.getObject({ Bucket: BUCKET_NAME, Key: obj.Key }).promise();
+			                    const content = getObject.Body.toString('utf-8');
+			                    const values = JSON.parse(content);
+			                    const date = getDateFromKey(obj.Key); // Extracting date from the object key
+			                    
+			                    return {
+			                        date,
+			                        values
+			                    };
+			                }));
+			                
+			                return {
+			                    hydrophone_id: hydrophone_id,
+			                    data
+			                };
+			            } else {
+			                return null;
+			            }
+			        } catch (error) {
+			            console.error("Error fetching S3 objects:", error);
+			            return null;
+			        }
+			    });
+			
+			    const splDataUrls = await Promise.all(splPromises);
+			    response.body = JSON.stringify(splDataUrls.filter(url => url !== null));
 			    break;
         }
     }

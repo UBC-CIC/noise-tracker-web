@@ -27,7 +27,7 @@ export default function SidebarSpectrogram({ spectrogramData }) {
   const formattedDate = currentDate?.slice(0, 10); 
 
   return (
-    <div style={{ paddingLeft: '20px' }}>
+    <div>
       <div style={{ paddingTop: '20px', width: '100%', height: 'auto', overflow: 'hidden' }}>
         <img src={currentUrl} alt="Spectrogram" style={{ width: '100%', height: 'auto', display: 'block' }} />
       </div>

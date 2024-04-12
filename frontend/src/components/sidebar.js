@@ -7,7 +7,7 @@ import SidebarTrends from './sidebarTrends';
 import SidebarStationInformation from './sidebarStationInformation';
 import LineGraph from './linegraph';
 
-const Sidebar = ({ hydrophoneData, onCloseSidebar, spectrogramData, selectedMetric }) => {
+const Sidebar = ({ hydrophoneData, onCloseSidebar, spectrogramData, splData, selectedMetric }) => {
     const [selectedTab, setSelectedTab] = useState("Overview"); // Initialize selectedTab state
     const tabs = ["Overview", "Noise Metrics", "Trends", "Station Information"];
     const theme = useTheme();
@@ -49,7 +49,7 @@ const Sidebar = ({ hydrophoneData, onCloseSidebar, spectrogramData, selectedMetr
       case "Overview":
         return <SidebarOverview hydrophoneData={hydrophoneData} />;
       case "Noise Metrics":
-        return <SidebarNoiseMetrics spectrogramData={spectrogramData} />;
+        return <SidebarNoiseMetrics spectrogramData={spectrogramData} splData={splData} />;
       case "Trends":
         return <SidebarTrends hydrophoneData={hydrophoneData} />;
       case "Station Information":
