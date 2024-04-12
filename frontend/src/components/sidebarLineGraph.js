@@ -16,11 +16,15 @@ const SidebarLineGraph = ({ splData }) => {
   let lowerFrequency = Infinity;
   let upperFrequency = -Infinity;
   values[0].forEach(value => {
-    if (value.f_min < lowerFrequency) {
-      lowerFrequency = value.f_min;
+    // Convert to numbers before comparing
+    let f_min = Number(value.f_min);
+    let f_max = Number(value.f_max);
+
+    if (f_min < lowerFrequency) {
+      lowerFrequency = f_min;
     }
-    if (value.f_max > upperFrequency) {
-      upperFrequency = value.f_max;
+    if (f_max > upperFrequency) {
+      upperFrequency = f_max;
     }
   });
 
@@ -28,7 +32,7 @@ const SidebarLineGraph = ({ splData }) => {
   const traces = values[0].map((_, index) => ({
     x: dates,
     y: values.map(data => data[index].val),
-    name: `${values[0][index].f_min} to ${values[0][index].f_max} Hz`,
+    name: `${Number(values[0][index].f_min)} to ${Number(values[0][index].f_max)} Hz`,
     type: 'scatter',
   }));
 
@@ -43,8 +47,8 @@ const SidebarLineGraph = ({ splData }) => {
         data={traces}
         layout={{
           title: 'Sound Pressure Levels',
-          xaxis: { title: 'Date' },
-          yaxis: { title: 'Value' },
+          xaxis: { title: 'Time' },
+          yaxis: { title: 'dB (re 1µPa)' },
           legend: { 
             traceorder: 'reversed',
             "orientation": "h",
