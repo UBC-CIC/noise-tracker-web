@@ -77,7 +77,7 @@ const Login = ({ loginStatus, setLoginStatus, jwt, setJwt, group, setGroup }) =>
             onFailure: (err) => {
                 // Handle other authentication failures
                 console.log("Error: ", err);
-                setError({ message: "Your username or password is incorrect. Please contact the system admin to reset your password." });
+                setError({ message: "Your username or password is incorrect." });
             },
             newPasswordRequired: () => {   
                 // User needs to set a new password
