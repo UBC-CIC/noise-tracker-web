@@ -28,6 +28,8 @@ export default function AdminSettings({ jwt }) {
       );
 
       const data = response.data;
+      // Sort operator data alphabetically by operator organization names
+      data.sort((a, b) => (a.hydrophone_operator_name > b.hydrophone_operator_name) ? 1 : -1);
       setOperatorData(data);
     } 
     
