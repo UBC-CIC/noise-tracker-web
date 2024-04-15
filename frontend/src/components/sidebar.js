@@ -12,6 +12,21 @@ const Sidebar = ({ hydrophoneData, onCloseSidebar, spectrogramData, splData, sel
     const tabs = ["Overview", "Noise Metrics", "Trends", "Station Information"];
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
+    const date = splData?.data[0]?.date.slice(0,-1) + '-07:00';
+    const lastUpdatedRaw = new Date(date);
+
+    const options = { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric', 
+        hour: 'numeric', 
+        minute: 'numeric', 
+        hour12: true,
+        timeZoneName: 'short',
+    };
+
+    const lastUpdatedFormatted = lastUpdatedRaw.toLocaleString('en-US', options);
     
     const handleTabChange = (event, newValue) => {
       setSelectedTab(newValue);
@@ -67,6 +82,9 @@ const Sidebar = ({ hydrophoneData, onCloseSidebar, spectrogramData, splData, sel
                   <CloseIcon />
               </IconButton>
           </div>
+          <div className="sidebar-updated-timestamp">
+            <Typography>Last Updated: {lastUpdatedFormatted}</Typography>
+          </div>
           <Tabs
               value={selectedTab}
               onChange={handleTabChange}
@@ -97,9 +115,6 @@ const Sidebar = ({ hydrophoneData, onCloseSidebar, spectrogramData, splData, sel
                   </>
               )}
               </div> */}
-              <div className="sidebar-updated-timestamp">
-              <Typography>Last Updated: {hydrophoneData.lastUpdated}</Typography>
-              </div>
           </div>
           
       </Box>
