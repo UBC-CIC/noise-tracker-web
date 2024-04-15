@@ -13,6 +13,9 @@ import { DBStack } from './database-stack';
 import { FunctionalityStack } from './functionality-stack';
 
 export class APIStack extends Stack {
+    public readonly stageARN_APIGW: string;
+    public readonly apiGW_baseURL: string;
+
     constructor(scope: Construct, id: string, vpcStack: VpcStack, db: DBStack, functionalityStack: FunctionalityStack, props?: StackProps){
         super(scope, id, props);
         /*
@@ -277,6 +280,9 @@ export class APIStack extends Stack {
               types: [ apigateway.EndpointType.REGIONAL ]
             },
           });
+
+        this.stageARN_APIGW = api.deploymentStage.stageArn;
+        this.apiGW_baseURL = api.urlForPath();
 
         const adminAuthorizer = new apigateway.TokenAuthorizer(this, 'adminAuthorizer', {handler: adminAuthorizerFunction});
         const operatorAuthorizer = new apigateway.TokenAuthorizer(this, 'operatorAuthorizer', {handler: operatorAuthorizerFunction});
