@@ -28,6 +28,67 @@ async function initializeConnection(){
     dbConnection = postgres(connectionConfig);
 }
 
+async function getRecentObjects(bucketName, prefix, numObjects, maxDatesToCheck) {
+    // Get current date
+    const currentDate = new Date();
+
+    let continuationToken = null;
+    let objectsCollected = [];
+    let datesChecked = 0;
+    
+    while (objectsCollected.length < numObjects && datesChecked <= maxDatesToCheck) {
+        // Iterate through dates from most recent to older
+        const dateToCheck = new Date(currentDate);
+        const datePrefix = `${prefix}/${dateToCheck.getFullYear()}/${(dateToCheck.getMonth() + 1).toString().padStart(2, '0')}/${dateToCheck.getDate().toString().padStart(2, '0')}`;
+
+		// Temporary array to store object keys when there's a continuation token
+        let tempObjectKeys = [];
+        
+        do {
+            // List objects in the specified date prefix
+            const response = await s3.listObjectsV2({ Bucket: bucketName, Prefix: datePrefix, ContinuationToken: continuationToken }).promise();
+    
+            if (response.Contents && response.Contents.length > 0) {
+                // Extract object keys and add to objectsCollected
+                const objectKeys = response.Contents.map(obj => obj.Key).filter(key => key.endsWith('.json'));
+                
+                // If there's a continuation token, add objectKeys to the temporary array
+                if (response.NextContinuationToken) {
+                    tempObjectKeys = tempObjectKeys.concat(objectKeys);
+                } else {
+                    // If there's no continuation token, sort objectKeys in descending order and add them to objectsCollected array
+                    const sortedObjectKeys = objectKeys.sort((a, b) => b.localeCompare(a));
+                    objectsCollected = objectsCollected.concat(sortedObjectKeys);
+                }
+            }
+            
+            // Update continuation token for pagination
+            continuationToken = response.NextContinuationToken;
+
+        } while (continuationToken);
+        
+        /// If there are object keys in the temporary array, sort them in descending order and add to objectsCollected array
+        if (tempObjectKeys.length > 0) {
+            const sortedTempObjectKeys = tempObjectKeys.sort((a, b) => b.localeCompare(a));
+            objectsCollected = objectsCollected.concat(sortedTempObjectKeys);
+        }
+
+        // If we have already collected enough objects, break the loop
+        if (objectsCollected.length >= numObjects) {
+            break;
+        }
+        
+        // Move to the previous day if necessary
+        currentDate.setDate(currentDate.getDate() - 1);
+        
+        // Increment the number of dates checked
+        datesChecked++;
+    }
+
+    return objectsCollected.slice(0, numObjects);
+}
+
+
 // The month needs to be adjusted by -1 because JavaScript uses a zero-based indexing for months (January is 0, December is 11).
 const getDateFromKey = key => {
     const match = key.match(/(\d{4})-(\d{2})-(\d{2})-(\d{2})-(\d{2})-(\d{2})/);
@@ -131,28 +192,16 @@ exports.handler = async (event) => {
 			
 			    const splPromises = hydrophonesSpl.map(async hydrophone => {
 			        const { hydrophone_operator_id, hydrophone_id } = hydrophone;
-			        const params = {
-			            Bucket: BUCKET_NAME,
-			            Prefix: `${hydrophone_operator_id}/${hydrophone_id}/biospl/2`
-			        };
-			        try {
-			            const objects = await s3.listObjectsV2(params).promise();
 
-			            // Sort objects based on datetime in the file name
-			            const sortedObjects = objects.Contents.sort((a, b) => {
-			                const dateA = getDateFromKey(a.Key);
-			                const dateB = getDateFromKey(b.Key);
-			
-			                return dateB - dateA;
-			            });
+			        try {
+			            const objects = await getRecentObjects(BUCKET_NAME, `${hydrophone_operator_id}/${hydrophone_id}/biospl`, 24, 2)
 			            
-			            if (sortedObjects.length > 0) {
-			                const recentObjects = sortedObjects.slice(0, 10);
-			                const data = await Promise.all(recentObjects.map(async obj => {
-			                    const getObject = await s3.getObject({ Bucket: BUCKET_NAME, Key: obj.Key }).promise();
+			            if (objects.length > 0) {
+			                const data = await Promise.all(objects.map(async obj => {
+			                    const getObject = await s3.getObject({ Bucket: BUCKET_NAME, Key: obj }).promise();
 			                    const content = getObject.Body.toString('utf-8');
 			                    const values = JSON.parse(content);
-			                    const date = getDateFromKey(obj.Key); // Extracting date from the object key
+			                    const date = getDateFromKey(obj); // Extracting date from the object key
 			                    
 			                    return {
 			                        date,
