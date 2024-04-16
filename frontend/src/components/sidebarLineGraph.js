@@ -31,7 +31,7 @@ const SidebarLineGraph = ({ splData }) => {
   // Creating traces
   const traces = values[0].map((_, index) => ({
     x: dates,
-    y: values.map(data => data[index].val),
+    y: values.map(data => 10*Math.log10(data[index].val)),
     name: `${Number(values[0][index].f_min)} to ${Number(values[0][index].f_max)} Hz`,
     type: 'scatter',
   }));
