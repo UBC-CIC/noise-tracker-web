@@ -62,22 +62,23 @@ def handler(event, context):
                 "site" varchar,
                 "coordinates" varchar,
                 "model" varchar,
-                mounting_type varchar,
-                height_from_seafloor varchar,
+                "mounting_type" varchar,
+                "height_from_seafloor" varchar,
                 "sampling_frequency" varchar,
                 "depth" varchar,
                 "first_deployment_date" varchar,
                 "last_deployment_date" varchar,
                 "range" varchar,
                 "angle_of_view" varchar,
-                file_length varchar,
-                file_format varchar,
-                directory varchar,
-                file_name varchar,
-                timezone varchar,
-                storage_interval varchar,
-                last_data_upload varchar,
-                calibration_available boolean
+                "file_length" varchar,
+                "file_format" varchar,
+                "directory" varchar,
+                "file_name" varchar,
+                "timezone" varchar,
+                "storage_interval" varchar,
+                "last_data_upload" varchar,
+                "calibration_available" boolean,
+                "average_spl" jsonb
             );
 
             CREATE TABLE IF NOT EXISTS  "metrics" (
