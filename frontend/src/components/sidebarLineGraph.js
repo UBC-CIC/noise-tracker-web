@@ -62,6 +62,9 @@ const SidebarLineGraph = ({ splData }) => {
       <Typography className='sidebar-typography-padding'>
         This plot shows Sound Pressure Levels in specific frequency bands over the last 24 hours. 
       </Typography>
+      <Typography style={{ paddingBottom: '20px' }}>
+        Double-click a label on the legend to isolate that band. 
+      </Typography>
       <Typography>These frequency bands are defined as: </Typography>
       <ul>
         <li>Broadband - the full frequency range that this hydrophone records</li>
