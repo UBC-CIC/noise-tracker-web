@@ -7,13 +7,13 @@ import SidebarTrends from './sidebarTrends';
 import SidebarStationInformation from './sidebarStationInformation';
 import LineGraph from './linegraph';
 
-const Sidebar = ({ hydrophoneData, onCloseSidebar, spectrogramData, splData, selectedMetric }) => {
+const Sidebar = ({ hydrophoneData, onCloseSidebar, spectrogramData, splData, gaugeData, selectedMetric }) => {
     const [selectedTab, setSelectedTab] = useState("Overview"); // Initialize selectedTab state
     const tabs = ["Overview", "Noise Metrics", "Trends", "Station Information"];
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-    const date = splData?.data[0]?.date.slice(0,-1) + '-07:00';
+    const date = gaugeData?.recent_spl[0]?.date.slice(0,-1) + '-07:00';
     const lastUpdatedRaw = new Date(date);
 
     const options = { 
@@ -62,7 +62,7 @@ const Sidebar = ({ hydrophoneData, onCloseSidebar, spectrogramData, splData, sel
   const renderTabContent = () => {
     switch (selectedTab) {
       case "Overview":
-        return <SidebarOverview hydrophoneData={hydrophoneData} />;
+        return <SidebarOverview hydrophoneData={hydrophoneData} gaugeData={gaugeData} />;
       case "Noise Metrics":
         return <SidebarNoiseMetrics spectrogramData={spectrogramData} splData={splData} />;
       case "Trends":

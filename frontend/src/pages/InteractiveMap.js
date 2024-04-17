@@ -15,16 +15,19 @@ export default function InteractiveMap(){
     const [selectedHydrophone, setSelectedHydrophone] = useState(null);
     const [selectedSpectrogram, setSelectedSpectrogram] = useState(null);
     const [selectedSpl, setSelectedSpl] = useState(null);
+    const [selectedGauge, setSelectedGauge] = useState(null);
 
     const [selectedMetric, setSelectedMetric] = useState(null);
     const [hydrophoneData, setHydrophoneData] = useState([]);
     const [spectrogramData, setSpectrogramData] = useState([]);
     const [splData, setSplData] = useState([]);
+    const [gaugeData, setGaugeData] = useState([]);
 
     useEffect(() => {
       fetchHydrophoneData();
       fetchSpectrogramData();
       fetchSplData();
+      fetchGaugeData();
     }, []);
 
     const fetchHydrophoneData = async () => {
@@ -75,17 +78,35 @@ export default function InteractiveMap(){
       } 
     }
 
+    const fetchGaugeData = async () => {
+      try{
+        const response = await axios.get(
+          API_URL + 'public/gauge',
+        );
+
+        const data = response.data;
+
+        setGaugeData(data);
+      } 
+      
+      catch(error){
+        console.error("Error fetching gauge data: ", error);
+      } 
+    }
+
 
     const handleToggleSidebar = (hydrophoneId) => {
         const selectedHydrophone = hydrophoneData.find(hydrophone => hydrophone.hydrophone_id === hydrophoneId);
         const selectedSpectrogram = spectrogramData.find(spectrogram => spectrogram.hydrophone_id === hydrophoneId);
         const selectedSpl = splData.find(spl => spl.hydrophone_id === hydrophoneId);
+        const selectedGauge = gaugeData.find(gauge => gauge.hydrophone_id === hydrophoneId);
         
         if (selectedHydrophone) {
           setShowSidebar(true);
           setSelectedHydrophone(selectedHydrophone);
           setSelectedSpectrogram(selectedSpectrogram);
           setSelectedSpl(selectedSpl);
+          setSelectedGauge(selectedGauge);
           
           /* const selectedMetric = selectedHydrophone.metrics.includes(metricName) ? metricName : null;
 
@@ -117,6 +138,7 @@ export default function InteractiveMap(){
               hydrophoneData={selectedHydrophone} 
               spectrogramData={selectedSpectrogram} 
               splData={selectedSpl}
+              gaugeData={selectedGauge}
               selectedMetric={selectedMetric} 
             />}
         </div>

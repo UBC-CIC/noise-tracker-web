@@ -194,7 +194,7 @@ exports.handler = async (event) => {
 			        const { hydrophone_operator_id, hydrophone_id } = hydrophone;
 
 			        try {
-			            const objects = await getRecentObjects(BUCKET_NAME, `${hydrophone_operator_id}/${hydrophone_id}/biospl`, 24, 2)
+			            const objects = await getRecentObjects(BUCKET_NAME, `${hydrophone_operator_id}/${hydrophone_id}/biospl`, 10, 2)
 			            
 			            if (objects.length > 0) {
 			                const data = await Promise.all(objects.map(async obj => {
@@ -224,6 +224,48 @@ exports.handler = async (event) => {
 			
 			    const splDataUrls = await Promise.all(splPromises);
 			    response.body = JSON.stringify(splDataUrls.filter(url => url !== null));
+			    break;
+			    
+			case "GET /public/gauge":
+			    const hydrophonesGauge = await dbConnection`
+			        SELECT hydrophone_operator_id, hydrophone_id, average_spl FROM hydrophones;
+			    `;
+			
+			    const gaugePromises = hydrophonesGauge.map(async hydrophone => {
+			        const { hydrophone_operator_id, hydrophone_id, average_spl } = hydrophone;
+
+			        try {
+			            const objects = await getRecentObjects(BUCKET_NAME, `${hydrophone_operator_id}/${hydrophone_id}/biospl`, 1, 2)
+			            
+			            if (objects.length > 0) {
+			                const recent_spl = await Promise.all(objects.map(async obj => {
+			                    const getObject = await s3.getObject({ Bucket: BUCKET_NAME, Key: obj }).promise();
+			                    const content = getObject.Body.toString('utf-8');
+			                    const values = JSON.parse(content);
+			                    const date = getDateFromKey(obj); // Extracting date from the object key
+			                    
+			                    return {
+			                        date,
+			                        values
+			                    };
+			                }));
+			                
+			                return {
+			                    hydrophone_id: hydrophone_id,
+			                    average_spl: average_spl,
+			                    recent_spl
+			                };
+			            } else {
+			                return null;
+			            }
+			        } catch (error) {
+			            console.error("Error fetching S3 objects:", error);
+			            return null;
+			        }
+			    });
+			
+			    const gaugeDataUrls = await Promise.all(gaugePromises);
+			    response.body = JSON.stringify(gaugeDataUrls.filter(url => url !== null));
 			    break;
         }
     }

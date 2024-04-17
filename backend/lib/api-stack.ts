@@ -301,6 +301,7 @@ export class APIStack extends Stack {
           const publicHydrophones = publicResource.addResource('hydrophones')
           const publicSpectrograms = publicResource.addResource('spectrograms')
           const publicSPL = publicResource.addResource('spl')
+          const publicGauge = publicResource.addResource('gauge')
 
           adminHydrophones.addMethod('GET', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}), {
             authorizer: adminAuthorizer,
@@ -364,6 +365,7 @@ export class APIStack extends Stack {
           publicHydrophones.addMethod('GET', new apigateway.LambdaIntegration(apiPublicHandler, {proxy: true}));
           publicSpectrograms.addMethod('GET', new apigateway.LambdaIntegration(apiPublicHandler, {proxy: true}));
           publicSPL.addMethod('GET', new apigateway.LambdaIntegration(apiPublicHandler, {proxy: true}));
+          publicGauge.addMethod('GET', new apigateway.LambdaIntegration(apiPublicHandler, {proxy: true}));
 
     }
 }
