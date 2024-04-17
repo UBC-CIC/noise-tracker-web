@@ -1,6 +1,6 @@
-# Invasive Plants
+# NoiseTracker
 
-This Invasive Plants identification prototype provides users with the capability to identify invasive plants based on their region and suggests alternative non-invasive plants to plant instead. The Invasive Plants Admin Page enables authorized users to expand and modify the database for comprehensive coverage. Also checkout the [Invasive Plants Mobile App](https://github.com/UBC-CIC/InvasivePlantsFlutter) that allows users to identify invasive plants. For more information, please visit the [CIC Website](https://cic.ubc.ca/).
+The NoiseTracker prototype solution acts as a centralized information hub for hydrophone operators and members of the general public to learn more about the underwater soundscapes near them. The NoiseTracker interactive map allows users to view various noise metrics and metadata for each registered hydrophone. Through specialized interfaces, operators can view and download their hydrophones' settings, and administrators can modify the configuration settings for operators and their hydrophones. Also checkout the [NoiseTracker Client Software](https://github.com/UBC-CIC/noise-tracker-client) that allows hydrophone operators to connect with the system. For more information, please visit the [CIC Website](https://cic.ubc.ca/).
 
 | Index                                               | Description                                             |
 | :-------------------------------------------------- | :------------------------------------------------------ |
