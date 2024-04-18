@@ -33,13 +33,17 @@ This map displays a clickable icon for each hydrophone in the database. Once cli
 
 ### Overview
 
+Users can view the latest broadband dB level and latest dB levels in specific frequency bands overlaid on monthly averages through a gauge chart.
+
 ### Noise Metrics
+
+Users can view spectrograms showing the acoustic soundscape over the past 24 hours. Time is represented on the horizontal axis, frequency on the vertical axis, and the amplitude of the sound is represented on a colour spectrum. 
+
+Sound Pressure Levels in specific frequency bands over the last 24 hours are also viewable.
 
 ### Trends
 
 ### Station Information
-
-### Adding an invasive species
 
 ## Operator Profile
 
@@ -57,5 +61,5 @@ Administrators have access to an Admin Dashboard, from which they can interact w
 
 ### Adding a new hydrophone
 
-### Editing a hydrophons
+### Editing a hydrophone
 
