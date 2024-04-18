@@ -66,4 +66,4 @@ Licenses of libraries and tools used by the system are listed below:
 
 [MIT License](LICENSE)
 
-Used by Material UI library to design user interface
+Used Material UI library to design user interface
