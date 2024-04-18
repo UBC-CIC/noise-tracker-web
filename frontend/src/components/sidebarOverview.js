@@ -1,12 +1,11 @@
-import { Typography } from "@mui/material";
+import { Typography, CircularProgress } from "@mui/material";
 import GaugeChart from 'react-gauge-chart'
 
-export default function SidebarOverview({ gaugeData }){
-    // Check if gaugeData is null or undefined
-    if (!gaugeData) {
+export default function SidebarOverview({ gaugeData, gaugeLoading }){
+    if (!gaugeData && !gaugeLoading) {
         return (
         <div>
-            <Typography>No Data Available</Typography>
+            <Typography Typography className='sidebar-typography-padding'>No Recent Sound Pressure Level Data Available</Typography>
         </div>
         );
     }
@@ -82,6 +81,12 @@ export default function SidebarOverview({ gaugeData }){
 
     return(
         <div>
+            {gaugeLoading ? ( // Render circular progress if loading is true
+                <center>
+                    <CircularProgress color="success" />
+                </center>
+          ) : (
+            <div>
             <GaugeChart id="gauge-chart1" 
                 nrOfLevels={10} 
                 percent={constrainValue(resultsArray[4]?.result)} 
@@ -150,6 +155,8 @@ export default function SidebarOverview({ gaugeData }){
             <Typography style={{ paddingBottom: '20px' }}>
             Learn more about understanding decibels and frequency ranges in our Education Hub.
             </Typography>
+            </div>
+          )}
         </div>
     );
 }
