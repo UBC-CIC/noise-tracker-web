@@ -32,6 +32,8 @@ export default function AdminHydrophones({ jwt }){
         );
 
         const data = response.data;
+        // Sort hydrophone data alphabetically by hydrophone site names
+        data.sort((a, b) => (a.site > b.site) ? 1 : -1);
         setHydrophoneData(data);
       } 
       

@@ -55,7 +55,7 @@ export class DBStack extends Stack {
                 subnetType: ec2.SubnetType.PRIVATE_ISOLATED,
             },
             engine: rds.DatabaseInstanceEngine.postgres({
-                version: rds.PostgresEngineVersion.VER_14_5,
+                version: rds.PostgresEngineVersion.VER_14_9,
             }),
             instanceType: ec2.InstanceType.of(
                 ec2.InstanceClass.BURSTABLE3,

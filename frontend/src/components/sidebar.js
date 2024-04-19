@@ -7,11 +7,41 @@ import SidebarTrends from './sidebarTrends';
 import SidebarStationInformation from './sidebarStationInformation';
 import LineGraph from './linegraph';
 
-const Sidebar = ({ hydrophoneData, onCloseSidebar, spectrogramData, splData, selectedMetric }) => {
+const Sidebar = ({ 
+  hydrophoneData, 
+  hydrophoneLoading,
+  onCloseSidebar, 
+  spectrogramData, 
+  spectrogramLoading,
+  splData, 
+  splLoading,
+  gaugeData, 
+  gaugeLoading,
+  selectedMetric 
+}) => {
     const [selectedTab, setSelectedTab] = useState("Overview"); // Initialize selectedTab state
     const tabs = ["Overview", "Noise Metrics", "Trends", "Station Information"];
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
+    const [selectedGauge, setSelectedGauge] = useState(null);
+    const [selectedSpl, setSelectedSpl] = useState(null);
+    const [selectedSpectrogram, setSelectedSpectrogram] = useState(null);
+
+    const date = selectedGauge?.recent_spl[0]?.date.slice(0,-1) + '-07:00';
+    const lastUpdatedRaw = new Date(date);
+
+    const options = { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric', 
+        hour: 'numeric', 
+        minute: 'numeric', 
+        hour12: true,
+        timeZoneName: 'short',
+    };
+
+    const lastUpdatedFormatted = lastUpdatedRaw.toLocaleString('en-US', options);
     
     const handleTabChange = (event, newValue) => {
       setSelectedTab(newValue);
@@ -26,6 +56,22 @@ const Sidebar = ({ hydrophoneData, onCloseSidebar, spectrogramData, splData, sel
         setSelectedTab(selectedMetric);
       }
     }, [selectedMetric]);
+
+    useEffect(() => {
+      const selectedGauge = gaugeData.find(gauge => gauge.hydrophone_id === hydrophoneData.hydrophone_id);
+      setSelectedGauge(selectedGauge);
+    }, [gaugeData, hydrophoneData]);
+    
+    useEffect(() => {
+      const selectedSpl = splData.find(spl => spl.hydrophone_id === hydrophoneData.hydrophone_id);
+      setSelectedSpl(selectedSpl);
+    }, [splData, hydrophoneData]);
+    
+    useEffect(() => {
+      const selectedSpectrogram = spectrogramData.find(spectrogram => spectrogram.hydrophone_id === hydrophoneData.hydrophone_id);
+      setSelectedSpectrogram(selectedSpectrogram);
+    }, [spectrogramData, hydrophoneData]);
+    
 
     const sidebarStyles = {
       position: isMobile ? 'absolute' : 'relative',
@@ -47,13 +93,13 @@ const Sidebar = ({ hydrophoneData, onCloseSidebar, spectrogramData, splData, sel
   const renderTabContent = () => {
     switch (selectedTab) {
       case "Overview":
-        return <SidebarOverview hydrophoneData={hydrophoneData} />;
+        return <SidebarOverview gaugeData={selectedGauge} gaugeLoading={gaugeLoading} />;
       case "Noise Metrics":
-        return <SidebarNoiseMetrics spectrogramData={spectrogramData} splData={splData} />;
+        return <SidebarNoiseMetrics spectrogramData={selectedSpectrogram} spectrogramLoading={spectrogramLoading} splData={selectedSpl} splLoading={splLoading} />;
       case "Trends":
-        return <SidebarTrends hydrophoneData={hydrophoneData} />;
+        return <SidebarTrends />;
       case "Station Information":
-        return <SidebarStationInformation hydrophoneData={hydrophoneData} />;
+        return <SidebarStationInformation hydrophoneData={hydrophoneData} hydrophoneLoading={hydrophoneLoading} />;
       default:
         return null;
     }
@@ -66,6 +112,9 @@ const Sidebar = ({ hydrophoneData, onCloseSidebar, spectrogramData, splData, sel
               <IconButton onClick={handleSidebarClose}>
                   <CloseIcon />
               </IconButton>
+          </div>
+          <div className="sidebar-updated-timestamp">
+            <Typography>Last Updated: {lastUpdatedFormatted}</Typography>
           </div>
           <Tabs
               value={selectedTab}
@@ -97,9 +146,6 @@ const Sidebar = ({ hydrophoneData, onCloseSidebar, spectrogramData, splData, sel
                   </>
               )}
               </div> */}
-              <div className="sidebar-updated-timestamp">
-              <Typography>Last Updated: {hydrophoneData.lastUpdated}</Typography>
-              </div>
           </div>
           
       </Box>

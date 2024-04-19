@@ -15,77 +15,44 @@ export default function InteractiveMap(){
     const [selectedHydrophone, setSelectedHydrophone] = useState(null);
     const [selectedSpectrogram, setSelectedSpectrogram] = useState(null);
     const [selectedSpl, setSelectedSpl] = useState(null);
+    const [selectedGauge, setSelectedGauge] = useState(null);
 
     const [selectedMetric, setSelectedMetric] = useState(null);
     const [hydrophoneData, setHydrophoneData] = useState([]);
     const [spectrogramData, setSpectrogramData] = useState([]);
     const [splData, setSplData] = useState([]);
+    const [gaugeData, setGaugeData] = useState([]);
 
+    const [hydrophoneLoading, setHydrophoneLoading] = useState(true);
+    const [spectrogramLoading, setSpectrogramLoading] = useState(true);
+    const [splLoading, setSplLoading] = useState(true);
+    const [gaugeLoading, setGaugeLoading] = useState(true);
+
+    
     useEffect(() => {
-      fetchHydrophoneData();
-      fetchSpectrogramData();
-      fetchSplData();
+      fetchData('hydrophones', setHydrophoneData, setHydrophoneLoading, 'hydrophone');
+      fetchData('spectrograms', setSpectrogramData, setSpectrogramLoading, 'spectrogram');
+      fetchData('spl', setSplData, setSplLoading, 'spl');
+      fetchData('gauge', setGaugeData, setGaugeLoading, 'gauge');
     }, []);
 
-    const fetchHydrophoneData = async () => {
-      try{
-        const response = await axios.get(
-          API_URL + 'public/hydrophones',
-        );
-
-        const data = response.data;
-
-        setHydrophoneData(data);
-      } 
-      
-      catch(error){
-        console.error("Error fetching hydrophone data: ", error);
-      } 
-    }
-
-    const fetchSpectrogramData = async () => {
-      try{
-        const response = await axios.get(
-          API_URL + 'public/spectrograms',
-        );
-
-        const data = response.data;
-
-        setSpectrogramData(data);
-      } 
-      
-      catch(error){
-        console.error("Error fetching spectrogram data: ", error);
-      } 
-    }
-
-    const fetchSplData = async () => {
-      try{
-        const response = await axios.get(
-          API_URL + 'public/spl',
-        );
-
-        const data = response.data;
-
-        setSplData(data);
-      } 
-      
-      catch(error){
-        console.error("Error fetching spl data: ", error);
-      } 
-    }
-
+    const fetchData = async (endpoint, setData, setLoading, errorMessage) => {
+      try {
+        const response = await axios.get(API_URL + 'public/' + endpoint);
+        setData(response.data);
+      } catch (error) {
+        console.error(`Error fetching ${errorMessage} data: `, error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
     const handleToggleSidebar = (hydrophoneId) => {
         const selectedHydrophone = hydrophoneData.find(hydrophone => hydrophone.hydrophone_id === hydrophoneId);
-        const selectedSpectrogram = spectrogramData.find(spectrogram => spectrogram.hydrophone_id === hydrophoneId);
-        const selectedSpl = splData.find(spl => spl.hydrophone_id === hydrophoneId);
         
         if (selectedHydrophone) {
           setShowSidebar(true);
           setSelectedHydrophone(selectedHydrophone);
-          setSelectedSpectrogram(selectedSpectrogram);
-          setSelectedSpl(selectedSpl);
           
           /* const selectedMetric = selectedHydrophone.metrics.includes(metricName) ? metricName : null;
 
@@ -113,12 +80,17 @@ export default function InteractiveMap(){
           </div>
           {showSidebar && 
             <Sidebar 
-              onCloseSidebar={handleCloseSidebar} 
-              hydrophoneData={selectedHydrophone} 
-              spectrogramData={selectedSpectrogram} 
-              splData={selectedSpl}
-              selectedMetric={selectedMetric} 
-            />}
+            onCloseSidebar={handleCloseSidebar} 
+            hydrophoneData={selectedHydrophone} 
+            hydrophoneLoading={hydrophoneLoading} 
+            spectrogramData={spectrogramData} 
+            spectrogramLoading={spectrogramLoading} 
+            splData={splData}
+            splLoading={splLoading}
+            gaugeData={gaugeData}
+            gaugeLoading={gaugeLoading}
+            selectedMetric={selectedMetric} 
+          />}
         </div>
       );      
 }

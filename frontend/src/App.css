@@ -91,6 +91,10 @@
   padding-bottom: 20px;
 }
 
+.sidebar-updated-timestamp {
+  padding-top: 10px;
+}
+
 /* OperatorProfile.js */
 
 .operator-profile-tabs {

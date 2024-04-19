@@ -9,6 +9,7 @@ import { APIStack } from '../lib/api-stack';
 import { ECRStack } from '../lib/ecr-stack';
 import { HostStack } from '../lib/host-stack';
 import { WAFStack } from '../lib/waf-stack';
+import { DataWorkflowStack } from '../lib/dataworkflow-stack';
 
 const app = new cdk.App();
 
@@ -43,6 +44,9 @@ const dbFlowStack = new DBFlowStack(app, 'DBFlowStack', vpcStack, dbStack, stack
 
 // Create instance of API stack
 const apiStack = new APIStack(app, 'APIStack', vpcStack, dbStack, functionalityStack, stackDefaultSetup);
+
+// Create instance of Data Workflow stack
+const dataWorkflowStack = new DataWorkflowStack(app, 'DataWorkflowStack', vpcStack, dbStack, functionalityStack, stackDefaultSetup);
 
 // Create instance of ECR stack
 const ecrStack = new ECRStack(app, 'ECRStack', stackDefaultSetup);

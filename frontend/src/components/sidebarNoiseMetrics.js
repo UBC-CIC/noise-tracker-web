@@ -1,13 +1,12 @@
 import SidebarSpectrogram from "./sidebarSpectrogram";
 import SidebarLineGraph from "./sidebarLineGraph";
 
-export default function SidebarNoiseMetrics({ spectrogramData, splData }) {
+export default function SidebarNoiseMetrics({ spectrogramData, spectrogramLoading, splData, splLoading }) {
   return (
     <div>
-      <SidebarSpectrogram spectrogramData={spectrogramData} />
-      <SidebarLineGraph splData={splData} />
+      <SidebarSpectrogram spectrogramData={spectrogramData} loading={spectrogramLoading} />
+      <SidebarLineGraph splData={splData} loading={splLoading} />
     </div>
   );
 }
-
   
