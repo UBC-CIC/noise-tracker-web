@@ -3,13 +3,12 @@ import { Tabs, Tab } from '@mui/material';
 import axios from 'axios';
 import OperatorProfileInformation from '../components/operatorProfileInformation'
 import OperatorProfileDownload from '../components/operatorProfileDownload';
-import OperatorProfileSettings from '../components/operatorProfileSettings';
 import OperatorProfileDirectory from '../components/operatorProfileDirectory';
 
 export default function OperatorProfile({ jwt }){
     const API_URL = process.env.REACT_APP_API_URL;
 
-    const tabs = ["Information", "Settings", "Download", "Directory"];
+    const tabs = ["Information", "Download", "Directory"];
 
     const [selectedTab, setSelectedTab] = useState("Information"); 
 
@@ -55,8 +54,6 @@ export default function OperatorProfile({ jwt }){
         switch (selectedTab) {
           case 'Information':
             return <OperatorProfileInformation jwt={jwt} hydrophoneData={hydrophoneData} loading={loadingHydrophoneData} />;
-          case 'Settings':
-            return <OperatorProfileSettings jwt={jwt} />;
           case 'Download':
             return <OperatorProfileDownload jwt={jwt} hydrophoneData={hydrophoneData} loading={loadingHydrophoneData} />;
           case 'Directory':
