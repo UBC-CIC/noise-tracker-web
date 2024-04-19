@@ -2,7 +2,6 @@ import { Typography, TextField, Button, Dialog, DialogTitle, DialogContent, Dial
 import DeleteIcon from '@mui/icons-material/Delete';import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import sampleHydrophoneData from "../../sampledata/sampleHydrophoneData";
 import axios from "axios";
 import { useState } from "react";
 

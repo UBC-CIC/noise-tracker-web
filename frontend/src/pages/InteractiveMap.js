@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import Map from "../components/map";
 import Sidebar from '../components/sidebar';
-import sampleHydrophoneData from '../sampledata/sampleHydrophoneData';
 import axios from 'axios';
 
 export default function InteractiveMap(){

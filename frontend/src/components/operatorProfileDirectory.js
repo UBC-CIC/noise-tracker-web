@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
 import { Table, TableBody, TableCell, tableCellClasses, TableContainer, TableHead, TableRow, Paper, CircularProgress } from '@mui/material';
-import sampleHydrophoneData from "../sampledata/sampleHydrophoneData";
-import sampleHOData from '../sampledata/sampleHOData';
 import axios from 'axios';
 
 export default function OperatorProfileDirectory({ jwt }){
