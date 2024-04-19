@@ -84,8 +84,6 @@ aws secretsmanager create-secret \
     --profile <your-profile-name>
 ```
 
-If you have trouble running the above command, try removing the `\` at the end of the lines and run it in one line.
-
 ### Step 3: CDK Deployment
 
 Initialize the CDK stacks (required only if you have not deployed this stack before). Note this CDK deployment was tested in `ca-central-1` region only.
@@ -177,12 +175,6 @@ The deployment command for the `hostStack` requires a parameter calls `prefixLis
 | us-west-2      | pl-82a045eb |
 
 Then, use the following command below and pass in the `prefixListID` value.
-
-```bash
-cdk deploy HostStack \
-  --parameters HostStack:prefixListID=<your-region-preFixListId> \
-  --profile <aws-profile-name>
-```
 
 ```bash
 cdk deploy --all \
