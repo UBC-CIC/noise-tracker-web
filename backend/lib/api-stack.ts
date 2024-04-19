@@ -168,6 +168,7 @@ export class APIStack extends Stack {
           memorySize: 512,
           environment:{
               SM_DB_CREDENTIALS: db.secretPathUser.secretName, 
+              BUCKET_NAME: functionalityStack.bucketName,  
           },
           vpc: vpcStack.vpc,
           code: lambda.Code.fromAsset("lambda"),
