@@ -48,8 +48,6 @@ cd noise-tracker-web
 
 ## Step 2: Cloud Deployment
 
-![Network Diagram](./images/networkDiagram/architecture_diagram.svg)
-
 It's time to set up everything that goes on behind the scenes and host it! For more information on how the backend works, feel free to refer to the [Architecture Deep Dive](./ArchitectureDeepDive.md), but an understanding of the backend is not necessary for deployment.
 
 ### Step 1: Install Dependencies
@@ -134,7 +132,7 @@ cd ..
 
 This is a sample of the `View push commands`:
 
-![Push commands for ECR](./images/depGuide/push_ecr.png)
+![Push commands for ECR](./images/deploymentGuide/push_ecr.png)
 
 \*Note: in Step 1 of the instructions, you can specify which profile to use by specifying in the following:
 
