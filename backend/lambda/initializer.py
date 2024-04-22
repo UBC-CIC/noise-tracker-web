@@ -34,7 +34,6 @@ def handler(event, context):
         delete_table = """
             DROP TABLE IF EXISTS hydrophone_operators;
             DROP TABLE IF EXISTS hydrophones;
-            DROP TABLE IF EXISTS metrics;
         """
         cursor.execute(delete_table)
         connection.commit()
@@ -79,16 +78,6 @@ def handler(event, context):
                 "last_data_upload" varchar,
                 "calibration_available" boolean,
                 "average_spl" jsonb
-            );
-
-            CREATE TABLE IF NOT EXISTS  "metrics" (
-                "metric_id" uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
-                "privacy" varchar,
-                "hydrophone_id" uuid,
-                "metric_name" varchar,
-                "s3_filepath" varchar,
-                "time_range" varchar,
-                "upload_timestamp" varchar
             );
         """
 

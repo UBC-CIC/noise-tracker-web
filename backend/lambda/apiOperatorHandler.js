@@ -4,8 +4,9 @@ const AWS = require("aws-sdk");
 
 // Gather AWS services
 const secretsManager = new AWS.SecretsManager();
+const s3 = new AWS.S3();
 
-let { SM_DB_CREDENTIALS } = process.env;
+let { SM_DB_CREDENTIALS, BUCKET_NAME } = process.env;
 let dbConnection;  // Global variable to hold the database connection
 
 async function initializeConnection(){
@@ -73,11 +74,24 @@ exports.handler = async (event) => {
             	const username = decodedToken.username;
             	
                 data = await dbConnection`
-	            	SELECT hydrophones.site
+	            	SELECT hydrophones.*, hydrophone_operators.hydrophone_operator_name
 					FROM hydrophones
 					JOIN hydrophone_operators ON hydrophones.hydrophone_operator_id = hydrophone_operators.hydrophone_operator_id
 					WHERE hydrophone_operators.contact_email = ${username};
 				`;
+				
+				// Generating presigned URLs for each row
+			    for (let i = 0; i < data.length; i++) {
+			        const { hydrophone_operator_id, hydrophone_id } = data[i];
+			        const Key = `${hydrophone_operator_id}/${hydrophone_id}/calibration.csv`;
+			        const params = {
+			            Bucket: BUCKET_NAME,
+			            Key: Key,
+			            Expires: 3600 // URL expiration time in seconds
+			        };
+			        const presignedUrl = s3.getSignedUrl('getObject', params);
+			        data[i].presignedUrl = presignedUrl;
+			    }
                 response.body = JSON.stringify(data);
                 
                 break;

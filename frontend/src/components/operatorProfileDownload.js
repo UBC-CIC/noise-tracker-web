@@ -4,10 +4,9 @@ import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-import sampleHydrophoneData from '../sampledata/sampleHydrophoneData';
 import axios from 'axios';
 
-export default function OperatorProfileDownload({ jwt }) {
+export default function OperatorProfileDownload({ jwt, hydrophoneData, loading }) {
     const API_URL = process.env.REACT_APP_API_URL;
 
     // Create a state to store selected metrics for each hydrophone
@@ -17,42 +16,10 @@ export default function OperatorProfileDownload({ jwt }) {
     const [startDateTime, setStartDateTime] = useState(null);
     const [endDateTime, setEndDateTime] = useState(null);
 
-    const [hydrophoneData, setHydrophoneData] = useState([]);
     const [downloadURL, setDownloadURL] = useState(null);
 
     // States to track loading statuses
-    const [loadingHydrophoneData, setLoadingHydrophoneData] = useState(false); 
     const [loadingPresignedURL, setLoadingPresignedURL] = useState(false); 
-
-
-    useEffect(() => {
-        fetchHydrophoneData();
-      }, []);
-  
-    const fetchHydrophoneData = async () => {
-    try{
-        setLoadingHydrophoneData(true);
-
-        const response = await axios.get(
-        API_URL + 'operator/hydrophones',
-        {
-            headers: {
-            'Authorization': jwt
-            }
-        }
-        );
-
-        const data = response.data;
-        setHydrophoneData(data);
-    } 
-    
-    catch(error){
-        console.error("Error fetching hydrophone data: ", error);
-    } 
-    finally {
-        setLoadingHydrophoneData(false); // Set loading to false when data fetching completes 
-    }
-    }
 
     const fetchPresignedURL = async () => {
         try{
@@ -121,7 +88,7 @@ export default function OperatorProfileDownload({ jwt }) {
                 Select which hydrophones' data you would like to download.
             </Typography>
 
-            {loadingHydrophoneData ? ( // Render circular progress if loading is true
+            {loading ? ( // Render circular progress if loading is true
                 <CircularProgress color="success" />
             ) : (
                 <div>

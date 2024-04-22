@@ -32,7 +32,6 @@ export default function SidebarOverview({ gaugeData, gaugeLoading }){
           }
         }
     
-        resultsArray.sort((a, b) => Number(a.f_max) - Number(b.f_max));
         return resultsArray;
     };
 
