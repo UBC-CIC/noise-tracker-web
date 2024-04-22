@@ -31,7 +31,7 @@ function App() {
             setLoginStatus(false);
           } else {
             const jwtToken = session.getAccessToken().getJwtToken();
-            const userGroup = session.getAccessToken().payload['cognito:groups'][0]
+            const userGroup = session.getAccessToken().payload['cognito:groups']?.[0]
             setJwt(jwtToken);
             setGroup(userGroup);
             setLoginStatus(true);
