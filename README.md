@@ -16,7 +16,7 @@ The NoiseTracker prototype solution acts as a centralized information hub for hy
 
 The following architecture diagram illustrates the various AWS components utilized to deliver the solution. For an in-depth explanation of the frontend and backend stacks, refer to the [Architecture Deep Dive](docs/ArchitectureDeepDive.md).
 
-![Alt text](docs/images/networkDiagram/simplified_architecture_diagram.svg)
+![Alt text](docs/images/noisetracker_architecture.png)
 
 ## Deployment Guide
 
