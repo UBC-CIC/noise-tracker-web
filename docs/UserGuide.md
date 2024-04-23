@@ -21,7 +21,7 @@ If you have already logged in, you can continue to [Hydrophone Tabs](#hydrophone
 ## Hydrophone Tabs
 
 The interactive map page is the default page after logging in.
-*insert map page*
+![interactive map](images/userGuide/interactive_map.png)
 
 This map displays a clickable icon for each hydrophone in the database. Once clicked, information about the hydrophone and its metrics are available through the following tabs:
 
@@ -34,16 +34,24 @@ This map displays a clickable icon for each hydrophone in the database. Once cli
 ### Overview
 
 Users can view the latest broadband dB level and latest dB levels in specific frequency bands overlaid on monthly averages through a gauge chart.
+![overview tab](images/userGuide/overview_tab.png)
 
 ### Noise Metrics
 
 Users can view spectrograms showing the acoustic soundscape over the past 24 hours. Previous data up to a week into the past is also available. Time is represented on the horizontal axis, frequency on the vertical axis, and the amplitude of the sound is represented on a colour spectrum. 
 
+![noise metrics tab spectrogram](images/userGuide/noise_metrics_tab_spectrogram.png)
+
 Sound Pressure Levels in specific frequency bands over the last 24 hours are also viewable.
+
+![noise metrics tab spl](images/userGuide/noise_metrics_tab_spl.png)
+
 
 ### Trends
 
 This tab is a placeholder for the future development longer-term noise trends.
+
+![trends tab](images/userGuide/trends_tab.png)
 
 ### Station Information
 
@@ -60,6 +68,8 @@ Users can view hydrophone metadata; these include the hydrophone's:
 - Calibration Status
 - Estimated range (m)
 - Estimated angle of view (degrees)
+
+![station information tab](images/userGuide/station_information_tab.png)
 
 
 ## Operator Profile
