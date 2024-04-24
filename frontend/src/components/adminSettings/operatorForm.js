@@ -1,4 +1,4 @@
-import { Typography, TextField, Button, Dialog, DialogTitle, DialogContent, DialogActions, IconButton, Checkbox, FormControlLabel } from "@mui/material";
+import { Typography, TextField, Button, Dialog, DialogTitle, DialogContent, DialogActions, IconButton, Checkbox, FormControlLabel, Alert } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -9,6 +9,7 @@ import { useState } from "react";
 export default function OperatorForm({ mode, onUpdate, operatorData, jwt }) {
   const API_URL = process.env.REACT_APP_API_URL;
 
+  const [error, setError] = useState(null);
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
     hydrophone_operator_name: operatorData?.hydrophone_operator_name || '',
@@ -41,9 +42,9 @@ export default function OperatorForm({ mode, onUpdate, operatorData, jwt }) {
 
     const requestData = { ...formData };
 
-    if (mode === 'create'){
-        try{
-            const response = await axios.post(
+    const handleRequest = async (method) => {
+      try {
+          const response = await axios[method](
               API_URL + 'admin/operators',
               requestData,
               {
@@ -51,36 +52,35 @@ export default function OperatorForm({ mode, onUpdate, operatorData, jwt }) {
                   'Authorization': jwt
                 }
               }
-            );
-
-            onUpdate();
-          } 
-          
-          catch(error){
-            console.error("Error creating operator: ", error);
-          }
+          );
+          onUpdate();
+          handleClose();
+      } catch (error) {
+        switch (true) {
+          case error?.response?.data?.includes("User account already exists"):
+              setError("Error creating operator: User account already exists");
+              console.error("Error creating operator: ", error);
+              break;
+          case error?.response?.data?.includes("validation error detected"):
+              setError("Error creating operator: Email cannot contain spaces");
+              console.error("Error creating operator: ", error);
+              break;
+          default:
+              setError("Error creating operator: " + error.response.data);
+              console.error("Error creating operator: ", error);
+        }
+        return;
       }
-      else if (mode === 'modify'){
+    }
+
+
+    if (mode === 'create') {
+      await handleRequest('post');
+    } 
+    else if (mode === 'modify') {
         requestData.hydrophone_operator_id = operatorData.hydrophone_operator_id;
-        try{
-            const response = await axios.put(
-              API_URL + 'admin/operators',
-              requestData,
-              {
-                headers: {
-                  'Authorization': jwt
-                }
-              }
-            );
-
-            onUpdate();
-          } 
-          
-          catch(error){
-            console.error("Error creating operator: ", error);
-          }
-      }
-      handleClose(); // Close the dialog 
+        await handleRequest('put');
+    }
   };
 
   const handleChange = (event) => {
@@ -136,6 +136,7 @@ export default function OperatorForm({ mode, onUpdate, operatorData, jwt }) {
             <Dialog open={open} onClose={handleClose}>
                     <DialogTitle>{mode === 'create' ? 'Create Hydrophone Operator': 'Modify Hydrophone Operator'}</DialogTitle>
                     <DialogContent>
+                        {error && <Alert severity="error">{error}</Alert>} 
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                                 <TextField
                                     label="Organization"

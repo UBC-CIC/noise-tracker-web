@@ -321,6 +321,15 @@ exports.handler = async (event) => {
             case "POST /admin/operators":
             	if (event.body != null){
             		const body = JSON.parse(event.body);
+            							
+					// Fetch Cognito credentials
+    				const credentials = await retrieveCognitoSecrets();
+					
+					// Create Cognito user and send invitation
+    				await createCognitoUser(body.contact_email, credentials.REACT_APP_USERPOOL_ID);
+    				
+    				// Add Cognito user to group
+    				await addCognitoUserToGroup(body.contact_email, credentials.REACT_APP_USERPOOL_ID, "OPERATOR_USER");
             		
             		data = await dbConnection`
 		            	INSERT INTO hydrophone_operators
@@ -353,15 +362,6 @@ exports.handler = async (event) => {
 					
 					// Upload the object
 					await s3.putObject(params).promise();
-					
-					// Fetch Cognito credentials
-    				const credentials = await retrieveCognitoSecrets();
-					
-					// Create Cognito user and send invitation
-    				await createCognitoUser(body.contact_email, credentials.REACT_APP_USERPOOL_ID);
-    				
-    				// Add Cognito user to group
-    				await addCognitoUserToGroup(body.contact_email, credentials.REACT_APP_USERPOOL_ID, "OPERATOR_USER");
             	}
 				
             	break;
