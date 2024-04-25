@@ -58,11 +58,15 @@ export default function OperatorForm({ mode, onUpdate, operatorData, jwt }) {
       } catch (error) {
         switch (true) {
           case error?.response?.data?.includes("User account already exists"):
-              setError("Error creating operator: User account already exists");
+              setFormErrors({ ...formErrors, ['contact_email']: 'User account already exists' });
               console.error("Error creating operator: ", error);
               break;
           case error?.response?.data?.includes("validation error detected"):
-              setError("Error creating operator: Email cannot contain spaces");
+              setFormErrors({ ...formErrors, ['contact_email']: 'Email cannot contain spaces' });
+              console.error("Error creating operator: ", error);
+              break;
+          case error?.response?.data?.includes("Invalid email address format."):
+              setFormErrors({ ...formErrors, ['contact_email']: 'Invalid email address format.' });
               console.error("Error creating operator: ", error);
               break;
           default:
