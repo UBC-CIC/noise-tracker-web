@@ -370,17 +370,58 @@ exports.handler = async (event) => {
             	if (event.body != null){
             		const body = JSON.parse(event.body);
             		
-            		data = await dbConnection`
-		            	UPDATE hydrophone_operators
-						SET 
-						    hydrophone_operator_name = ${body.hydrophone_operator_name},
-						    contact_name = ${body.contact_name},
-						    contact_email = ${body.contact_email},
-						    website = ${body.website},
-						    in_directory = ${body.in_directory}
-						WHERE 
-						    hydrophone_operator_id = ${body.hydrophone_operator_id};
+            		// Fetch the existing contact_email
+			        const existingData = await dbConnection`
+			            SELECT contact_email
+			            FROM hydrophone_operators
+			            WHERE hydrophone_operator_id = ${body.hydrophone_operator_id}
+			            LIMIT 1;
+			        `;
+			        const existingContactEmail = existingData[0].contact_email;
+			        
+			        // Compare the existing and new contact_email values
+			        if (existingContactEmail !== body.contact_email) {
+	            		// Fetch Cognito credentials
+	    				const credentials = await retrieveCognitoSecrets();
+	    				
+					    // Create Cognito user using new email and send invitation
+					    await createCognitoUser(body.contact_email, credentials.REACT_APP_USERPOOL_ID);
+					    
+					    // Add new Cognito user to group
+					    await addCognitoUserToGroup(body.contact_email, credentials.REACT_APP_USERPOOL_ID, "OPERATOR_USER");
+					    
+					    // Delete the old Cognito user
+					    const deleteUserParams = {
+					        UserPoolId: credentials.REACT_APP_USERPOOL_ID, 
+					        Username: existingContactEmail,
+					    };
+					
+					    await CognitoIdentityServiceProvider.adminDeleteUser(deleteUserParams).promise();
+					    
+					    data = await dbConnection`
+			            	UPDATE hydrophone_operators
+							SET 
+							    hydrophone_operator_name = ${body.hydrophone_operator_name},
+							    contact_name = ${body.contact_name},
+							    contact_email = ${body.contact_email},
+							    website = ${body.website},
+							    in_directory = ${body.in_directory}
+							WHERE 
+							    hydrophone_operator_id = ${body.hydrophone_operator_id};
 						`;
+			        }
+			        else {
+			        	data = await dbConnection`
+			            	UPDATE hydrophone_operators
+							SET 
+							    hydrophone_operator_name = ${body.hydrophone_operator_name},
+							    contact_name = ${body.contact_name},
+							    website = ${body.website},
+							    in_directory = ${body.in_directory}
+							WHERE 
+							    hydrophone_operator_id = ${body.hydrophone_operator_id};
+						`;
+			        }
             	}
 				
             	break;
