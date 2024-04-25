@@ -434,6 +434,9 @@ exports.handler = async (event) => {
 			        data = await dbConnection`
 			            DELETE FROM hydrophone_operators
 			            WHERE hydrophone_operator_id = ${operator_id}
+			            AND NOT EXISTS (
+					        SELECT 1 FROM hydrophones WHERE hydrophone_operator_id = ${operator_id}
+					    )
 			            RETURNING hydrophone_operator_id, contact_email;`;
 			
 			        if (data.length > 0) {
@@ -474,6 +477,10 @@ exports.handler = async (event) => {
 			
 			                await s3.deleteObjects(deleteParams).promise();
 			            }
+			        }
+			        else{
+			        	response.statusCode = 400;
+						response.body = JSON.stringify("The hydrophone operator could not be deleted because it is still referenced by one or more hydrophones.");
 			        }
             	}
 				

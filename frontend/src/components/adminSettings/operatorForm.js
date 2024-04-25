@@ -70,7 +70,7 @@ export default function OperatorForm({ mode, onUpdate, operatorData, jwt }) {
               console.error("Error creating operator: ", error);
               break;
           default:
-              setError("Error creating operator: " + error.response.data);
+              setError("Error creating operator: " + error?.response?.data);
               console.error("Error creating operator: ", error);
         }
         return;
