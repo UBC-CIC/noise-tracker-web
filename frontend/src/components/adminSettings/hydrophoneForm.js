@@ -49,6 +49,25 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt, op
         calibration_available: hydrophoneData?.calibration_available || ''
     });
 
+    const [formErrors, setFormErrors] = useState({
+        hydrophone_operator_name: '',
+        site: '',
+        coordinates: '',
+        model: '',
+        mounting_type: '',
+        height_from_seafloor: '',
+        sampling_frequency: '',
+        depth: '',
+        range: '',
+        angle_of_view: '',
+        file_length: '',
+        file_format: '',
+        directory: '',
+        file_name: '',
+        timezone: '',
+        storage_interval: '',
+      });
+
     const [fileError, setFileError] = useState(false); 
 
     const handleOpen = () => {
@@ -60,6 +79,11 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt, op
     };
 
     const handleSave = async () => {
+        const isValid = validateForm(); 
+        if (!isValid) {
+            return; 
+        }
+        
         const requestData = { ...formData };
 
         if (mode === 'create'){
@@ -148,6 +172,7 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt, op
     const handleChange = (event) => {
         const { name, value } = event.target;
         setFormData({ ...formData, [name]: value });
+        setFormErrors({ ...formErrors, [name]: '' });
     };
 
     const handleDateChange = (date, name) => {
@@ -168,6 +193,94 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt, op
         setFileError(false);
     };
 
+    const validateForm = () => {
+        let valid = true;
+        const errors = {};
+    
+        if (!formData.hydrophone_operator_name.trim()) {
+            errors.hydrophone_operator_name = 'Organization is required';
+            valid = false;
+        }
+    
+        if (!formData.site.trim()) {
+            errors.site = 'Site is required';
+            valid = false;
+        }
+    
+        if (!formData.coordinates.trim()) {
+            errors.coordinates = 'Coordinates are required';
+            valid = false;
+        }
+    
+        if (!formData.model.trim()) {
+            errors.model = 'Model is required';
+            valid = false;
+        }
+    
+        if (!formData.mounting_type.trim()) {
+            errors.mounting_type = 'Mounting type is required';
+            valid = false;
+        }
+    
+        if (!formData.height_from_seafloor.trim()) {
+            errors.height_from_seafloor = 'Height from seafloor is required';
+            valid = false;
+        }
+    
+        if (!formData.sampling_frequency.trim()) {
+            errors.sampling_frequency = 'Sampling frequency is required';
+            valid = false;
+        }
+    
+        if (!formData.depth.trim()) {
+            errors.depth = 'Depth is required';
+            valid = false;
+        }
+    
+        if (!formData.range.trim()) {
+            errors.range = 'Range is required';
+            valid = false;
+        }
+    
+        if (!formData.angle_of_view.trim()) {
+            errors.angle_of_view = 'Angle of view is required';
+            valid = false;
+        }
+    
+        if (!formData.file_length.trim()) {
+            errors.file_length = 'File length is required';
+            valid = false;
+        }
+    
+        if (!formData.file_format.trim()) {
+            errors.file_format = 'File format is required';
+            valid = false;
+        }
+    
+        if (!formData.directory.trim()) {
+            errors.directory = 'Directory is required';
+            valid = false;
+        }
+    
+        if (!formData.file_name.trim()) {
+            errors.file_name = 'File name is required';
+            valid = false;
+        }
+    
+        if (!formData.timezone.trim()) {
+            errors.timezone = 'Timezone is required';
+            valid = false;
+        }
+    
+        if (!formData.storage_interval.trim()) {
+            errors.storage_interval = 'Storage interval is required';
+            valid = false;
+        }
+    
+        setFormErrors(errors);
+        return valid;
+    };
+
     return (
         <div style={{ paddingBottom: '20px' }}>
             {mode === 'create' ? (
@@ -183,7 +296,7 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt, op
                     <DialogTitle>{mode === 'create' ? 'Create Hydrophone' : 'Modify Hydrophone'}</DialogTitle>
                     <DialogContent>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <FormControl fullWidth margin="normal">
+                                <FormControl fullWidth margin="normal" error={!!formErrors.hydrophone_operator_name}>
                                     <InputLabel id="operator-label">Operator</InputLabel>
                                     <Select
                                         labelId="operator-label"
@@ -208,6 +321,8 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt, op
                                     margin="normal"
                                     value={formData.site}
                                     onChange={handleChange}
+                                    error={!!formErrors.site}
+                                    helperText={formErrors.site}
                                 />
                                 <TextField
                                     label="Location (Coordinates)"
@@ -217,6 +332,8 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt, op
                                     margin="normal"
                                     value={formData.coordinates}
                                     onChange={handleChange}
+                                    error={!!formErrors.coordinates}
+                                    helperText={formErrors.coordinates}
                                 />
                                 <TextField
                                     label="Hydrophone Brand and Model"
@@ -226,6 +343,8 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt, op
                                     margin="normal"
                                     value={formData.model}
                                     onChange={handleChange}
+                                    error={!!formErrors.model}
+                                    helperText={formErrors.model}
                                 />
                                 <TextField
                                     label="Mounting Type"
@@ -235,6 +354,8 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt, op
                                     margin="normal"
                                     value={formData.mounting_type}
                                     onChange={handleChange}
+                                    error={!!formErrors.mounting_type}
+                                    helperText={formErrors.mounting_type}
                                 />
 
                                 <TextField
@@ -245,6 +366,8 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt, op
                                     margin="normal"
                                     value={formData.height_from_seafloor}
                                     onChange={handleChange}
+                                    error={!!formErrors.height_from_seafloor}
+                                    helperText={formErrors.height_from_seafloor}
                                 />
                                 <TextField
                                     label="Sampling Frequency (kHz)"
@@ -254,6 +377,8 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt, op
                                     margin="normal"
                                     value={formData.sampling_frequency}
                                     onChange={handleChange}
+                                    error={!!formErrors.sampling_frequency}
+                                    helperText={formErrors.sampling_frequency}
                                 />
                                 <TextField
                                     label="Depth (m, at median tide)"
@@ -263,6 +388,8 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt, op
                                     margin="normal"
                                     value={formData.depth}
                                     onChange={handleChange}
+                                    error={!!formErrors.depth}
+                                    helperText={formErrors.depth}
                                 />
                                 <DatePicker
                                     label="First Deployment Date"
@@ -290,6 +417,8 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt, op
                                     margin="normal"
                                     value={formData.range}
                                     onChange={handleChange}
+                                    error={!!formErrors.range}
+                                    helperText={formErrors.range}
                                 />
                                 <TextField
                                     label="Estimated Angle of View (degs)"
@@ -299,6 +428,8 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt, op
                                     margin="normal"
                                     value={formData.angle_of_view}
                                     onChange={handleChange}
+                                    error={!!formErrors.angle_of_view}
+                                    helperText={formErrors.angle_of_view}
                                 />
                                 <TextField
                                     label="File Length (mins)"
@@ -308,6 +439,8 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt, op
                                     margin="normal"
                                     value={formData.file_length}
                                     onChange={handleChange}
+                                    error={!!formErrors.file_length}
+                                    helperText={formErrors.file_length}
                                 />
                                 <TextField
                                     label="File Format"
@@ -317,6 +450,8 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt, op
                                     margin="normal"
                                     value={formData.file_format}
                                     onChange={handleChange}
+                                    error={!!formErrors.file_format}
+                                    helperText={formErrors.file_format}
                                 />
                                 <TextField
                                     label="Directory"
@@ -326,6 +461,8 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt, op
                                     margin="normal"
                                     value={formData.directory}
                                     onChange={handleChange}
+                                    error={!!formErrors.directory}
+                                    helperText={formErrors.directory}
                                 />
                                 <TextField
                                     label="Sample File Name"
@@ -335,6 +472,8 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt, op
                                     margin="normal"
                                     value={formData.file_name}
                                     onChange={handleChange}
+                                    error={!!formErrors.file_name}
+                                    helperText={formErrors.file_name}
                                 />
                                 <TextField
                                     label="Timezone"
@@ -344,6 +483,8 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt, op
                                     margin="normal"
                                     value={formData.timezone}
                                     onChange={handleChange}
+                                    error={!!formErrors.timezone}
+                                    helperText={formErrors.timezone}
                                 />
                                 <TextField
                                     label="Storage Interval (e.g., daily, monthly)"
@@ -353,6 +494,8 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt, op
                                     margin="normal"
                                     value={formData.storage_interval}
                                     onChange={handleChange}
+                                    error={!!formErrors.storage_interval}
+                                    helperText={formErrors.storage_interval}
                                 />
                                 <Typography style={{ marginTop: '20px' }}>
                                     Is calibration information available?
