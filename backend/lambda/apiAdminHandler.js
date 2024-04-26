@@ -47,6 +47,10 @@ async function createCognitoUser(email, userPoolId) {
         Name: 'email',
         Value: email,
       },
+      {
+		Name: 'email_verified',
+		Value: 'true'
+	  },
     ],
   };
 
