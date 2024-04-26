@@ -101,13 +101,20 @@ This tab lists the hydrophones and contact information of all other operators. T
 
 Administrators have access to an Admin Dashboard, from which they can interact with the database by adding new operators and hydrophones, or by configuring their settings.
 
+![admin dashboard](images/userGuide/admin_dashboard.png)
+
 ### Adding a new operator
 
 A new operator can be created by clicking the "Create Operator" button and inputting the operator's organization, organization website, contact name, and contact email.
 
+![adding a hydrophone operator](images/userGuide/admin_dashboard_add_operator.png)
+![filling in the create operator form](images/userGuide/admin_dashboard_add_operator_form.png)
+
 ### Editing an operator
 
 An operator's main contact information can also be modified by clicking on the "Edit" icon. After making the changes, click the "Save" button to confirm.
+
+![editing an operator](images/userGuide/admin_dashboard_edit_operator.png)
 
 ### Adding a new hydrophone
 
@@ -132,10 +139,15 @@ A new hydrophone can be created by clicking the "Create Hydrophone" button and i
 - Storage interval (daily, monthly, etc.)
 - Calibration information (if available)
 
+![adding a hydrophone](images/userGuide/admin_dashboard_add_hydrophone.png)
+![filling in the create hydrophone form](images/userGuide/admin_dashboard_add_hydrophone_form.png)
+
 
 ### Editing a hydrophone
 
 A hydrophone's metadata can also be modified by clicking on the "Edit" icon. New calibration files may also be uploaded here. After making the changes, click the "Save" button to confirm.
+
+![editing a hydrophone](images/userGuide/admin_dashboard_edit_hydrophone.png)
 
 ### Deleting operators or hydrophones
 
