@@ -27,7 +27,7 @@ export default function OperatorProfileInformation({ jwt, hydrophoneData, loadin
                 </center>
           ) : (
             <div>
-            <Typography style={{ fontSize: '24px', paddingBottom: '20px' }}><b>{hydrophoneData[0].hydrophone_operator_name}</b></Typography>
+            <Typography style={{ fontSize: '24px', paddingBottom: '20px' }}><b>{hydrophoneData[0]?.hydrophone_operator_name}</b></Typography>
             <TableContainer component={Paper}>
               <Table>
                 <TableHead>
