@@ -29,7 +29,8 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt, op
     const [formData, setFormData] = useState({
         hydrophone_operator_name: hydrophoneData?.hydrophone_operator_name || '',
         site: hydrophoneData?.site || '',
-        coordinates: hydrophoneData?.coordinates || '',
+        latitude: hydrophoneData?.latitude || '',
+        longitude: hydrophoneData?.longitude || '',
         model: hydrophoneData?.model || '',
         mounting_type: hydrophoneData?.mounting_type || '',
         height_from_seafloor: hydrophoneData?.height_from_seafloor || '',
@@ -52,7 +53,8 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt, op
     const [formErrors, setFormErrors] = useState({
         hydrophone_operator_name: '',
         site: '',
-        coordinates: '',
+        latitude: '',
+        longitude: '',
         model: '',
         mounting_type: '',
         height_from_seafloor: '',
@@ -206,9 +208,14 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt, op
             errors.site = 'Site is required';
             valid = false;
         }
-    
-        if (!formData.coordinates.trim()) {
-            errors.coordinates = 'Coordinates are required';
+
+        if (!formData.latitude.trim()) {
+            errors.latitude = 'Latitude is required';
+            valid = false;
+        }
+
+        if (!formData.longitude.trim()) {
+            errors.longitude = 'Longitude are required';
             valid = false;
         }
     
@@ -325,15 +332,28 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt, op
                                     helperText={formErrors.site}
                                 />
                                 <TextField
-                                    label="Location (Coordinates)"
-                                    name="coordinates"
+                                    label="Latitude"
+                                    name="latitude"
+                                    variant="outlined"
+                                    type="number"
+                                    fullWidth
+                                    margin="normal"
+                                    value={formData.latitude}
+                                    onChange={handleChange}
+                                    error={!!formErrors.latitude}
+                                    helperText={formErrors.latitude}
+                                />
+                                <TextField
+                                    label="Longitude"
+                                    name="longitude"
+                                    type="number"
                                     variant="outlined"
                                     fullWidth
                                     margin="normal"
-                                    value={formData.coordinates}
+                                    value={formData.longitude}
                                     onChange={handleChange}
-                                    error={!!formErrors.coordinates}
-                                    helperText={formErrors.coordinates}
+                                    error={!!formErrors.longitude}
+                                    helperText={formErrors.longitude}
                                 />
                                 <TextField
                                     label="Hydrophone Brand and Model"

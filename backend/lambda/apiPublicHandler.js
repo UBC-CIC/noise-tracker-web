@@ -117,7 +117,7 @@ exports.handler = async (event) => {
         switch(request){
             case "GET /public/hydrophones":
                 data = await dbConnection`
-	            	SELECT h.hydrophone_id, h.site, h.coordinates, h.model, h.mounting_type, h.height_from_seafloor, 
+	            	SELECT h.hydrophone_id, h.site, h.latitude, h.longitude, h.model, h.mounting_type, h.height_from_seafloor, 
 			           h.sampling_frequency, h.depth, h.first_deployment_date, h.last_deployment_date, 
 			           h.range, h.angle_of_view, h.file_length, h.file_format, h.directory, 
 			           h.file_name, h.timezone, h.storage_interval, h.last_data_upload, 
@@ -194,7 +194,7 @@ exports.handler = async (event) => {
 			        const { hydrophone_operator_id, hydrophone_id } = hydrophone;
 
 			        try {
-			            const objects = await getRecentObjects(BUCKET_NAME, `${hydrophone_operator_id}/${hydrophone_id}/biospl`, 10, 2)
+			            const objects = await getRecentObjects(BUCKET_NAME, `${hydrophone_operator_id}/${hydrophone_id}/biospl`, 24, 30)
 			            
 			            if (objects.length > 0) {
 			                const data = await Promise.all(objects.map(async obj => {
@@ -235,7 +235,7 @@ exports.handler = async (event) => {
 			        const { hydrophone_operator_id, hydrophone_id, average_spl } = hydrophone;
 
 			        try {
-			            const objects = await getRecentObjects(BUCKET_NAME, `${hydrophone_operator_id}/${hydrophone_id}/biospl`, 1, 2)
+			            const objects = await getRecentObjects(BUCKET_NAME, `${hydrophone_operator_id}/${hydrophone_id}/biospl`, 1, 30)
 			            
 			            if (objects.length > 0) {
 			                const recent_spl = await Promise.all(objects.map(async obj => {

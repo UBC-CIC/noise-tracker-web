@@ -133,7 +133,8 @@ exports.handler = async (event) => {
 		            	INSERT INTO hydrophones
 			            	(hydrophone_operator_id, 
 			            	 site,
-			            	 coordinates,
+			            	 latitude,
+			            	 longitude,
 			        		 model,
 			        		 mounting_type,
 			        		 height_from_seafloor,
@@ -154,7 +155,8 @@ exports.handler = async (event) => {
 			            VALUES 
 			            	(${operator_id[0].hydrophone_operator_id}, 
 			            	 ${body.site},
-			            	 ${body.coordinates},
+			            	 ${body.latitude},
+			            	 ${body.longitude},
 			            	 ${body.model},
 			            	 ${body.mounting_type},
 			            	 ${body.height_from_seafloor},
@@ -218,7 +220,8 @@ exports.handler = async (event) => {
 			            SET 
 			            	hydrophone_operator_id = ${operator_id[0].hydrophone_operator_id}, 
 						    site = ${body.site},
-						    coordinates = ${body.coordinates},
+						    latitude = ${body.latitude},
+						    longitude = ${body.longitude},
 						    model = ${body.model},
 						    mounting_type = ${body.mounting_type},
 			            	height_from_seafloor = ${body.height_from_seafloor},

@@ -108,7 +108,7 @@ export default function AdminHydrophones({ jwt }){
                       <StyledTableCell>{hydrophone.site}</StyledTableCell>
                       <StyledTableCell>{hydrophone.hydrophone_id}</StyledTableCell>
                       <StyledTableCell>{hydrophone.hydrophone_operator_name}</StyledTableCell>
-                      <StyledTableCell>{hydrophone.coordinates}</StyledTableCell>
+                      <StyledTableCell>{hydrophone.latitude + ", " + hydrophone.longitude}</StyledTableCell>
                       <StyledTableCell>{hydrophone.model}</StyledTableCell>
                       <StyledTableCell>{hydrophone.mounting_type}</StyledTableCell>
                       <StyledTableCell>{hydrophone.height_from_seafloor}</StyledTableCell>
@@ -144,7 +144,8 @@ export default function AdminHydrophones({ jwt }){
                             "hydrophone_operator_id": hydrophone.hydrophone_operator_id,
                             "hydrophone_operator_name": hydrophone.hydrophone_operator_name,
                             "site": hydrophone.site,
-                            "coordinates": hydrophone.coordinates,
+                            "latitude": hydrophone.latitude,
+                            "longitude": hydrophone.longitude,
                             "model": hydrophone.model,
                             "mounting_type": hydrophone.mounting_type,
                             "sampling_frequency": hydrophone.sampling_frequency,

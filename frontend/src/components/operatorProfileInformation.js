@@ -60,7 +60,7 @@ export default function OperatorProfileInformation({ jwt, hydrophoneData, loadin
                     <TableRow key={hydrophone.hydrophone_id} style={{ background: index % 2 === 0 ? '#f9f9f9' : 'white' }}>
                       <StyledTableCell>{hydrophone.site}</StyledTableCell>
                       <StyledTableCell>{hydrophone.hydrophone_id}</StyledTableCell>
-                      <StyledTableCell>{hydrophone.coordinates}</StyledTableCell>
+                      <StyledTableCell>{hydrophone.latitude + ", " + hydrophone.longitude}</StyledTableCell>
                       <StyledTableCell>{hydrophone.model}</StyledTableCell>
                       <StyledTableCell>{hydrophone.mounting_type}</StyledTableCell>
                       <StyledTableCell>{hydrophone.height_from_seafloor}</StyledTableCell>

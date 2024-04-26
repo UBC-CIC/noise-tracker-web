@@ -50,10 +50,10 @@ export default function Map({ onToggleSidebar, hydrophoneData, selectedHydrophon
     const zoomAdjustedTotalLongitude = zoomIn ? currentTotalLongitude/(2**zoomDifference) : currentTotalLongitude*(2**Math.abs(zoomDifference));
 
     // Calculate the adjusted longitude based on the sidebar width
-    const adjustedLongitude = parseFloat(hydrophone.coordinates.split(', ')[1]) + (zoomAdjustedTotalLongitude*(sidebarPercentage/2));
+    const adjustedLongitude = parseFloat(hydrophone.longitude) + (zoomAdjustedTotalLongitude*(sidebarPercentage/2));
 
     // Update the coordinates with the adjusted longitude
-    const adjustedCoordinates = [hydrophone.coordinates.split(', ')[0], adjustedLongitude];
+    const adjustedCoordinates = [hydrophone.latitude, adjustedLongitude];
 
     // Zoom in on icon
     map.flyTo(adjustedCoordinates, zoomLevel);
@@ -83,7 +83,7 @@ export default function Map({ onToggleSidebar, hydrophoneData, selectedHydrophon
         />
         {hydrophoneData.map((hydrophone, index) => {
           try {
-            const position = hydrophone.coordinates.split(', ');
+            const position = [hydrophone.latitude, hydrophone.longitude];
             if (position && position.length === 2 && !isNaN(position[0]) && !isNaN(position[1])) {
                 return (
                   <Marker
