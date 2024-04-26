@@ -1,4 +1,4 @@
-import { Typography, TextField, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, IconButton } from "@mui/material";
+import { Typography, TextField, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, IconButton, Alert } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -8,6 +8,7 @@ import { useState } from "react";
 export default function DeleteForm({ mode, itemId, onDelete, jwt }) {
     const API_URL = process.env.REACT_APP_API_URL;
 
+    const [error, setError] = useState(null);
     const [open, setOpen] = useState(false);
     const [organization, setOrganization] = useState('');
     const [contact, setContact] = useState('');
@@ -33,9 +34,11 @@ export default function DeleteForm({ mode, itemId, onDelete, jwt }) {
                 );
 
                 onDelete();
+                handleClose(); 
               } 
               
               catch(error){
+                setError("Error deleting operator: " + error?.response?.data);
                 console.error("Error deleting operator: ", error);
               }
         }
@@ -52,14 +55,14 @@ export default function DeleteForm({ mode, itemId, onDelete, jwt }) {
                 );
 
                 onDelete();
+                handleClose(); 
               } 
               
               catch(error){
-                console.error("Error deleting operator: ", error);
+                setError("Error deleting hydrophone: " + error?.response?.data);
+                console.error("Error deleting hydrophone: ", error);
               }
         }
-
-        handleClose(); // Close the dialog 
     };
 
     const handleOrganizationChange = (event) => {
@@ -79,6 +82,7 @@ export default function DeleteForm({ mode, itemId, onDelete, jwt }) {
             <Dialog open={open} onClose={handleClose}>
                     <DialogTitle>Delete</DialogTitle>
                     <DialogContent>
+                        {error && <Alert severity="error">{error}</Alert>} 
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DialogContentText>
                                 {mode === 'operator' 

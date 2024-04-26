@@ -32,7 +32,7 @@ const Login = ({ loginStatus, setLoginStatus, jwt, setJwt, group, setGroup }) =>
               setLoginStatus(false);
             } else {
               const jwtToken = session.getAccessToken().getJwtToken();
-              const userGroup = session.getAccessToken().payload['cognito:groups'][0]
+              const userGroup = session.getAccessToken().payload['cognito:groups']?.[0]
               setGroup(userGroup);
               setJwt(jwtToken);
               setLoginStatus(true);
@@ -51,6 +51,11 @@ const Login = ({ loginStatus, setLoginStatus, jwt, setJwt, group, setGroup }) =>
       }, []); // Empty dependency array ensures this effect runs only once when the component mounts
 
     const signIn = async () => {
+        if (!username || !password) {
+            setError({ message: "Please enter both username and password." });
+            return;
+        }
+    
         const authenticationData = {
             Username: username,
             Password: password,
@@ -67,12 +72,16 @@ const Login = ({ loginStatus, setLoginStatus, jwt, setJwt, group, setGroup }) =>
         
           cognitoUser.authenticateUser(authenticationDetails, {
             onSuccess: (session) => {
-              setLoginStatus(true);
-              navigate("/map");
               const jwtToken = session.getAccessToken().getJwtToken();
-              const userGroup = session.getAccessToken().payload['cognito:groups'][0]
-              setGroup(userGroup);
-              setJwt(jwtToken);
+              const userGroup = session.getAccessToken().payload['cognito:groups']?.[0]
+              if (userGroup) {
+                setGroup(userGroup);
+                setJwt(jwtToken);
+                setLoginStatus(true);
+                navigate("/map");
+              } else {
+                setError({ message: "Invalid user group." });
+              }
             },
             onFailure: (err) => {
                 // Handle other authentication failures
@@ -104,12 +113,17 @@ const Login = ({ loginStatus, setLoginStatus, jwt, setJwt, group, setGroup }) =>
             cognitoUser.completeNewPasswordChallenge(password, {}, {
                 onSuccess: (session) => {
                     // Handle successful password change
-                    setLoginStatus(true);
-                    navigate("/map");
                     const jwtToken = session.getAccessToken().getJwtToken();
-                    const userGroup = session.getAccessToken().payload['cognito:groups'][0]
-                    setGroup(userGroup);
-                    setJwt(jwtToken);
+                    const userGroup = session.getAccessToken().payload['cognito:groups']?.[0]
+                    if (userGroup) {
+                        setGroup(userGroup);
+                        setJwt(jwtToken);
+                        setLoginStatus(true);
+                        navigate("/map");
+                    } else {
+                        setError({ message: "Invalid user group." });
+                        setPageState(0);
+                    }
                 },
                 onFailure: (err) => {
                     // Handle failure in setting new password

@@ -81,17 +81,26 @@ export default function Map({ onToggleSidebar, hydrophoneData, selectedHydrophon
         <TileLayer
           url="https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Reference/MapServer/tile/{z}/{y}/{x}        "
         />
-        {hydrophoneData.map((hydrophone, index) => (
-          <Marker
-            key={index}
-            position={hydrophone.coordinates.split(', ')}
-            icon={hydrophone.site === selectedHydrophone ? hydrophoneIconSelected : hydrophoneIcon}
-            eventHandlers={{
-              click: (e) => handleIconClick(hydrophone, e.target._map),
-            }}
-          >
-          </Marker>
-        ))}
+        {hydrophoneData.map((hydrophone, index) => {
+          try {
+            const position = hydrophone.coordinates.split(', ');
+            if (position && position.length === 2 && !isNaN(position[0]) && !isNaN(position[1])) {
+                return (
+                  <Marker
+                    key={index}
+                    position={position}
+                    icon={hydrophone.site === selectedHydrophone ? hydrophoneIconSelected : hydrophoneIcon}
+                    eventHandlers={{
+                      click: (e) => handleIconClick(hydrophone, e.target._map),
+                    }}
+                  >
+                  </Marker>
+                );
+            }
+          } catch (error) {
+            console.error("Error processing coordinates for hydrophone:", error);
+          }
+        })}
       </MapContainer>
       <Popup />
     </div>
