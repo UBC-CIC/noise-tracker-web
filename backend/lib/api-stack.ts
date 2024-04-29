@@ -202,13 +202,20 @@ export class APIStack extends Stack {
           memorySize: 512,
           environment:{
             SM_DB_CREDENTIALS: db.secretPathUser.secretName,
-            BUCKET_NAME: functionalityStack.bucketName,   
+            BUCKET_NAME: functionalityStack.bucketName, 
+            SENDER_EMAIL: '',  
           },
           vpc: vpcStack.vpc,
           code: lambda.Code.fromAsset("lambda"),
           layers: [pyJWT, psyscopg2],
           role: lambdaRole,
         });
+
+        const sesStatement = new iam.PolicyStatement();
+        sesStatement.addActions("ses:SendEmail");
+        sesStatement.addResources("*");
+
+        operatorDownloadHandler.addToRolePolicy(sesStatement);
 
         /**
          *
