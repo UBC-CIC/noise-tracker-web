@@ -26,3 +26,47 @@
 14. Client software fetched the hydrophone details and configurations by calling an API endpoint. This endpoint invokes a lambda function (7) that fetches the details from the Noise Tracker Database (8).
 15. The client application also needs to upload the analysis results into the cloud, which is done by uploading JSON files in the Noise Tracker S3 Bucket.
 
+## Database Schema
+
+![Database Schema](./images/architectureDeepDive/database_schema.png)
+
+### `hydrophone_operators` table
+
+| Column Name | Description 
+| ----------- | ----------- 
+| hydrophone_operator_id | The uuid of the hydrophone operator
+| hydrophone_operator_name | The name of the hydrophone operator's organization
+| contact_name | The name of the organization contact 
+| contact_email | The email address of the organization contact
+| website | The organization's website
+| in_directory | Whether or not the organization is opted into sharing their contact information in the operator directory
+
+
+### `hydrophones` table
+
+| Column Name | Description 
+| ----------- | ----------- 
+| hydrophone_id | The uuid of the hydrophone
+| hydrophone_operator_id |  The uuid of the hydrophone's associated hydrophone operator
+| site | The name of the hydrophone site
+| latitude | The latitude of the hydrophone
+| longitude | The longitude of the hydrophone
+| model | The model of the hydrophone
+| mounting_type | The mounting type of the hydrophone
+| height_from_seafloor | The height of the hydrophone above the seafloor in meters
+| sampling_frequency | The sampling frequency of the hydrophone in kilohertz
+| depth | The depth of the hydrophone in meters
+| first_deployment_date | The date that the hydrophone was first deployed
+| last_deployment_date | The date that the hydrophone was most recently deployed
+| range | The range of the hydrophone in meters
+| angle_of_view | The hydrophone's angle of view in degrees
+| file_length | The length of audio files in minutes 
+| file_format | The format of the audio file
+| directory | The directory that the audio files are stored in on the hydrophone operator's system 
+| file_name | The format of file names 
+| timezone | The timezone of the hydrophone
+| storage_interval | How often files are stored
+| calibration_available | Whether or not calibration data is available for the hydrophone 
+| average_spl | Average monthly sound pressure level values, calculated daily
+
+
