@@ -119,8 +119,7 @@ exports.handler = async (event) => {
                 data = await dbConnection`
 	            	SELECT h.hydrophone_id, h.site, h.latitude, h.longitude, h.model, h.mounting_type, h.height_from_seafloor, 
 			           h.sampling_frequency, h.depth, h.first_deployment_date, h.last_deployment_date, 
-			           h.range, h.angle_of_view, h.file_length, h.file_format, h.directory, 
-			           h.file_name, h.timezone, h.storage_interval, 
+			           h.range, h.angle_of_view,
 			           h.calibration_available, ho.hydrophone_operator_name, ho.website
 				    FROM hydrophones h
 				    INNER JOIN hydrophone_operators ho ON h.hydrophone_operator_id = ho.hydrophone_operator_id;
