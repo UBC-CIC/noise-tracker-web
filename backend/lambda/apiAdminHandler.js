@@ -154,7 +154,6 @@ exports.handler = async (event) => {
 			            	 file_name,
 			            	 timezone,
 			            	 storage_interval,
-			            	 last_data_upload,
 			            	 calibration_available)
 			            VALUES 
 			            	(${operator_id[0].hydrophone_operator_id}, 
@@ -176,7 +175,6 @@ exports.handler = async (event) => {
 			            	 ${body.file_name},
 			            	 ${body.timezone},
 			            	 ${body.storage_interval},
-			            	 ${body.last_data_upload},
 			            	 ${body.calibration_available})
 			        	RETURNING hydrophone_id;
 						`;
@@ -241,7 +239,6 @@ exports.handler = async (event) => {
 						    file_name = ${body.file_name},
 						    timezone = ${body.timezone},
 						    storage_interval = ${body.storage_interval},
-						    last_data_upload = ${body.last_data_upload},
 						    calibration_available = ${body.calibration_available}
 			            WHERE hydrophone_id = ${body.hydrophone_id};
 						`;

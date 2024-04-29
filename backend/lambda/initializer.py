@@ -76,7 +76,6 @@ def handler(event, context):
                 "file_name" varchar,
                 "timezone" varchar,
                 "storage_interval" varchar,
-                "last_data_upload" varchar,
                 "calibration_available" boolean,
                 "average_spl" jsonb
             );

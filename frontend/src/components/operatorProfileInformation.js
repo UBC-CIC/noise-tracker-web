@@ -76,7 +76,6 @@ export default function OperatorProfileInformation({ jwt, hydrophoneData, loadin
                       <StyledTableCell>{hydrophone.file_name}</StyledTableCell>
                       <StyledTableCell>{hydrophone.timezone}</StyledTableCell>
                       <StyledTableCell>{hydrophone.storage_interval}</StyledTableCell>
-                      <StyledTableCell>{hydrophone.last_data_upload}</StyledTableCell>
                       <StyledTableCell>{hydrophone.calibration_available ? 'Yes' : 'No'}</StyledTableCell>
                       <StyledTableCell>
                       {hydrophone.calibration_available ? (
