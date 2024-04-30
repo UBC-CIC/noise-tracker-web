@@ -277,19 +277,39 @@ exports.handler = async (event) => {
 			                Prefix: `${hydrophone_id}/`,
 			            };
 			
-			            const objectsToDelete = await s3.listObjectsV2(listParams).promise();
-			
-			            // Delete the objects in batches (if there are many)
-			            if (objectsToDelete.Contents.length > 0) {
-			                const deleteParams = {
-			                    Bucket: BUCKET_NAME,
-			                    Delete: {
-			                        Objects: objectsToDelete.Contents.map(obj => ({ Key: obj.Key })),
-			                    },
-			                };
-			
-			                await s3.deleteObjects(deleteParams).promise();
-			            }
+			            const objectsToDelete = [];
+						let continuationToken = null;
+
+						do {
+							const listParamsWithToken = {
+								...listParams,
+								ContinuationToken: continuationToken
+							};
+
+							const response = await s3.listObjectsV2(listParamsWithToken).promise();
+							objectsToDelete.push(...response.Contents);
+							continuationToken = response.NextContinuationToken;
+
+						} while (continuationToken);
+
+						// Delete the objects in batches (if there are many)
+						if (objectsToDelete.length > 0) {
+							const batchSize = 1000;
+							let startIndex = 0;
+
+							while (startIndex < objectsToDelete.length) {
+								const batchObjects = objectsToDelete.slice(startIndex, startIndex + batchSize);
+								const deleteParams = {
+									Bucket: BUCKET_NAME,
+									Delete: {
+										Objects: batchObjects.map(obj => ({ Key: obj.Key })),
+									},
+								};
+
+								await s3.deleteObjects(deleteParams).promise();
+								startIndex += batchSize;
+							}
+						}
 			        }
             	}
 				
