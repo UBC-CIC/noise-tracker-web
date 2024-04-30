@@ -50,7 +50,7 @@ async function getRecentObjects(bucketName, prefix, numObjects, maxDatesToCheck)
     
             if (response.Contents && response.Contents.length > 0) {
                 // Extract object keys and add to objectsCollected
-                const objectKeys = response.Contents.map(obj => obj.Key).filter(key => key.endsWith('.json'));
+                const objectKeys = response.Contents.map(obj => obj.Key).filter(key => key.endsWith('.json') || key.endsWith('.png'));
                 
                 // If there's a continuation token, add objectKeys to the temporary array
                 if (response.NextContinuationToken) {
@@ -67,7 +67,7 @@ async function getRecentObjects(bucketName, prefix, numObjects, maxDatesToCheck)
 
         } while (continuationToken);
         
-        /// If there are object keys in the temporary array, sort them in descending order and add to objectsCollected array
+        // If there are object keys in the temporary array, sort them in descending order and add to objectsCollected array
         if (tempObjectKeys.length > 0) {
             const sortedTempObjectKeys = tempObjectKeys.sort((a, b) => b.localeCompare(a));
             objectsCollected = objectsCollected.concat(sortedTempObjectKeys);
@@ -117,10 +117,9 @@ exports.handler = async (event) => {
         switch(request){
             case "GET /public/hydrophones":
                 data = await dbConnection`
-	            	SELECT h.hydrophone_id, h.site, h.coordinates, h.model, h.mounting_type, h.height_from_seafloor, 
+	            	SELECT h.hydrophone_id, h.site, h.latitude, h.longitude, h.model, h.mounting_type, h.height_from_seafloor, 
 			           h.sampling_frequency, h.depth, h.first_deployment_date, h.last_deployment_date, 
-			           h.range, h.angle_of_view, h.file_length, h.file_format, h.directory, 
-			           h.file_name, h.timezone, h.storage_interval, h.last_data_upload, 
+			           h.range, h.angle_of_view,
 			           h.calibration_available, ho.hydrophone_operator_name, ho.website
 				    FROM hydrophones h
 				    INNER JOIN hydrophone_operators ho ON h.hydrophone_operator_id = ho.hydrophone_operator_id;
@@ -131,37 +130,25 @@ exports.handler = async (event) => {
                 
             case "GET /public/spectrograms":
 			    const hydrophones = await dbConnection`
-			        SELECT hydrophone_operator_id, hydrophone_id FROM hydrophones;
+			        SELECT hydrophone_id FROM hydrophones;
 			    `;
 			
 			    const promises = hydrophones.map(async hydrophone => {
-			        const { hydrophone_operator_id, hydrophone_id } = hydrophone;
-			        const params = {
-			            Bucket: BUCKET_NAME,
-			            Prefix: `${hydrophone_operator_id}/${hydrophone_id}/spectrogram/2`
-			        };
-			        try {
-			            const objects = await s3.listObjectsV2(params).promise();
-			            
-			            // Sort objects based on datetime in the file name
-			            const sortedObjects = objects.Contents.sort((a, b) => {
-			                const dateA = getDateFromKey(a.Key);
-			                const dateB = getDateFromKey(b.Key);
+			        const { hydrophone_id } = hydrophone;
 
-			                return dateB - dateA;
-			            });
-            
-			            if (sortedObjects.length > 0) {
-			                const recentObjects = sortedObjects.slice(0, 7);
-			                const presignedUrls = await Promise.all(recentObjects.map(async obj => {
+			        try {
+			            const objects = await getRecentObjects(BUCKET_NAME, `${hydrophone_id}/spectrogram`, 7, 30)
+			            
+			            if (objects.length > 0) {
+			                const presignedUrls = await Promise.all(objects.map(async obj => {
 				                const presignedUrl = await s3.getSignedUrlPromise('getObject', {
 				                    Bucket: BUCKET_NAME,
-				                    Key: obj.Key,
+				                    Key: obj,
 				                    Expires: 3600 // 1 hour
 				                });
 				                
 				                // Extract date from key
-						        const date = getDateFromKey(obj.Key);
+						        const date = getDateFromKey(obj);
 
 						        return {
 						          date,
@@ -187,14 +174,14 @@ exports.handler = async (event) => {
 		
 			case "GET /public/spl":
 			    const hydrophonesSpl = await dbConnection`
-			        SELECT hydrophone_operator_id, hydrophone_id FROM hydrophones;
+			        SELECT hydrophone_id FROM hydrophones;
 			    `;
 			
 			    const splPromises = hydrophonesSpl.map(async hydrophone => {
-			        const { hydrophone_operator_id, hydrophone_id } = hydrophone;
+			        const { hydrophone_id } = hydrophone;
 
 			        try {
-			            const objects = await getRecentObjects(BUCKET_NAME, `${hydrophone_operator_id}/${hydrophone_id}/biospl`, 10, 2)
+			            const objects = await getRecentObjects(BUCKET_NAME, `${hydrophone_id}/biospl`, 24, 30)
 			            
 			            if (objects.length > 0) {
 			                const data = await Promise.all(objects.map(async obj => {
@@ -228,14 +215,14 @@ exports.handler = async (event) => {
 			    
 			case "GET /public/gauge":
 			    const hydrophonesGauge = await dbConnection`
-			        SELECT hydrophone_operator_id, hydrophone_id, average_spl FROM hydrophones;
+			        SELECT hydrophone_id, average_spl FROM hydrophones;
 			    `;
 			
 			    const gaugePromises = hydrophonesGauge.map(async hydrophone => {
-			        const { hydrophone_operator_id, hydrophone_id, average_spl } = hydrophone;
+			        const { hydrophone_id, average_spl } = hydrophone;
 
 			        try {
-			            const objects = await getRecentObjects(BUCKET_NAME, `${hydrophone_operator_id}/${hydrophone_id}/biospl`, 1, 2)
+			            const objects = await getRecentObjects(BUCKET_NAME, `${hydrophone_id}/biospl`, 1, 30)
 			            
 			            if (objects.length > 0) {
 			                const recent_spl = await Promise.all(objects.map(async obj => {

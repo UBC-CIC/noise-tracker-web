@@ -40,7 +40,7 @@ def filter_s3_objects(hydrophones, start_date, end_date, jwt_token):
     cursor = connection.cursor()
     
     get_hydrophone_ids = """
-        SELECT h.hydrophone_operator_id, h.hydrophone_id
+        SELECT h.hydrophone_id
         FROM hydrophones h
         JOIN hydrophone_operators ho ON h.hydrophone_operator_id = ho.hydrophone_operator_id
         WHERE ho.contact_email = %s
@@ -57,7 +57,7 @@ def filter_s3_objects(hydrophones, start_date, end_date, jwt_token):
     filtered_objects = []
 
     for hydrophone_id in hydrophone_ids:
-        prefix = hydrophone_id[0] + "/" + hydrophone_id[1] + "/"
+        prefix = hydrophone_id[0] + "/spl"
 
         # Initialize continuation token for pagination
         continuation_token = None
@@ -94,6 +94,36 @@ def filter_s3_objects(hydrophones, start_date, end_date, jwt_token):
 def generate_random_string(length):
     letters = string.ascii_lowercase
     return ''.join(random.choice(letters) for i in range(length))
+
+def send_email(url, jwt_token):
+    SENDER_EMAIL = os.environ["SENDER_EMAIL"]
+
+    # Retrieve recipient email from jwt
+    decoded_data = jwt.decode(jwt=jwt_token, options={"verify_signature": False})
+    recipient_email = decoded_data['username']
+    
+    # Create a new SES client
+    ses_client = boto3.client('ses')
+    
+    # Email subject
+    subject = "NoiseTracker Download Link"
+    
+    # Email body
+    body_text = ""
+    body_html = f"<p>Your download link is ready: <a href=\"{url}\">Download Here</a></p>"
+    
+    # Send email
+    response = ses_client.send_email(
+        Source=SENDER_EMAIL,
+        Destination={'ToAddresses': [recipient_email]},
+        Message={
+            'Subject': {'Data': subject},
+            'Body': {
+                'Text': {'Data': body_text},
+                'Html': {'Data': body_html}
+            }
+        }
+    )
     
 def handler(event, context):
     # Bucket name where the files are stored
@@ -131,6 +161,9 @@ def handler(event, context):
             Params={'Bucket': BUCKET_NAME, 'Key': random_key},
             ExpiresIn=expiry
         )
+
+    # Send email with the pre-signed URL
+    send_email(url, jwt_token)
     
     return {
         'statusCode': 200,

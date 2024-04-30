@@ -18,7 +18,8 @@ const InfoItem = ({ label, value }) => {
 export default function SidebarStationInformation({ hydrophoneData }){
     const {
         site,
-        coordinates,
+        latitude,
+        longitude,
         hydrophone_operator_name,
         model,
         mounting_type,
@@ -37,7 +38,7 @@ export default function SidebarStationInformation({ hydrophoneData }){
         <div style={{ paddingLeft: '20px' }}>
             <InfoItem label="Organization" value={hydrophone_operator_name} />
             <InfoItem label="Site" value={site} />
-            <InfoItem label="Location" value={coordinates} />
+            <InfoItem label="Location" value={latitude + ", " + longitude} />
             <InfoItem label="Hydrophone (Brand and Model)" value={model} />
             <InfoItem label="Mounting Type" value={mounting_type} />
             <InfoItem label="Height from Seafloor (m)" value={height_from_seafloor} />

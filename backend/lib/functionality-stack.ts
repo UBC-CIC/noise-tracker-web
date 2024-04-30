@@ -25,9 +25,9 @@ export class FunctionalityStack extends cdk.Stack {
         requireUppercase: true,
         requireDigits: true,
         requireSymbols: true,
-        tempPasswordValidity: cdk.Duration.days(3),
+        tempPasswordValidity: cdk.Duration.days(14),
       },
-      accountRecovery: cognito.AccountRecovery.NONE,
+      accountRecovery: cognito.AccountRecovery.EMAIL_AND_PHONE_WITHOUT_MFA,
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
 

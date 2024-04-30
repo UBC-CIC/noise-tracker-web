@@ -59,7 +59,8 @@ def handler(event, context):
                 "hydrophone_id" uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
                 "hydrophone_operator_id" uuid,
                 "site" varchar,
-                "coordinates" varchar,
+                "latitude" varchar,
+                "longitude" varchar,
                 "model" varchar,
                 "mounting_type" varchar,
                 "height_from_seafloor" varchar,
@@ -75,7 +76,6 @@ def handler(event, context):
                 "file_name" varchar,
                 "timezone" varchar,
                 "storage_interval" varchar,
-                "last_data_upload" varchar,
                 "calibration_available" boolean,
                 "average_spl" jsonb
             );

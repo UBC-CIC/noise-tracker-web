@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Typography, Checkbox, FormControlLabel, Button, CircularProgress } from '@mui/material';
+import { Typography, Checkbox, FormControlLabel, Button, CircularProgress, Alert } from '@mui/material';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -18,11 +18,23 @@ export default function OperatorProfileDownload({ jwt, hydrophoneData, loading }
 
     const [downloadURL, setDownloadURL] = useState(null);
 
+    const [error, setError] = useState(null);
+
     // States to track loading statuses
+    const [showWaitingText, setShowWaitingText] = useState(false);
     const [loadingPresignedURL, setLoadingPresignedURL] = useState(false); 
 
     const fetchPresignedURL = async () => {
         try{
+
+            // Check for empty fields
+            if (!startDateTime || !endDateTime || Object.values(checkedHydrophones).every(value => !value)) {
+                setError('Please fill in all fields.');
+                return;
+            }
+
+            setShowWaitingText(true);
+            setError(null);
             setLoadingPresignedURL(true);
 
             const params = new URLSearchParams();
@@ -41,12 +53,12 @@ export default function OperatorProfileDownload({ jwt, hydrophoneData, loading }
                 headers: {
                     'Authorization': jwt
                 },
-                params: params
-                }
-            );
+                params: params,
+                validateStatus: () => true,
+                },
+            )
 
             const data = response.data;
-            console.log(data);
             setDownloadURL(data);
         } 
         
@@ -134,21 +146,14 @@ export default function OperatorProfileDownload({ jwt, hydrophoneData, loading }
                 </LocalizationProvider>
             </div>
 
-            {loadingPresignedURL ? (
+            {error && (
+                <Alert severity="error">{error}</Alert>
+            )}
+
                 <div>
-                    <CircularProgress color="success" />
-                    <Typography>Generating a download URL. This may take a while.</Typography>
-                </div>
-            ) : (
-                <div>
-                    {downloadURL ? (
+                    {showWaitingText ? (
                         <div>
-                            <Typography>Download URL generated. Click below to begin download.</Typography>
-                            <a href={downloadURL} target="_blank" rel="noopener noreferrer">
-                                <Button sx={{ mt: 2, mb: 2 }} variant="contained">
-                                    Download
-                                </Button>
-                            </a>
+                            <Alert severity='success'>Download URL is generating. An email containing a download link should be sent to you within 15 minutes.</Alert>
                         </div>
                     ) : (
                         <Button sx={{ mt: 2, mb: 2 }} variant="contained" onClick={handleDownloadClick}>
@@ -156,7 +161,6 @@ export default function OperatorProfileDownload({ jwt, hydrophoneData, loading }
                         </Button>
                     )}
                 </div>
-            )}
         </div>
     );
 }

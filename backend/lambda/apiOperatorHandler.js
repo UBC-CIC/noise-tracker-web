@@ -82,8 +82,8 @@ exports.handler = async (event) => {
 				
 				// Generating presigned URLs for each row
 			    for (let i = 0; i < data.length; i++) {
-			        const { hydrophone_operator_id, hydrophone_id } = data[i];
-			        const Key = `${hydrophone_operator_id}/${hydrophone_id}/calibration.csv`;
+			        const { hydrophone_id } = data[i];
+			        const Key = `${hydrophone_id}/calibration.csv`;
 			        const params = {
 			            Bucket: BUCKET_NAME,
 			            Key: Key,

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, Alert } from "@mui/material"
+import { Box, Alert, Typography } from "@mui/material"
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 
@@ -8,12 +8,17 @@ import { AuthenticationDetails, CognitoUser, CognitoUserPool } from 'amazon-cogn
 
 const Login = ({ loginStatus, setLoginStatus, jwt, setJwt, group, setGroup }) => {
     const [error, setError] = useState(null);
-    const [pageState, setPageState] = useState(0);
+    const [alert, setAlert] = useState(null);
+    const [pageState, setPageState] = useState("login");
     const [cognitoUser, setCognitoUser] = useState('');
     const navigate = useNavigate(); 
-    let   username;
-    let   password;
+    let username;
+    let password;
     let confirmPassword;
+    let email;
+    let verificationCode;
+    let newPassword;
+    let confirmNewPassword;
 
     const poolData = {
         UserPoolId: process.env.REACT_APP_USERPOOL_ID,
@@ -91,10 +96,79 @@ const Login = ({ loginStatus, setLoginStatus, jwt, setJwt, group, setGroup }) =>
             newPasswordRequired: () => {   
                 // User needs to set a new password
                 setCognitoUser(cognitoUser);
-                setPageState(1); // Change page state to prompt for new password
+                setPageState("newPassword"); // Change page state to prompt for new password
                 setError(null);
             }
           });
+    }
+
+    const forgotPassword = async () => {                
+        setPageState("forgotPassword");
+        setError(null);
+    }
+
+    const backToSignIn = async () => {                
+        setPageState("login");
+        setError(null);
+    }
+
+    const sendCode = async () => { 
+        if (!email) {
+            setError({ message: "Please enter your email." });
+            return;
+        }
+
+        const userData = {
+            Username: email,
+            Pool: userPool,
+        };
+    
+        const cognitoUser = new CognitoUser(userData);
+
+        cognitoUser.forgotPassword({
+            onSuccess: function (data) {
+                // Password reset code sent successfully
+                setCognitoUser(cognitoUser);
+                setPageState("resetPassword")
+                setError(null)
+            },
+            onFailure: function (err) {
+                // Error sending password reset code
+                if (err.code === "UserNotFoundException") {
+                    setError({ message: "User not found." });
+                }
+                console.log(err);
+            },
+        });
+    }
+
+    const resetPassword = async (cognitoUser) => { 
+        if (!verificationCode || !newPassword || !confirmNewPassword) {
+            setError({ message: "Please fill in all fields." });
+            return;
+        }
+
+        if (newPassword === confirmNewPassword){
+            cognitoUser.confirmPassword(verificationCode, newPassword, {
+                onSuccess: function (data) {
+                    setAlert("Your password has been reset successfully.");
+                    setPageState("login");
+                    setError(null);
+                },
+                onFailure: function (err) {
+                    if (err.code === "InvalidPasswordException") {
+                        setError({ message: "Invalid password. All passwords must have: minimum length of 8 characters, at least one lowercase letter, at least one uppercase letter, at least one digit, and at least one symbol." });
+                    } 
+                    else if (err.code === "CodeMismatchException") {
+                        setError({ message: "Invalid verification code" });
+                    }   
+                    console.log(err);
+                },
+            });
+        }
+        else{
+            setError({ message: "The passwords do not match" });
+        }
     }
 
     const signout = () => {
@@ -122,7 +196,7 @@ const Login = ({ loginStatus, setLoginStatus, jwt, setJwt, group, setGroup }) =>
                         navigate("/map");
                     } else {
                         setError({ message: "Invalid user group." });
-                        setPageState(0);
+                        setPageState("login");
                     }
                 },
                 onFailure: (err) => {
@@ -155,9 +229,12 @@ const Login = ({ loginStatus, setLoginStatus, jwt, setJwt, group, setGroup }) =>
     const LoginPage = () => {
         return(
             <Box className="login-container">
-                {pageState === 0 ? (
+                {pageState === "login" &&
                 <>
-                    <TextField
+                    {alert && (
+                        <Alert severity="success">{alert}</Alert>
+                    )}
+                    <TextField 
                         onChange={(event)=>{username=event.target.value}}
                         id="usernameinput" 
                         label="Username" 
@@ -183,8 +260,15 @@ const Login = ({ loginStatus, setLoginStatus, jwt, setJwt, group, setGroup }) =>
                         sx={{m:1}}
                     >Login
                     </Button>
+                    <Button 
+                        variant="outlined" 
+                        onClick={() => {forgotPassword()}}
+                        sx={{m:1}}
+                    >Forgot Password?
+                    </Button>
                 </>
-            ) : (
+                }
+            {pageState === "newPassword" && 
                 // Prompt for new password
                 <>
                     <TextField
@@ -214,7 +298,74 @@ const Login = ({ loginStatus, setLoginStatus, jwt, setJwt, group, setGroup }) =>
                         Set New Password
                     </Button>
                 </>
-                )}
+                }
+                {pageState === "forgotPassword" && 
+                <>
+                    <Typography style={{ width: '50%' }}>Enter your email address and we'll send you a code to help you reset your password.</Typography>
+                    {error && (
+                        <Alert severity="error">{error.message}</Alert>
+                    )}
+                    <TextField style={{ width: '50%' }}
+                        onChange={(event)=>{email=event.target.value}}
+                        id="emailinput" 
+                        label="Email" 
+                        variant="outlined" 
+                        sx={{m:1}}
+                    ></TextField>
+                    <Button style={{ width: '50%' }}
+                        variant="contained"
+                        onClick={() => {backToSignIn()}}
+                        sx={{ m: 1 }}
+                    >
+                        Back
+                    </Button>
+                    <Button style={{ width: '50%' }}
+                        variant="contained"
+                        onClick={() => {sendCode()}}
+                        sx={{ m: 1 }}
+                    >
+                        Send Code
+                    </Button>
+                </>
+                }
+                {pageState === "resetPassword" && 
+                <>
+                    <Typography style={{ width: '50%' }}>A password reset code has been sent to your email. Enter it below to reset your password.</Typography>
+                    {error && (
+                        <Alert severity="error">{error.message}</Alert>
+                    )}
+                    <TextField style={{ width: '50%' }}
+                        onChange={(event)=>{verificationCode=event.target.value}}
+                        id="verificationCode" 
+                        label="Code" 
+                        variant="outlined" 
+                        sx={{m:1}}
+                    ></TextField>
+                    <TextField style={{ width: '50%' }}
+                        onChange={(event) => { newPassword=event.target.value }}
+                        id="changePasswordInput"
+                        label="New Password"
+                        type="password"
+                        variant="outlined"
+                        sx={{ m: 1 }}
+                    />
+                    <TextField style={{ width: '50%' }}
+                        onChange={(event) => { confirmNewPassword=event.target.value }}
+                        id="confirmChangePasswordInput"
+                        label="Confirm New Password"
+                        type="password"
+                        variant="outlined"
+                        sx={{ m: 1 }}
+                    />
+                    <Button style={{ width: '50%' }}
+                        variant="contained"
+                        onClick={() => {resetPassword(cognitoUser)}}
+                        sx={{ m: 1 }}
+                    >
+                        Change Password
+                    </Button>
+                </>
+                }
             </Box>
         )
     }

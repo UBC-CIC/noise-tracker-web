@@ -30,16 +30,16 @@ async function initializeConnection(){
 
 async function calculateAverageSpl() {
     const hydrophonesSpl = await dbConnection`
-        SELECT hydrophone_operator_id, hydrophone_id FROM hydrophones;
+        SELECT hydrophone_id FROM hydrophones;
     `;
 
     await Promise.all(hydrophonesSpl.map(async hydrophone => {
         const splAverages = [];
         
-        const { hydrophone_operator_id, hydrophone_id } = hydrophone;
+        const { hydrophone_id } = hydrophone;
 
         try {
-            const objects = await getRecentObjects(BUCKET_NAME, `${hydrophone_operator_id}/${hydrophone_id}/biospl`, 1440, 2)
+            const objects = await getRecentObjects(BUCKET_NAME, `${hydrophone_id}/biospl`, 720, 30)
 
             if (objects.length > 0) {
                 const allValues = []; // Array to accumulate all values from S3 objects

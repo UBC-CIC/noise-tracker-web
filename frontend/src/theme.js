@@ -33,6 +33,15 @@ const theme = createTheme({
             backgroundColor: '#3a6f73', // Darker primary color when hovering
           },
         },
+        outlined: {
+          // Override styles for the outlined variant
+          borderColor: '#fff', 
+          backgroundColor: '#fff', 
+          color: primaryColor,
+          '&:hover': {
+            backgroundColor: '#fff', 
+          },
+        },
       },
     },
     MuiDrawer: {

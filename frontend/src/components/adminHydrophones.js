@@ -95,7 +95,6 @@ export default function AdminHydrophones({ jwt }){
                     <StyledTableCell>File Name</StyledTableCell>
                     <StyledTableCell>Timezone</StyledTableCell>
                     <StyledTableCell>Storage Interval</StyledTableCell>
-                    <StyledTableCell>Last Data Upload</StyledTableCell>
                     <StyledTableCell>Calibration Available</StyledTableCell>
                     <StyledTableCell>Calibration File</StyledTableCell>
                     <StyledTableCell>Edit</StyledTableCell>
@@ -108,7 +107,7 @@ export default function AdminHydrophones({ jwt }){
                       <StyledTableCell>{hydrophone.site}</StyledTableCell>
                       <StyledTableCell>{hydrophone.hydrophone_id}</StyledTableCell>
                       <StyledTableCell>{hydrophone.hydrophone_operator_name}</StyledTableCell>
-                      <StyledTableCell>{hydrophone.coordinates}</StyledTableCell>
+                      <StyledTableCell>{hydrophone.latitude + ", " + hydrophone.longitude}</StyledTableCell>
                       <StyledTableCell>{hydrophone.model}</StyledTableCell>
                       <StyledTableCell>{hydrophone.mounting_type}</StyledTableCell>
                       <StyledTableCell>{hydrophone.height_from_seafloor}</StyledTableCell>
@@ -124,7 +123,6 @@ export default function AdminHydrophones({ jwt }){
                       <StyledTableCell>{hydrophone.file_name}</StyledTableCell>
                       <StyledTableCell>{hydrophone.timezone}</StyledTableCell>
                       <StyledTableCell>{hydrophone.storage_interval}</StyledTableCell>
-                      <StyledTableCell>{hydrophone.last_data_upload}</StyledTableCell>
                       <StyledTableCell>{hydrophone.calibration_available ? 'Yes' : 'No'}</StyledTableCell>
                       <StyledTableCell>
                       {hydrophone.calibration_available ? (
@@ -144,7 +142,8 @@ export default function AdminHydrophones({ jwt }){
                             "hydrophone_operator_id": hydrophone.hydrophone_operator_id,
                             "hydrophone_operator_name": hydrophone.hydrophone_operator_name,
                             "site": hydrophone.site,
-                            "coordinates": hydrophone.coordinates,
+                            "latitude": hydrophone.latitude,
+                            "longitude": hydrophone.longitude,
                             "model": hydrophone.model,
                             "mounting_type": hydrophone.mounting_type,
                             "sampling_frequency": hydrophone.sampling_frequency,
@@ -160,7 +159,6 @@ export default function AdminHydrophones({ jwt }){
                             "file_name": hydrophone.file_name,
                             "timezone": hydrophone.timezone,
                             "storage_interval": hydrophone.storage_interval,
-                            "last_data_upload": hydrophone.last_data_upload,
                             "calibration_available": hydrophone.calibration_available,
                             "presignedUrl": hydrophone.presignedUrl
                           }}

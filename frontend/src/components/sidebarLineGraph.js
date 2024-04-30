@@ -110,7 +110,7 @@ const SidebarLineGraph = ({ splData, loading }) => {
               <li>15-150kHz - echolocation range of killer whales. Smaller vessels may produce noise in this range.</li>
             </ul>
             <Typography style={{ paddingTop: '20px' }}>
-              Note: This hydrophone has a recording frequency range of {lowerFrequency}Hz to {upperFrequency}Hz.
+              Note: This hydrophone has a recording frequency range of <b>{lowerFrequency}Hz</b> to <b>{upperFrequency}Hz</b>.
             </Typography>
             <Typography className='sidebar-typography-padding'>
               Learn more about Sound Pressure Levels as a tool to understanding the ocean soundscape in our Education Hub.

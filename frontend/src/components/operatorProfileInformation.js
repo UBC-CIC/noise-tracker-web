@@ -27,7 +27,7 @@ export default function OperatorProfileInformation({ jwt, hydrophoneData, loadin
                 </center>
           ) : (
             <div>
-            <Typography style={{ fontSize: '24px', paddingBottom: '20px' }}><b>{hydrophoneData[0].hydrophone_operator_name}</b></Typography>
+            <Typography style={{ fontSize: '24px', paddingBottom: '20px' }}><b>{hydrophoneData[0]?.hydrophone_operator_name}</b></Typography>
             <TableContainer component={Paper}>
               <Table>
                 <TableHead>
@@ -50,7 +50,6 @@ export default function OperatorProfileInformation({ jwt, hydrophoneData, loadin
                     <StyledTableCell>File Name</StyledTableCell>
                     <StyledTableCell>Timezone</StyledTableCell>
                     <StyledTableCell>Storage Interval</StyledTableCell>
-                    <StyledTableCell>Last Data Upload</StyledTableCell>
                     <StyledTableCell>Calibration Available</StyledTableCell>
                     <StyledTableCell>Calibration File</StyledTableCell>
                   </TableRow>
@@ -60,7 +59,7 @@ export default function OperatorProfileInformation({ jwt, hydrophoneData, loadin
                     <TableRow key={hydrophone.hydrophone_id} style={{ background: index % 2 === 0 ? '#f9f9f9' : 'white' }}>
                       <StyledTableCell>{hydrophone.site}</StyledTableCell>
                       <StyledTableCell>{hydrophone.hydrophone_id}</StyledTableCell>
-                      <StyledTableCell>{hydrophone.coordinates}</StyledTableCell>
+                      <StyledTableCell>{hydrophone.latitude + ", " + hydrophone.longitude}</StyledTableCell>
                       <StyledTableCell>{hydrophone.model}</StyledTableCell>
                       <StyledTableCell>{hydrophone.mounting_type}</StyledTableCell>
                       <StyledTableCell>{hydrophone.height_from_seafloor}</StyledTableCell>
@@ -76,7 +75,6 @@ export default function OperatorProfileInformation({ jwt, hydrophoneData, loadin
                       <StyledTableCell>{hydrophone.file_name}</StyledTableCell>
                       <StyledTableCell>{hydrophone.timezone}</StyledTableCell>
                       <StyledTableCell>{hydrophone.storage_interval}</StyledTableCell>
-                      <StyledTableCell>{hydrophone.last_data_upload}</StyledTableCell>
                       <StyledTableCell>{hydrophone.calibration_available ? 'Yes' : 'No'}</StyledTableCell>
                       <StyledTableCell>
                       {hydrophone.calibration_available ? (
