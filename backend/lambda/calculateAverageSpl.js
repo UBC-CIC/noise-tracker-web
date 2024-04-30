@@ -39,7 +39,7 @@ async function calculateAverageSpl() {
         const { hydrophone_id } = hydrophone;
 
         try {
-            const objects = await getRecentObjects(BUCKET_NAME, `${hydrophone_id}/biospl`, 1440, 2)
+            const objects = await getRecentObjects(BUCKET_NAME, `${hydrophone_id}/biospl`, 720, 30)
 
             if (objects.length > 0) {
                 const allValues = []; // Array to accumulate all values from S3 objects
