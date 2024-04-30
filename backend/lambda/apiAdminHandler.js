@@ -194,15 +194,6 @@ exports.handler = async (event) => {
         			
 					// Append the presigned URL to the response
         			response.body = JSON.stringify(signedUrl);
-						
-					// Define an object
-					const params = {
-					  Bucket: BUCKET_NAME,
-					  Key: `${hydrophone_id}/`,
-					};
-					
-					// Upload the object
-					await s3.putObject(params).promise();
 	        	}
 				
 	        	break;
