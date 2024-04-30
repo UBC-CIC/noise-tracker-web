@@ -2,7 +2,7 @@ import { Typography, CircularProgress } from "@mui/material";
 import GaugeChart from 'react-gauge-chart'
 
 export default function SidebarOverview({ gaugeData, gaugeLoading }){
-    if (!gaugeData && !gaugeLoading) {
+    if ((!gaugeData || !gaugeData.average_spl) && !gaugeLoading) {
         return (
         <div>
             <Typography Typography className='sidebar-typography-padding'>No Recent Sound Pressure Level Data Available</Typography>
@@ -16,7 +16,7 @@ export default function SidebarOverview({ gaugeData, gaugeLoading }){
         const resultsArray = [];
         for (let i = 0; i < gaugeData?.recent_spl[0].values.length; i++) {
           const recentVal = gaugeData.recent_spl[0].values[i];
-          const correspondingAvgSpl = gaugeData.average_spl.find(avgSpl =>
+          const correspondingAvgSpl = gaugeData.average_spl?.find(avgSpl =>
             avgSpl.f_min === recentVal.f_min && avgSpl.f_max === recentVal.f_max
           );
     
