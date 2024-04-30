@@ -76,6 +76,7 @@ def handler(event, context):
                 "file_name" varchar,
                 "timezone" varchar,
                 "storage_interval" varchar,
+                "hydrophone_is_public" boolean,
                 "calibration_available" boolean,
                 "average_spl" jsonb
             );

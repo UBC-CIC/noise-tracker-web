@@ -46,6 +46,7 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt, op
         file_name: hydrophoneData?.file_name || '',
         timezone: hydrophoneData?.timezone || '',
         storage_interval: hydrophoneData?.storage_interval || '',
+        hydrophone_is_public: hydrophoneData?.hydrophone_is_public || false,
         calibration_available: hydrophoneData?.calibration_available || false
     });
 
@@ -115,7 +116,7 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt, op
               } 
               
               catch(error){
-                console.error("Error creating operator: ", error);
+                console.error("Error creating hydrophone: ", error);
               }
         }
         else if (mode === 'modify'){
@@ -148,7 +149,7 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt, op
               } 
               
               catch(error){
-                console.error("Error creating operator: ", error);
+                console.error("Error modifying hydrophone: ", error);
               }
         }
 
@@ -515,6 +516,18 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt, op
                                     onChange={handleChange}
                                     error={!!formErrors.storage_interval}
                                     helperText={formErrors.storage_interval}
+                                />
+                                <Typography style={{ marginTop: '20px' }}>
+                                    Show hydrophone on map?
+                                </Typography>
+                                <FormControlLabel
+                                  control={
+                                    <Checkbox
+                                        name="hydrophone_is_public"
+                                        checked={formData.hydrophone_is_public}
+                                        onChange={handleCheckboxChange}
+                                    />}
+                                  label="Yes"
                                 />
                                 <Typography style={{ marginTop: '20px' }}>
                                     Is calibration information available?

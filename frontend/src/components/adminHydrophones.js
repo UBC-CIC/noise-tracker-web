@@ -95,6 +95,7 @@ export default function AdminHydrophones({ jwt }){
                     <StyledTableCell>File Name</StyledTableCell>
                     <StyledTableCell>Timezone</StyledTableCell>
                     <StyledTableCell>Storage Interval</StyledTableCell>
+                    <StyledTableCell>Hydrophone Privacy</StyledTableCell>
                     <StyledTableCell>Calibration Available</StyledTableCell>
                     <StyledTableCell>Calibration File</StyledTableCell>
                     <StyledTableCell>Edit</StyledTableCell>
@@ -123,6 +124,7 @@ export default function AdminHydrophones({ jwt }){
                       <StyledTableCell>{hydrophone.file_name}</StyledTableCell>
                       <StyledTableCell>{hydrophone.timezone}</StyledTableCell>
                       <StyledTableCell>{hydrophone.storage_interval}</StyledTableCell>
+                      <StyledTableCell>{hydrophone.hydrophone_is_public ? 'Public' : 'Private'}</StyledTableCell>
                       <StyledTableCell>{hydrophone.calibration_available ? 'Yes' : 'No'}</StyledTableCell>
                       <StyledTableCell>
                       {hydrophone.calibration_available ? (
@@ -159,6 +161,7 @@ export default function AdminHydrophones({ jwt }){
                             "file_name": hydrophone.file_name,
                             "timezone": hydrophone.timezone,
                             "storage_interval": hydrophone.storage_interval,
+                            "hydrophone_is_public": hydrophone.hydrophone_is_public,
                             "calibration_available": hydrophone.calibration_available,
                             "presignedUrl": hydrophone.presignedUrl
                           }}
