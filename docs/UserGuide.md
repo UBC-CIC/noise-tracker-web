@@ -26,7 +26,7 @@ The interactive map page is the default page after logging in.
 This map displays a clickable icon for each hydrophone in the database. Once clicked, information about the hydrophone and its metrics are available through the following tabs:
 
 - [**Overview**](#overview) - plots for decibel level broadband and specific frequency bands
-- [**Noise Metrics**](#noise-metrics)- interactive spectrogram and sound pressure level diagrams
+- [**Noise Metrics**](#noise-metrics)- interactive spectrogram and Sound Pressure Level diagrams
 - [**Trends**](#trends) - placeholder for future trend data
 - [**Station Information**](#station-information) - description of hydrophone metadata
 
