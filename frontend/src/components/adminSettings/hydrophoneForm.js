@@ -46,7 +46,7 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt, op
         file_name: hydrophoneData?.file_name || '',
         timezone: hydrophoneData?.timezone || '',
         storage_interval: hydrophoneData?.storage_interval || '',
-        calibration_available: hydrophoneData?.calibration_available || ''
+        calibration_available: hydrophoneData?.calibration_available || false
     });
 
     const [formErrors, setFormErrors] = useState({
