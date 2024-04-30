@@ -50,7 +50,6 @@ export default function OperatorProfileInformation({ jwt, hydrophoneData, loadin
                     <StyledTableCell>File Name</StyledTableCell>
                     <StyledTableCell>Timezone</StyledTableCell>
                     <StyledTableCell>Storage Interval</StyledTableCell>
-                    <StyledTableCell>Last Data Upload</StyledTableCell>
                     <StyledTableCell>Calibration Available</StyledTableCell>
                     <StyledTableCell>Calibration File</StyledTableCell>
                   </TableRow>
