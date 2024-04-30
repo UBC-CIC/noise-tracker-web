@@ -51,7 +51,7 @@ export default function SidebarSpectrogram({ spectrogramData, loading }) {
             <Button variant="contained" disabled={currentIndex === 0} onClick={handleNext}>Next</Button>
           </div>
           <Typography style={{ paddingTop: '20px' }}>
-            *All times are shown in Pacific Standard Time (PST)
+            *All times are shown in Pacific Standard Time (PST, UTC-07:00)
           </Typography>
           <Typography style={{ paddingTop: '20px', paddingBottom: '20px' }}>
             This is a spectrogram showing the acoustic soundscape over a 24 hour time period on {formattedDate}. Time is represented on the horizontal axis, 
