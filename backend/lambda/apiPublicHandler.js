@@ -134,10 +134,10 @@ exports.handler = async (event) => {
 			    `;
 			
 			    const promises = hydrophones.map(async hydrophone => {
-			        const { hydrophone_operator_id, hydrophone_id } = hydrophone;
+			        const { hydrophone_id } = hydrophone;
 			        const params = {
 			            Bucket: BUCKET_NAME,
-			            Prefix: `${hydrophone_operator_id}/${hydrophone_id}/spectrogram/2`
+			            Prefix: `${hydrophone_id}/spectrogram/2`
 			        };
 			        try {
 			            const objects = await s3.listObjectsV2(params).promise();
@@ -186,14 +186,14 @@ exports.handler = async (event) => {
 		
 			case "GET /public/spl":
 			    const hydrophonesSpl = await dbConnection`
-			        SELECT hydrophone_operator_id, hydrophone_id FROM hydrophones;
+			        SELECT hydrophone_id FROM hydrophones;
 			    `;
 			
 			    const splPromises = hydrophonesSpl.map(async hydrophone => {
-			        const { hydrophone_operator_id, hydrophone_id } = hydrophone;
+			        const { hydrophone_id } = hydrophone;
 
 			        try {
-			            const objects = await getRecentObjects(BUCKET_NAME, `${hydrophone_operator_id}/${hydrophone_id}/biospl`, 24, 30)
+			            const objects = await getRecentObjects(BUCKET_NAME, `${hydrophone_id}/biospl`, 24, 30)
 			            
 			            if (objects.length > 0) {
 			                const data = await Promise.all(objects.map(async obj => {
@@ -227,14 +227,14 @@ exports.handler = async (event) => {
 			    
 			case "GET /public/gauge":
 			    const hydrophonesGauge = await dbConnection`
-			        SELECT hydrophone_operator_id, hydrophone_id, average_spl FROM hydrophones;
+			        SELECT hydrophone_id, average_spl FROM hydrophones;
 			    `;
 			
 			    const gaugePromises = hydrophonesGauge.map(async hydrophone => {
-			        const { hydrophone_operator_id, hydrophone_id, average_spl } = hydrophone;
+			        const { hydrophone_id, average_spl } = hydrophone;
 
 			        try {
-			            const objects = await getRecentObjects(BUCKET_NAME, `${hydrophone_operator_id}/${hydrophone_id}/biospl`, 1, 30)
+			            const objects = await getRecentObjects(BUCKET_NAME, `${hydrophone_id}/biospl`, 1, 30)
 			            
 			            if (objects.length > 0) {
 			                const recent_spl = await Promise.all(objects.map(async obj => {

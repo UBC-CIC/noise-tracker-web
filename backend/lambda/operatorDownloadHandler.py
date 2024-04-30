@@ -40,7 +40,7 @@ def filter_s3_objects(hydrophones, start_date, end_date, jwt_token):
     cursor = connection.cursor()
     
     get_hydrophone_ids = """
-        SELECT h.hydrophone_operator_id, h.hydrophone_id
+        SELECT h.hydrophone_id
         FROM hydrophones h
         JOIN hydrophone_operators ho ON h.hydrophone_operator_id = ho.hydrophone_operator_id
         WHERE ho.contact_email = %s
@@ -57,7 +57,7 @@ def filter_s3_objects(hydrophones, start_date, end_date, jwt_token):
     filtered_objects = []
 
     for hydrophone_id in hydrophone_ids:
-        prefix = hydrophone_id[0] + "/" + hydrophone_id[1] + "/s"
+        prefix = hydrophone_id[0] + "/spl"
 
         # Initialize continuation token for pagination
         continuation_token = None

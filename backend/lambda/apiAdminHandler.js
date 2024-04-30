@@ -108,8 +108,8 @@ exports.handler = async (event) => {
 				
 				// Generating presigned URLs for each row
 			    for (let i = 0; i < data.length; i++) {
-			        const { hydrophone_operator_id, hydrophone_id } = data[i];
-			        const Key = `${hydrophone_operator_id}/${hydrophone_id}/calibration.csv`;
+			        const { hydrophone_id } = data[i];
+			        const Key = `${hydrophone_id}/calibration.csv`;
 			        const params = {
 			            Bucket: BUCKET_NAME,
 			            Key: Key,
@@ -185,7 +185,7 @@ exports.handler = async (event) => {
 			        // Define presigned url parameters 
 					const signedUrlParams = {
 					  Bucket: BUCKET_NAME,
-					  Key: `${operator_id[0].hydrophone_operator_id}/${hydrophone_id}/calibration.csv`,
+					  Key: `${hydrophone_id}/calibration.csv`,
 					  Expires: 3600
 					};
 					
@@ -198,7 +198,7 @@ exports.handler = async (event) => {
 					// Define an object
 					const params = {
 					  Bucket: BUCKET_NAME,
-					  Key: `${operator_id[0].hydrophone_operator_id}/${hydrophone_id}/`,
+					  Key: `${hydrophone_id}/`,
 					};
 					
 					// Upload the object
@@ -246,7 +246,7 @@ exports.handler = async (event) => {
 					// Define presigned url parameters 
 			        const signedUrlParams = {
 			            Bucket: BUCKET_NAME,
-			            Key: `${operator_id[0].hydrophone_operator_id}/${body.hydrophone_id}/calibration.csv`,
+			            Key: `${body.hydrophone_id}/calibration.csv`,
 			            Expires: 3600
 			        };
 			        
@@ -266,16 +266,15 @@ exports.handler = async (event) => {
             		data = await dbConnection`
 		            DELETE FROM hydrophones 
 		            WHERE hydrophone_id = ${hydrophone_id_to_delete} 
-		            RETURNING hydrophone_id, hydrophone_operator_id;`;
+		            RETURNING hydrophone_id;`;
 		            	
 		        	if (data.length > 0) {
 			            const hydrophone_id = data[0].hydrophone_id;
-			            const hydrophone_operator_id = data[0].hydrophone_operator_id;
 			
 			            // List objects with the common prefix
 			            const listParams = {
 			                Bucket: BUCKET_NAME,
-			                Prefix: `${hydrophone_operator_id}/${hydrophone_id}/`,
+			                Prefix: `${hydrophone_id}/`,
 			            };
 			
 			            const objectsToDelete = await s3.listObjectsV2(listParams).promise();
@@ -351,21 +350,8 @@ exports.handler = async (event) => {
 						        ${body.contact_email},
 						        ${body.website},
 						        ${body.in_directory}
-						    )
-						RETURNING hydrophone_operator_id;
+						    );
 						`;
-
-			        // The result will be an array, get the first element as the UUID
-			        const hydrophone_operator_id = data[0].hydrophone_operator_id;
-			        
-		            // Define an object 
-					const params = {
-					  Bucket: BUCKET_NAME,
-					  Key: `${hydrophone_operator_id}/`,
-					};
-					
-					// Upload the object
-					await s3.putObject(params).promise();
             	}
 				
             	break;
@@ -434,17 +420,16 @@ exports.handler = async (event) => {
             	if (event.queryStringParameters['operator_id'] != null){
             		const operator_id = event.queryStringParameters['operator_id'];
 
-            		// Delete the hydrophone operator from the database and return the hydrophone_operator_id and contact_email
+            		// Delete the hydrophone operator from the database and return the contact_email
 			        data = await dbConnection`
 			            DELETE FROM hydrophone_operators
 			            WHERE hydrophone_operator_id = ${operator_id}
 			            AND NOT EXISTS (
 					        SELECT 1 FROM hydrophones WHERE hydrophone_operator_id = ${operator_id}
 					    )
-			            RETURNING hydrophone_operator_id, contact_email;`;
+			            RETURNING contact_email;`;
 			
 			        if (data.length > 0) {
-			            const hydrophone_operator_id = data[0].hydrophone_operator_id;
 			            const username = data[0].contact_email;
 			            
 			            // Fetch Cognito credentials
@@ -461,26 +446,6 @@ exports.handler = async (event) => {
 		                } catch (error) {
 		                    console.error('Error deleting Cognito user:', error);
 		                }
-			
-			            // List objects with the common prefix
-			            const listParams = {
-			                Bucket: BUCKET_NAME,
-			                Prefix: `${hydrophone_operator_id}/`,
-			            };
-			
-			            const objectsToDelete = await s3.listObjectsV2(listParams).promise();
-			
-			            // Delete the objects in batches (if there are many)
-			            if (objectsToDelete.Contents.length > 0) {
-			                const deleteParams = {
-			                    Bucket: BUCKET_NAME,
-			                    Delete: {
-			                        Objects: objectsToDelete.Contents.map(obj => ({ Key: obj.Key })),
-			                    },
-			                };
-			
-			                await s3.deleteObjects(deleteParams).promise();
-			            }
 			        }
 			        else{
 			        	response.statusCode = 400;
