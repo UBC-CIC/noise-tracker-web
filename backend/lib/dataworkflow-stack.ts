@@ -97,7 +97,7 @@ export class DataWorkflowStack extends Stack {
             functionName: "calculateAverageSpl",
             runtime: lambda.Runtime.NODEJS_16_X,
             handler: "calculateAverageSpl.handler",
-            timeout: Duration.seconds(300),
+            timeout: Duration.seconds(900),
             memorySize: 512,
             environment:{
                 SM_DB_CREDENTIALS: db.secretPathUser.secretName,
