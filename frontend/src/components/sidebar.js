@@ -5,7 +5,6 @@ import SidebarOverview from './sidebarOverview';
 import SidebarNoiseMetrics from './sidebarNoiseMetrics';
 import SidebarTrends from './sidebarTrends';
 import SidebarStationInformation from './sidebarStationInformation';
-import LineGraph from './linegraph';
 
 const Sidebar = ({ 
   hydrophoneData, 
@@ -136,16 +135,6 @@ const Sidebar = ({
               </Tabs>
           <div className="sidebar-content">
             {renderTabContent()}
-            {/* <div className="sidebar-graph">
-              {selectedTab === "Sound Pressure Level" && (
-                  <>
-                      <Typography className="sidebar-typography-padding">Contextual information about the metric goes here.</Typography>
-                      <div>
-                        <LineGraph hydrophoneData={hydrophoneData} />
-                      </div>
-                  </>
-              )}
-              </div> */}
           </div>
           
       </Box>
