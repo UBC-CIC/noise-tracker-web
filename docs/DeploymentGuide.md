@@ -149,7 +149,7 @@ This step will create the following CloudFormation stacks:
 - `DBFlowStack` - loads existing data to database
 - `APIStack` - creates an API Gateway and Lambdas that attach with each endpoints
 - `DataWorkflowStack` - creates functions to process data
-- `hostStack` - launches the admin page to ECS fronted by CloudFront (for local deployment, you can skip this step)
+- `HostStack` - launches the admin page to ECS fronted by CloudFront (for local deployment, you can skip this step)
 
 Navigate to the `/noise-tracker-web/backend/` directory. This deployment will take time. If your login session is short, you can always deploy one stack at a time in the order above.
 
