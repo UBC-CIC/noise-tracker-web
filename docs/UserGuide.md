@@ -115,9 +115,7 @@ Hydrophone operators have access to an Operator Profile, from which they can vie
 
 This tab displays a list of all the operator's registered hydrophones and their associated metadata. For ease of use, clicking on the "Show Details" button next to a hydrophone will bring the operator back to the interactive map with that hydrophone selected.
 
-### Settings
-
-This tab displays which metrics are public (available for anyone to view) and which ones are private (limited to only the associated operator). Any changes must be requested through the administrator.
+![operator information tab](images/userGuide/operator_profile_information.png)
 
 ### Download
 
