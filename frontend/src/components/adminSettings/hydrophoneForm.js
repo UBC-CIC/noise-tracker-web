@@ -47,6 +47,9 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt, op
         timezone: hydrophoneData?.timezone || '',
         storage_interval: hydrophoneData?.storage_interval || '',
         hydrophone_is_public: hydrophoneData?.hydrophone_is_public || false,
+        recent_spl_is_public: hydrophoneData?.recent_spl_is_public || false,
+        spectrogram_is_public: hydrophoneData?.spectrogram_is_public || false,
+        spl_is_public: hydrophoneData?.spl_is_public || false,
         calibration_available: hydrophoneData?.calibration_available || false
     });
 
@@ -525,6 +528,42 @@ export default function HydrophoneForm({ mode, onUpdate, hydrophoneData, jwt, op
                                     <Checkbox
                                         name="hydrophone_is_public"
                                         checked={formData.hydrophone_is_public}
+                                        onChange={handleCheckboxChange}
+                                    />}
+                                  label="Yes"
+                                />
+                                <Typography style={{ marginTop: '20px' }}>
+                                    Show recent SPLs (gauge charts) in sidebar?
+                                </Typography>
+                                <FormControlLabel
+                                  control={
+                                    <Checkbox
+                                        name="recent_spl_is_public"
+                                        checked={formData.recent_spl_is_public}
+                                        onChange={handleCheckboxChange}
+                                    />}
+                                  label="Yes"
+                                />
+                                <Typography style={{ marginTop: '20px' }}>
+                                    Show spectrograms in sidebar?
+                                </Typography>
+                                <FormControlLabel
+                                  control={
+                                    <Checkbox
+                                        name="spectrogram_is_public"
+                                        checked={formData.spectrogram_is_public}
+                                        onChange={handleCheckboxChange}
+                                    />}
+                                  label="Yes"
+                                />
+                                <Typography style={{ marginTop: '20px' }}>
+                                    Show SPL graph in sidebar?
+                                </Typography>
+                                <FormControlLabel
+                                  control={
+                                    <Checkbox
+                                        name="spl_is_public"
+                                        checked={formData.spl_is_public}
                                         onChange={handleCheckboxChange}
                                     />}
                                   label="Yes"

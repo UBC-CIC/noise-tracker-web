@@ -155,6 +155,9 @@ exports.handler = async (event) => {
 			            	 timezone,
 			            	 storage_interval,
 							 hydrophone_is_public,
+							 recent_spl_is_public,
+							 spectrogram_is_public,
+							 spl_is_public,
 			            	 calibration_available)
 			            VALUES 
 			            	(${operator_id[0].hydrophone_operator_id}, 
@@ -177,6 +180,9 @@ exports.handler = async (event) => {
 			            	 ${body.timezone},
 			            	 ${body.storage_interval},
 							 ${body.hydrophone_is_public},
+							 ${body.recent_spl_is_public},
+							 ${body.spectrogram_is_public},
+							 ${body.spl_is_public},
 			            	 ${body.calibration_available})
 			        	RETURNING hydrophone_id;
 						`;
@@ -233,6 +239,9 @@ exports.handler = async (event) => {
 						    timezone = ${body.timezone},
 						    storage_interval = ${body.storage_interval},
 							hydrophone_is_public = ${body.hydrophone_is_public},
+							recent_spl_is_public = ${body.recent_spl_is_public},
+							spectrogram_is_public = ${body.spectrogram_is_public},
+							spl_is_public = ${body.spl_is_public},
 						    calibration_available = ${body.calibration_available}
 			            WHERE hydrophone_id = ${body.hydrophone_id};
 						`;

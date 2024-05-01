@@ -51,6 +51,7 @@ export default function OperatorProfileInformation({ jwt, hydrophoneData, loadin
                     <StyledTableCell>Timezone</StyledTableCell>
                     <StyledTableCell>Storage Interval</StyledTableCell>
                     <StyledTableCell>Hydrophone Privacy</StyledTableCell>
+                    <StyledTableCell>Metric Privacy</StyledTableCell>
                     <StyledTableCell>Calibration Available</StyledTableCell>
                     <StyledTableCell>Calibration File</StyledTableCell>
                   </TableRow>
@@ -77,6 +78,13 @@ export default function OperatorProfileInformation({ jwt, hydrophoneData, loadin
                       <StyledTableCell>{hydrophone.timezone}</StyledTableCell>
                       <StyledTableCell>{hydrophone.storage_interval}</StyledTableCell>
                       <StyledTableCell>{hydrophone.hydrophone_is_public ? 'Public' : 'Private'}</StyledTableCell>
+                      <StyledTableCell>
+                        <ul>
+                          <li key={"recent_spl_is_public"}>{hydrophone.recent_spl_is_public ? ' Recent SPL: Public' : 'Recent SPL: Private'}</li>
+                          <li key={"spectrogram_is_public"}>{hydrophone.spectrogram_is_public ? 'Spectrogram: Public' : ' Spectrogram: Private'}</li>
+                          <li key={"spl_is_public"}>{hydrophone.spl_is_public ? 'SPL Graph: Public' : 'SPL Graph: Private'}</li>
+                        </ul>
+                      </StyledTableCell>
                       <StyledTableCell>{hydrophone.calibration_available ? 'Yes' : 'No'}</StyledTableCell>
                       <StyledTableCell>
                       {hydrophone.calibration_available ? (

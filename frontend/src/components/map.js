@@ -62,14 +62,6 @@ export default function Map({ onToggleSidebar, hydrophoneData, selectedHydrophon
     onToggleSidebar(hydrophone.hydrophone_id);
   };
 
-/*   useEffect(() => {
-    if (selectedHydrophoneFromProfile){
-      setSelectedHydrophone(selectedHydrophoneFromProfile.name);
-    }
-    console.log("Selected hydrophone MAP: ", selectedHydrophone);
-  }, [selectedHydrophoneFromProfile]);  */
-
-
   return (
     <div>
       <MapContainer center={initialPosition} zoom={initialZoom} className="map-container" attributionControl={false} maxZoom={13}>
