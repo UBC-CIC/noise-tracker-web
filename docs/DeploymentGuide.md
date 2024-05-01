@@ -11,8 +11,12 @@
         - [1. Create Elastic Container Registry (ECR)](#1-create-elastic-container-registry-ecr)
         - [2. Create and Push Docker Image to ECR](#2-create-and-push-docker-image-to-ecr)
         - [3. Deploy all stacks](#3-deploy-all-stacks)
-- [Extra: Finding important values](#extra-finding-important-values)
-- [Extra: Taking down the deployed stacks](#extra-taking-down-the-deployed-stacks)
+        - [Extra: Finding important values](#extra-finding-important-values)
+        - [Extra: Taking down the deployed stacks](#extra-taking-down-the-deployed-stacks)
+- [Step 3: Set Up Email Sending](#step-3-set-up-email-sending)
+- [Step 4: Request Production Access in SES](#step-4-request-production-access-in-ses)
+
+
 
 ## Requirements
 
@@ -205,3 +209,76 @@ To take down the deployed stack for a fresh redeployment in the future, navigate
 Please wait for the stacks in each step to be properly deleted before deleting the stack downstream.
 
 Also make sure to delete secrets in Secrets Manager and a stack in `us-east-1`.
+
+## Step 3: Set Up Email Sending
+### 1. Verify Email Address
+In order to send emails to users that contain links that they use to download data, we must set up and verify an email address to send emails **from**.
+
+First, to verify the email address, go to the SES console and select `Get set up` on the sidebar. Please ensure the region displayed in the top right of the screen is the region in which you have deployed the project.
+
+![SES Console](images/deploymentGuide/ses_console.png)
+
+Scroll down to the `Get production access and start sending emails` section and click on `Create identity` button in the `Verify email address` box.
+
+![SES Create Identity](images/deploymentGuide/ses_create_identity.png)
+
+Select the option `email address`, and enter your email of choice in the box labeled `email address`. Your screen should appear like the image below. Click **create identity** to finish.
+
+![Verify Email](images/deploymentGuide/verify_email.png) 
+
+Navigate to your email inbox, you should have received an email from Amazon Web Services, click on the blue link to verify your email address.
+![Verify Link](images/deploymentGuide/verify_link.png)
+
+The link should take you to a page that confirms your email has been verified, no further action is required on that page.
+
+### 2. Configure Lambda Environment Variable
+Then, navigate to the Lambda console, once again, ensure the region shown at the top right of the screen is the region in which your app is deployed. Click on the sidebar tab labeled `Functions`, then use the search bar to search for a function named **'noiseTracker-operatorDownloadHandler'**. We will configure this Lambda function to use your verified email address with the following steps.
+
+![Lambda Console](images/deploymentGuide/lambda_console.png)
+
+Click on the function name to open it and navigate to the tab labeled `Configuration`. Then, in the sidebar on the left, select the tab `Environment variables` and click on the button `Edit`.
+
+![Lambda Configuration](images/deploymentGuide/lambda_configuration.png)
+
+In the page that opens, for the `Value` of the `Key` labelled `SENDER_EMAIL`, type in the email address that was verified in the steps above. Click save to save your changes.
+
+![Modify Email Environment Variable](./images/deploymentGuide/email_environment_variable.png)
+
+If at anytime you wish to change the email address, repeat this section with the new email address.
+
+## Step 4: Request Production Access in SES
+
+By default, AWS will limit your access to SES services to prevent spam and unrestricting spending, as each email has an associated cost. For this project, we will want to gain production access in order to be able to send a download link to any user that requests to download data. 
+
+**Note: Without production access, emails can only be sent to verified email addresses. To test the email functionality without production access, you can verify the receiving email addresses by following the [steps above](#1-verify-email-address).**
+
+Begin by navigating to the SES Console and ensure the region indicated in the top right is the region in which the app is deployed. Select the `Get set up` button on the sidebar. Then, select the button labeled `Request Production Access`.
+
+![SES Request Production Access](images/deploymentGuide/ses_request_production_access.png)
+
+On the subsequent page, take the following action:
+
+1. Check the box labeled `Transactional`
+
+2. For website URL, enter the `Hosted Website URL` from the earlier [deployment](#extra-finding-important-values). This URL can be found in the Cloudfront console.
+
+3. `Use case description` should explain how the application plans to use Amazon SES to send email. The following text is a sample description of how the application plans to use Amazon SES. 
+```
+This web application is a centralized information hub for hydrophone operators and members of the general public to learn more about the underwater soundscapes near them. Only hydrophone operators, who are in contact with the application admins, will receive emails. Users are able to request to download data from S3 and they will receive an email containing a pre-signed download URL that they can use to download the requested data.
+
+One type of email will be sent through the application:
+    Download URL -> this sends an email containing a pre-signed download URL that the user can use to download the requested data.
+
+Assuming the rate of 25 users/month, an estimated maximum of 2 emails will be sent per day
+
+An invalid email address will result in no email being sent
+
+Recipients are only sent emails at their own request.
+```
+4. In the box `Additional contacts`, add any emails you may wish to receive notifications on the status of this request for production access.
+
+5. Finally, check the box for terms and conditions, and click the button `Submit request`
+
+## Viewing Support Cases
+
+After submitting the requests for production access, the status of these requests can be viewed at the AWS Support Console. Ensure the region on the top right is the region in which the app is deployed. Go to the section `Your support cases` to view your support cases.
