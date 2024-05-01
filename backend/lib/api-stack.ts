@@ -198,7 +198,7 @@ export class APIStack extends Stack {
           functionName: "noiseTracker-operatorDownloadHandler",
           runtime: lambda.Runtime.PYTHON_3_9,
           handler: "operatorDownloadHandler.handler",
-          timeout: Duration.seconds(300),
+          timeout: Duration.seconds(900),
           memorySize: 512,
           environment:{
             SM_DB_CREDENTIALS: db.secretPathUser.secretName,

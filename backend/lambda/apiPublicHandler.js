@@ -122,7 +122,8 @@ exports.handler = async (event) => {
 			           h.range, h.angle_of_view,
 			           h.calibration_available, ho.hydrophone_operator_name, ho.website
 				    FROM hydrophones h
-				    INNER JOIN hydrophone_operators ho ON h.hydrophone_operator_id = ho.hydrophone_operator_id;
+				    INNER JOIN hydrophone_operators ho ON h.hydrophone_operator_id = ho.hydrophone_operator_id
+					WHERE h.hydrophone_is_public = true;
 				`;
                 response.body = JSON.stringify(data);
                 
@@ -130,7 +131,9 @@ exports.handler = async (event) => {
                 
             case "GET /public/spectrograms":
 			    const hydrophones = await dbConnection`
-			        SELECT hydrophone_id FROM hydrophones;
+			        SELECT hydrophone_id 
+					FROM hydrophones
+					WHERE hydrophone_is_public = true;
 			    `;
 			
 			    const promises = hydrophones.map(async hydrophone => {
@@ -174,7 +177,9 @@ exports.handler = async (event) => {
 		
 			case "GET /public/spl":
 			    const hydrophonesSpl = await dbConnection`
-			        SELECT hydrophone_id FROM hydrophones;
+			        SELECT hydrophone_id 
+					FROM hydrophones
+					WHERE hydrophone_is_public = true;
 			    `;
 			
 			    const splPromises = hydrophonesSpl.map(async hydrophone => {
@@ -215,7 +220,9 @@ exports.handler = async (event) => {
 			    
 			case "GET /public/gauge":
 			    const hydrophonesGauge = await dbConnection`
-			        SELECT hydrophone_id, average_spl FROM hydrophones;
+			        SELECT hydrophone_id, average_spl 
+					FROM hydrophones
+					WHERE hydrophone_is_public = true;
 			    `;
 			
 			    const gaugePromises = hydrophonesGauge.map(async hydrophone => {

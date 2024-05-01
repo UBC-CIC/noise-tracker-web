@@ -50,6 +50,7 @@ export default function OperatorProfileInformation({ jwt, hydrophoneData, loadin
                     <StyledTableCell>File Name</StyledTableCell>
                     <StyledTableCell>Timezone</StyledTableCell>
                     <StyledTableCell>Storage Interval</StyledTableCell>
+                    <StyledTableCell>Hydrophone Privacy</StyledTableCell>
                     <StyledTableCell>Calibration Available</StyledTableCell>
                     <StyledTableCell>Calibration File</StyledTableCell>
                   </TableRow>
@@ -75,6 +76,7 @@ export default function OperatorProfileInformation({ jwt, hydrophoneData, loadin
                       <StyledTableCell>{hydrophone.file_name}</StyledTableCell>
                       <StyledTableCell>{hydrophone.timezone}</StyledTableCell>
                       <StyledTableCell>{hydrophone.storage_interval}</StyledTableCell>
+                      <StyledTableCell>{hydrophone.hydrophone_is_public ? 'Public' : 'Private'}</StyledTableCell>
                       <StyledTableCell>{hydrophone.calibration_available ? 'Yes' : 'No'}</StyledTableCell>
                       <StyledTableCell>
                       {hydrophone.calibration_available ? (
