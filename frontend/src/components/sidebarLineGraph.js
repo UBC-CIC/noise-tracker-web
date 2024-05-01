@@ -66,8 +66,6 @@ const SidebarLineGraph = ({ splData, loading }) => {
     }
   }, [splData, loading]);
 
-  console.log("Error: ", error);
-
   return (
     <div>
       {error ? (
