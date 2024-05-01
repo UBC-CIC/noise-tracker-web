@@ -119,7 +119,7 @@ This tab displays a list of all the operator's registered hydrophones and their 
 
 ### Download
 
-This tab lists which hydrophone data the operator would like to download. The date range may also be selected, and a ZIP file will be exported and link to download the file will be sent to the user in an email.
+This tab lists which hydrophone data the operator would like to download. The date range may also be selected. A ZIP file containing the relevant files will be created and a link to download the file will be sent to the user in an email.
 
 ![operator download tab](images/userGuide/operator_profile_download.png)
 
