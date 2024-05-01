@@ -2,7 +2,7 @@
 
 ## Architecture
 
-![Archnitecture Diagram](./images/architectureDeepDive/architecture_diagram.png)
+![Archnitecture Diagram](./images/noisetracker_architecture.png)
 
 ## Description
 ### Web Application
@@ -20,11 +20,13 @@
 10. Once a day, the average monthly spl values are calculated using data from S3 and are stored in the database.
 11. Once a day, the 1-minute interval spectrograms are combined into a single daily spectrogram which is stored in S3.
 12. Each hour, the 1-minute interval spl data is combined into hourly spl values which are stored in S3.  
-13. When an admin creates a new operator using the admin dashboard, a new user is created in the Cognito user pool.
+13. Objects in S3 are filtered based on user inputted parameters. The filtered objects are than combined into a single zip file which gets stored in S3. 
+14. An email is sent to the user that requested the download. The email contains a pre-signed URL that the user can use to download the zip file from S3.
+15. When an admin creates a new operator using the admin dashboard, a new user is created in the Cognito user pool.
 
 ### Client Software
-14. Client software fetched the hydrophone details and configurations by calling an API endpoint. This endpoint invokes a lambda function (7) that fetches the details from the Noise Tracker Database (8).
-15. The client application also needs to upload the analysis results into the cloud, which is done by uploading JSON files in the Noise Tracker S3 Bucket.
+16. Client software fetched the hydrophone details and configurations by calling an API endpoint. This endpoint invokes a lambda function (7) that fetches the details from the Noise Tracker Database (8).
+17. The client application also needs to upload the analysis results into the cloud, which is done by uploading JSON files in the Noise Tracker S3 Bucket.
 
 ## Database Schema
 
