@@ -11,8 +11,12 @@
         - [1. Create Elastic Container Registry (ECR)](#1-create-elastic-container-registry-ecr)
         - [2. Create and Push Docker Image to ECR](#2-create-and-push-docker-image-to-ecr)
         - [3. Deploy all stacks](#3-deploy-all-stacks)
-- [Extra: Finding important values](#extra-finding-important-values)
-- [Extra: Taking down the deployed stacks](#extra-taking-down-the-deployed-stacks)
+        - [Extra: Finding important values](#extra-finding-important-values)
+        - [Extra: Taking down the deployed stacks](#extra-taking-down-the-deployed-stacks)
+- [Step 3: Set Up Email Sending](#step-3-set-up-email-sending)
+- [Step 4: Request Production Access in SES](#step-4-request-production-access-in-ses)
+
+
 
 ## Requirements
 
