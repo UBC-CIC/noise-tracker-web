@@ -301,7 +301,7 @@ const Login = ({ loginStatus, setLoginStatus, jwt, setJwt, group, setGroup }) =>
                 }
                 {pageState === "forgotPassword" && 
                 <>
-                    <Typography style={{ width: '50%' }}>Enter your email address and we'll send you a code to help you reset your password.</Typography>
+                    <Typography style={{ width: '50%' }}>Enter your username and we'll send you a code to help you reset your password.</Typography>
                     {error && (
                         <Alert severity="error">{error.message}</Alert>
                     )}
