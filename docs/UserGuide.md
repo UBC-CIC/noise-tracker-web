@@ -18,6 +18,40 @@ Once you have deployed the solution, the following user guide will help you navi
 
 If you have already logged in, you can continue to [Hydrophone Tabs](#hydrophone-tabs). Otherwise, the following section will walkthrough creating an Admin user and logging in to the Admin page.
 
+In the AWS Console:
+
+1. Search for Amazon Cognito in the search bar and click on it.
+   ![cognito console search](images/userGuide/login/cognito_console.png)
+
+2. Select the `noiseTrackerUserPool` user pool
+   ![user pool](./images/userGuide/login/user_pool.png)
+
+3. Next, we will create a user. Under Users, click on `Create user`.
+   ![create user button](./images/userGuide/login/create_user_button.png)
+
+4. Under User information:
+
+   - Select `Send an email invitation`
+   - Input the user's username. This is what will be used to login to the app.
+   - Input the user's email address and mark as verified
+   - Select `Generate a password`
+   - Click `Create user`
+     
+     ![create user button](./images/userGuide/login/create_user.png)
+
+5. Next, we will add this user to the `ADMIN_USER` group. Click into the newly added user, then under Group memberships, click on `Add user to a group`
+   ![add user to group button](./images/userGuide/login/add_user_to_group_button.png)
+
+6. Select the `ADMIN_USER` group then click `Add`
+   ![add user to group](./images/userGuide/login/add_user_to_group.png)
+
+Great! Now you can login with the newly created admin user. Check your email for the temporary password to sign in. 
+    ![temporary password](./images/userGuide/login/temporary_password.png)
+
+Upon sign in, you will be asked to change your password.
+
+![login page](./images/userGuide/login/login_page.png)
+
 ## Hydrophone Tabs
 
 The interactive map page is the default page after logging in.
