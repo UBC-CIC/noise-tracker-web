@@ -77,6 +77,9 @@ def handler(event, context):
                 "timezone" varchar,
                 "storage_interval" varchar,
                 "hydrophone_is_public" boolean,
+                "recent_spl_is_public" boolean,
+                "spectrogram_is_public" boolean,
+                "spl_is_public" boolean,
                 "calibration_available" boolean,
                 "average_spl" jsonb
             );

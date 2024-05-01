@@ -96,6 +96,7 @@ export default function AdminHydrophones({ jwt }){
                     <StyledTableCell>Timezone</StyledTableCell>
                     <StyledTableCell>Storage Interval</StyledTableCell>
                     <StyledTableCell>Hydrophone Privacy</StyledTableCell>
+                    <StyledTableCell>Metric Privacy</StyledTableCell>
                     <StyledTableCell>Calibration Available</StyledTableCell>
                     <StyledTableCell>Calibration File</StyledTableCell>
                     <StyledTableCell>Edit</StyledTableCell>
@@ -125,6 +126,13 @@ export default function AdminHydrophones({ jwt }){
                       <StyledTableCell>{hydrophone.timezone}</StyledTableCell>
                       <StyledTableCell>{hydrophone.storage_interval}</StyledTableCell>
                       <StyledTableCell>{hydrophone.hydrophone_is_public ? 'Public' : 'Private'}</StyledTableCell>
+                      <StyledTableCell>
+                        <ul>
+                          <li key={"recent_spl_is_public"}>{hydrophone.recent_spl_is_public ? ' Recent SPL: Public' : 'Recent SPL: Private'}</li>
+                          <li key={"spectrogram_is_public"}>{hydrophone.spectrogram_is_public ? 'Spectrogram: Public' : ' Spectrogram: Private'}</li>
+                          <li key={"spl_is_public"}>{hydrophone.spl_is_public ? 'SPL Graph: Public' : 'SPL Graph: Private'}</li>
+                        </ul>
+                      </StyledTableCell>
                       <StyledTableCell>{hydrophone.calibration_available ? 'Yes' : 'No'}</StyledTableCell>
                       <StyledTableCell>
                       {hydrophone.calibration_available ? (
@@ -162,6 +170,9 @@ export default function AdminHydrophones({ jwt }){
                             "timezone": hydrophone.timezone,
                             "storage_interval": hydrophone.storage_interval,
                             "hydrophone_is_public": hydrophone.hydrophone_is_public,
+                            "recent_spl_is_public": hydrophone.recent_spl_is_public,
+                            "spectrogram_is_public": hydrophone.spectrogram_is_public,
+                            "spl_is_public": hydrophone.spl_is_public,
                             "calibration_available": hydrophone.calibration_available,
                             "presignedUrl": hydrophone.presignedUrl
                           }}

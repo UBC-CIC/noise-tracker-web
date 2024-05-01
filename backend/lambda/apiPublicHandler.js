@@ -133,7 +133,8 @@ exports.handler = async (event) => {
 			    const hydrophones = await dbConnection`
 			        SELECT hydrophone_id 
 					FROM hydrophones
-					WHERE hydrophone_is_public = true;
+					WHERE hydrophone_is_public = true
+					AND spectrogram_is_public = true;
 			    `;
 			
 			    const promises = hydrophones.map(async hydrophone => {
@@ -179,7 +180,8 @@ exports.handler = async (event) => {
 			    const hydrophonesSpl = await dbConnection`
 			        SELECT hydrophone_id 
 					FROM hydrophones
-					WHERE hydrophone_is_public = true;
+					WHERE hydrophone_is_public = true
+					AND spl_is_public = true;
 			    `;
 			
 			    const splPromises = hydrophonesSpl.map(async hydrophone => {
@@ -222,7 +224,8 @@ exports.handler = async (event) => {
 			    const hydrophonesGauge = await dbConnection`
 			        SELECT hydrophone_id, average_spl 
 					FROM hydrophones
-					WHERE hydrophone_is_public = true;
+					WHERE hydrophone_is_public = true
+					AND recent_spl_is_public = true;
 			    `;
 			
 			    const gaugePromises = hydrophonesGauge.map(async hydrophone => {
