@@ -110,7 +110,6 @@ Users can view hydrophone metadata; these include the hydrophone's:
 
 Hydrophone operators have access to an Operator Profile, from which they can view the following tabs:
 - [**Information**](#information) - metadata for all associated hydrophones
-- [**Settings**](#settings) - public and private metrics
 - [**Download**](#download) - downloadable metrics
 - [**Directory**](#directory) - contact information of other operators
 
@@ -118,13 +117,9 @@ Hydrophone operators have access to an Operator Profile, from which they can vie
 
 This tab displays a list of all the operator's registered hydrophones and their associated metadata. For ease of use, clicking on the "Show Details" button next to a hydrophone will bring the operator back to the interactive map with that hydrophone selected.
 
-### Settings
-
-This tab displays which metrics are public (available for anyone to view) and which ones are private (limited to only the associated operator). Any changes must be requested through the administrator.
-
 ### Download
 
-This tab lists which hydrophone data the operator would like to download. The date range may also be selected, and a ZIP file will be exported.
+This tab lists which hydrophone data the operator would like to download. The date range may also be selected, and a ZIP file will be exported and link to download the file will be sent to the user in an email.
 
 ### Directory
 
@@ -139,14 +134,14 @@ Administrators have access to an Admin Dashboard, from which they can interact w
 
 ### Adding a new operator
 
-A new operator can be created by clicking the "Create Operator" button and inputting the operator's organization, organization website, contact name, and contact email.
+A new operator can be created by clicking the "Create Operator" button and inputting the operator's organization, organization website, contact name, and contact email. The contact email will be used as the operator's username for logging in. An email containing a temporary password will be sent to the operator's contact email. Upon logging in, the operator will be asked to change their password.
 
 ![adding a hydrophone operator](images/userGuide/admin_dashboard_add_operator.png)
 ![filling in the create operator form](images/userGuide/admin_dashboard_add_operator_form.png)
 
 ### Editing an operator
 
-An operator's main contact information can also be modified by clicking on the "Edit" icon. After making the changes, click the "Save" button to confirm.
+An operator's information can also be modified by clicking on the "Edit" icon. After making the changes, click the "Save" button to confirm.
 
 ![editing an operator](images/userGuide/admin_dashboard_edit_operator.png)
 
@@ -155,7 +150,8 @@ An operator's main contact information can also be modified by clicking on the "
 A new hydrophone can be created by clicking the "Create Hydrophone" button and inputting the following information:
 - Operator
 - Site
-- Location (in coordinates)
+- Latitude
+- Longitude
 - Brand and Model
 - Mounting Type (bottom-mount, surface buoy, etc.)
 - Height from seafloor (m)
@@ -172,6 +168,10 @@ A new hydrophone can be created by clicking the "Create Hydrophone" button and i
 - Timezone
 - Storage interval (daily, monthly, etc.)
 - Calibration information (if available)
+- Hydrophone privacy (visibility of hydrophone on map)
+- Recent SPL privacy (visibillity of gauge charts) 
+- Spectrogram privacy (visiblity of spectrograms)
+- SPL privacy (visibility of SPL graph)  
 
 ![adding a hydrophone](images/userGuide/admin_dashboard_add_hydrophone.png)
 ![filling in the create hydrophone form](images/userGuide/admin_dashboard_add_hydrophone_form.png)
