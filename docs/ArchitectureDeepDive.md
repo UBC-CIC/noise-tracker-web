@@ -21,7 +21,7 @@
 11. Once a day, the 1-minute interval spectrograms are combined into a single daily spectrogram which is stored in S3.
 12. Each hour, the 1-minute interval spl data is combined into hourly spl values which are stored in S3.  
 13. Objects in S3 are filtered based on user inputted parameters. The filtered objects are than combined into a single zip file which gets stored in S3. 
-14. An email is sent to the user that requested the download. The email contains a pre-signed URL that the user can use to download the zip file from S3.
+14. An email is sent to the user who requested the download. The email contains a pre-signed URL that the user can use to download the zip file from S3.
 15. When an admin creates a new operator using the admin dashboard, a new user is created in the Cognito user pool.
 
 ### Client Software
