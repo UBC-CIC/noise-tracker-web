@@ -113,7 +113,6 @@ export class FunctionalityStack extends cdk.Stack {
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
       encryption: s3.BucketEncryption.S3_MANAGED,
       removalPolicy: cdk.RemovalPolicy.RETAIN,
-      autoDeleteObjects: true,
       cors: [
         {
           allowedHeaders: ["*"],
