@@ -5,7 +5,7 @@ import psycopg2
 import psycopg2.extras
 import uuid
 import csv
-
+import base64
 
 def get_db_secret():
     db_secret_name = os.environ["SM_DB_CREDENTIALS"]
@@ -37,6 +37,8 @@ def get_config(operator_id):
     cursor.execute(get_hydrophone_ids, (valid_uuid,))
 
     results = cursor.fetchall()
+    if results == {}:
+        raise Exception("No hydrophones found for the given operator ID.")
     return results
 
 
@@ -45,7 +47,6 @@ def get_calibration_data(hydrophone_id):
     bucket = os.environ['BUCKET_NAME']
     object_name = f"{hydrophone_id}/calibration.csv"
     s3_client = boto3.client('s3')
-    print(object_name)
     s3_client.download_file(bucket, object_name, '/tmp/calibration.csv')
     with open('/tmp/calibration.csv') as f:
         reader = csv.reader(f)
@@ -58,7 +59,12 @@ def get_calibration_data(hydrophone_id):
 
 def handler(event, context):
     operator_id = event['queryStringParameters']['operator_id']
-    configs = get_config(operator_id)
+    try:
+        configs = get_config(operator_id)
+    except ValueError:
+        return {'statusCode': 400, 'body': 'Entered ID is not valid.'}
+    except Exception as e:
+        return {'statusCode': 400, 'body': str(e)}
     client_config = {"operator_id": operator_id, "hydrophones": [], "scan_interval": 5, "upload_interval": 5}
 
     for config in configs:
@@ -72,4 +78,4 @@ def handler(event, context):
                 print(f"Could not find the calibration file for hydrophone: {hydrophone_config['id']}")
         client_config['hydrophones'].append(hydrophone_config)
 
-    return client_config
+    return {'statusCode': 200, 'body': base64.b64encode(json.dumps(client_config, indent=2).encode('utf-8'))}

@@ -228,6 +228,20 @@ export class APIStack extends Stack {
             role: lambdaRole,
         })
 
+        const apiOperatorUploadUrl = new lambda.Function(this, "noiseTracker-apiOperatorUploadUrl", {
+            functionName: "noiseTracker-apiOperatorUploadUrl",
+            runtime: lambda.Runtime.PYTHON_3_9,
+            handler: "apiOperatorUploadUrl.handler",
+            timeout: Duration.seconds(60),
+            memorySize: 512,
+            environment:{
+              BUCKET_NAME: functionalityStack.bucketName,
+            },
+            vpc: vpcStack.vpc,
+            code: lambda.Code.fromAsset("lambda/apiOperatorUploadUrl"),
+            role: lambdaRole,
+        })
+
         const sesStatement = new iam.PolicyStatement();
         sesStatement.addActions("ses:SendEmail");
         sesStatement.addResources("*");
@@ -322,6 +336,7 @@ export class APIStack extends Stack {
         const operatorHydrophones = operatorResource.addResource('hydrophones')
         const operatorOperators = operatorResource.addResource('operators')
         const operatorConfig = operatorResource.addResource('config')
+        const operatorUploadUrl = operatorResource.addResource('upload-url')
 
         const publicResource = api.root.addResource('public');
         const publicHydrophones = publicResource.addResource('hydrophones')
@@ -385,6 +400,7 @@ export class APIStack extends Stack {
             authorizationType: apigateway.AuthorizationType.CUSTOM,
         });
         operatorConfig.addMethod('GET', new apigateway.LambdaIntegration(apiOperatorConfigRetreiver, {proxy: true}));
+        operatorUploadUrl.addMethod('GET', new apigateway.LambdaIntegration(apiOperatorUploadUrl, {proxy: true}));
         publicHydrophones.addMethod('GET', new apigateway.LambdaIntegration(apiPublicHandler, {proxy: true}));
         publicSpectrograms.addMethod('GET', new apigateway.LambdaIntegration(apiPublicHandler, {proxy: true}));
         publicSPL.addMethod('GET', new apigateway.LambdaIntegration(apiPublicHandler, {proxy: true}));
@@ -393,6 +409,7 @@ export class APIStack extends Stack {
         new cdk.CfnOutput(this, 'Output-Message', {
             value: `
                 Operator Get Config URL: ${api.urlForPath()}operator/config
+                Operator Upload URL: ${api.urlForPath()}operator/upload-url
             `,
         })
     }
