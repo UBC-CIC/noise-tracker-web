@@ -11,6 +11,7 @@ import * as iam from 'aws-cdk-lib/aws-iam';
 import { VpcStack } from './vpc-stack';
 import { DBStack } from './database-stack';
 import { FunctionalityStack } from './functionality-stack';
+import * as cdk from "aws-cdk-lib";
 
 export class APIStack extends Stack {
     public readonly stageARN_APIGW: string;
@@ -211,6 +212,36 @@ export class APIStack extends Stack {
           role: lambdaRole,
         });
 
+        const apiOperatorConfigRetreiver = new lambda.Function(this, "noiseTracker-apiOperatorConfigRetreiver", {
+            functionName: "noiseTracker-apiOperatorConfigRetreiver",
+            runtime: lambda.Runtime.PYTHON_3_9,
+            handler: "apiOperatorConfigRetreiver.handler",
+            timeout: Duration.seconds(60),
+            memorySize: 512,
+            environment:{
+              SM_DB_CREDENTIALS: db.secretPathUser.secretName,
+              BUCKET_NAME: functionalityStack.bucketName,
+            },
+            vpc: vpcStack.vpc,
+            code: lambda.Code.fromAsset("lambda/apiOperatorConfigRetreiver"),
+            layers: [psyscopg2],
+            role: lambdaRole,
+        })
+
+        const apiOperatorUploadUrl = new lambda.Function(this, "noiseTracker-apiOperatorUploadUrl", {
+            functionName: "noiseTracker-apiOperatorUploadUrl",
+            runtime: lambda.Runtime.PYTHON_3_9,
+            handler: "apiOperatorUploadUrl.handler",
+            timeout: Duration.seconds(60),
+            memorySize: 512,
+            environment:{
+              BUCKET_NAME: functionalityStack.bucketName,
+            },
+            vpc: vpcStack.vpc,
+            code: lambda.Code.fromAsset("lambda/apiOperatorUploadUrl"),
+            role: lambdaRole,
+        })
+
         const sesStatement = new iam.PolicyStatement();
         sesStatement.addActions("ses:SendEmail");
         sesStatement.addResources("*");
@@ -295,85 +326,91 @@ export class APIStack extends Stack {
         const adminAuthorizer = new apigateway.TokenAuthorizer(this, 'adminAuthorizer', {handler: adminAuthorizerFunction});
         const operatorAuthorizer = new apigateway.TokenAuthorizer(this, 'operatorAuthorizer', {handler: operatorAuthorizerFunction});
       
-          // define api resources
-          const adminResource = api.root.addResource('admin');
-          const adminHydrophones = adminResource.addResource('hydrophones')
-          const adminOperators = adminResource.addResource('operators')
+        // define api resources
+        const adminResource = api.root.addResource('admin');
+        const adminHydrophones = adminResource.addResource('hydrophones')
+        const adminOperators = adminResource.addResource('operators')
 
-          const operatorResource = api.root.addResource('operator');
-          const operatorDownload = operatorResource.addResource('download')
-          const operatorHydrophones = operatorResource.addResource('hydrophones')
-          const operatorOperators = operatorResource.addResource('operators')
+        const operatorResource = api.root.addResource('operator');
+        const operatorDownload = operatorResource.addResource('download')
+        const operatorHydrophones = operatorResource.addResource('hydrophones')
+        const operatorOperators = operatorResource.addResource('operators')
+        const operatorConfig = operatorResource.addResource('config')
+        const operatorUploadUrl = operatorResource.addResource('upload-url')
 
-          const publicResource = api.root.addResource('public');
-          const publicHydrophones = publicResource.addResource('hydrophones')
-          const publicSpectrograms = publicResource.addResource('spectrograms')
-          const publicSPL = publicResource.addResource('spl')
-          const publicGauge = publicResource.addResource('gauge')
+        const publicResource = api.root.addResource('public');
+        const publicHydrophones = publicResource.addResource('hydrophones')
+        const publicSpectrograms = publicResource.addResource('spectrograms')
+        const publicSPL = publicResource.addResource('spl')
+        const publicGauge = publicResource.addResource('gauge')
 
-          adminHydrophones.addMethod('GET', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}), {
+        adminHydrophones.addMethod('GET', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}), {
             authorizer: adminAuthorizer,
             authorizationType: apigateway.AuthorizationType.CUSTOM,
-          });
-          adminHydrophones.addMethod('POST', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}),
-          {
+        });
+        adminHydrophones.addMethod('POST', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}),
+        {
             authorizer: adminAuthorizer,
             authorizationType: apigateway.AuthorizationType.CUSTOM,
-          });
-          adminHydrophones.addMethod('PUT', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}),
-          {
+        });
+        adminHydrophones.addMethod('PUT', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}),
+        {
             authorizer: adminAuthorizer,
             authorizationType: apigateway.AuthorizationType.CUSTOM,
-          });
-          adminHydrophones.addMethod('DELETE', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}),
-          {
+        });
+        adminHydrophones.addMethod('DELETE', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}),
+        {
             authorizer: adminAuthorizer,
             authorizationType: apigateway.AuthorizationType.CUSTOM,
-          });
+        });
 
-          adminOperators.addMethod('GET', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}),
-          {
+        adminOperators.addMethod('GET', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}),
+        {
             authorizer: adminAuthorizer,
             authorizationType: apigateway.AuthorizationType.CUSTOM,
-          });
-          adminOperators.addMethod('POST', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}),
-          {
+        });
+        adminOperators.addMethod('POST', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}),
+        {
             authorizer: adminAuthorizer,
             authorizationType: apigateway.AuthorizationType.CUSTOM,
-          });
-          adminOperators.addMethod('PUT', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}),
-          {
+        });
+        adminOperators.addMethod('PUT', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}),
+        {
             authorizer: adminAuthorizer,
             authorizationType: apigateway.AuthorizationType.CUSTOM,
-          });
-          adminOperators.addMethod('DELETE', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}),
-          {
+        });
+        adminOperators.addMethod('DELETE', new apigateway.LambdaIntegration(apiAdminHandler, {proxy: true}),
+        {
             authorizer: adminAuthorizer,
             authorizationType: apigateway.AuthorizationType.CUSTOM,
-          });
-
-          operatorDownload.addMethod('GET', new apigateway.LambdaIntegration(operatorDownloadHandler, {proxy: true}),
-          {
+        });
+        operatorDownload.addMethod('GET', new apigateway.LambdaIntegration(operatorDownloadHandler, {proxy: true}),
+        {
             authorizer: operatorAuthorizer,
             authorizationType: apigateway.AuthorizationType.CUSTOM,
-          });
-
-          operatorHydrophones.addMethod('GET', new apigateway.LambdaIntegration(apiOperatorHandler, {proxy: true}),
-          {
+        });
+        operatorHydrophones.addMethod('GET', new apigateway.LambdaIntegration(apiOperatorHandler, {proxy: true}),
+        {
             authorizer: operatorAuthorizer,
             authorizationType: apigateway.AuthorizationType.CUSTOM,
-          });
-
-          operatorOperators.addMethod('GET', new apigateway.LambdaIntegration(apiOperatorHandler, {proxy: true}),
-          {
+        });
+        operatorOperators.addMethod('GET', new apigateway.LambdaIntegration(apiOperatorHandler, {proxy: true}),
+        {
             authorizer: operatorAuthorizer,
             authorizationType: apigateway.AuthorizationType.CUSTOM,
-          });
+        });
+        operatorConfig.addMethod('GET', new apigateway.LambdaIntegration(apiOperatorConfigRetreiver, {proxy: true}));
+        operatorUploadUrl.addMethod('GET', new apigateway.LambdaIntegration(apiOperatorUploadUrl, {proxy: true}));
+        publicHydrophones.addMethod('GET', new apigateway.LambdaIntegration(apiPublicHandler, {proxy: true}));
+        publicSpectrograms.addMethod('GET', new apigateway.LambdaIntegration(apiPublicHandler, {proxy: true}));
+        publicSPL.addMethod('GET', new apigateway.LambdaIntegration(apiPublicHandler, {proxy: true}));
+        publicGauge.addMethod('GET', new apigateway.LambdaIntegration(apiPublicHandler, {proxy: true}));
 
-          publicHydrophones.addMethod('GET', new apigateway.LambdaIntegration(apiPublicHandler, {proxy: true}));
-          publicSpectrograms.addMethod('GET', new apigateway.LambdaIntegration(apiPublicHandler, {proxy: true}));
-          publicSPL.addMethod('GET', new apigateway.LambdaIntegration(apiPublicHandler, {proxy: true}));
-          publicGauge.addMethod('GET', new apigateway.LambdaIntegration(apiPublicHandler, {proxy: true}));
-
+        new cdk.CfnOutput(this, 'Output-Message', {
+            value: `
+                Operator Get Config URL: ${api.urlForPath()}operator/config
+                Operator Upload URL: ${api.urlForPath()}operator/upload-url
+            `,
+        })
     }
 }
